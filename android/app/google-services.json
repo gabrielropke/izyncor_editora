@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "809408569788",
+    "project_id": "izyncor-app-949df",
+    "storage_bucket": "izyncor-app-949df.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:809408569788:android:ab33c74d2a5a1eebfc0bb9",
+        "android_client_info": {
+          "package_name": "editora.izyncor.app.editora_izyncor_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "809408569788-sffddl01o3532g3db9vfgn4jnvdfh583.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOnVICN0s5Tq7zcYjxcLGacTuzqRqQK_4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "809408569788-sffddl01o3532g3db9vfgn4jnvdfh583.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
