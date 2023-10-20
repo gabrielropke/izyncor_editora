@@ -44,7 +44,6 @@ class _storeState extends State<store> {
   late String nome;
   late String email;
   String? _idUsuarioLogado;
-  // String? _generoSelecionado;
 
   List<String> listaGeneros = [
     'Ficção',

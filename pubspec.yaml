@@ -65,6 +65,7 @@ dependencies:
   flutter_sound_lite: ^8.5.0
   permission_handler: ^11.0.0
   flutter_facebook_auth: ^5.0.11
+  url_launcher: ^6.1.14
   
 
 dev_dependencies:
@@ -145,6 +146,29 @@ flutter:
     - assets/foto_thais.png
     - assets/fundo_chat.png
     - assets/chat_back.jpg
+    - assets/home_01.png
+    - assets/home_02.png
+    - assets/comment_01.png
+    - assets/comment_02.png
+    - assets/comment_03.png
+    - assets/comment_04.png
+    - assets/shop_01.png
+    - assets/shop_02.png
+    - assets/add_01.png
+    - assets/add_02.png
+    - assets/user_01.png
+    - assets/user_02.png
+    - assets/curtir_01.png
+    - assets/curtir_02.png
+    - assets/curtir_03.png
+    - assets/send.png
+    - assets/send3.png
+    - assets/pesquisa.png
+    - assets/salvar_01.png
+    - assets/salvar_02.png
+    - assets/salvar_03.png
+    - assets/salvar_04.png
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

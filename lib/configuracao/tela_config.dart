@@ -37,7 +37,6 @@ class _home_configState extends State<home_config> {
         confirmBtnText: 'Sair',
         type: QuickAlertType.warning,
         onConfirmBtnTap: () async {
-          showAlert();
           _deslogarUsuario();
         });
   }

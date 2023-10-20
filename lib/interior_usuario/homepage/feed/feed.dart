@@ -653,9 +653,8 @@ class _feedState extends State<feed> {
                                                         Navigator.push(
                                                           context,
                                                           MaterialPageRoute(
-                                                            builder:
-                                                                ((context) =>
-                                                                    const perfil()),
+                                                            builder: ((context) =>
+                                                                const perfil()),
                                                           ),
                                                         );
                                                       } else {
@@ -1011,23 +1010,22 @@ class _feedState extends State<feed> {
                                                                         .data!
                                                                         .exists) {
                                                                   // Se não houver dados (usuário não curtiu), mostre o ícone de coração vazio
-                                                                  return const Icon(
-                                                                    Icons
-                                                                        .favorite_border,
-                                                                    color: Colors
-                                                                        .white,
-                                                                  );
-                                                                }
+                                                                  return SizedBox(
+                                                                  width: 22,
+                                                                  child: Image
+                                                                      .asset(
+                                                                          'assets/curtir_03.png'));
+                                                            }
 
-                                                                // Se houver dados (usuário já curtiu), mostre o ícone de coração cheio
-                                                                return const Icon(
-                                                                  Icons
-                                                                      .favorite,
-                                                                  color: Colors
-                                                                      .red, // Ou qualquer outra cor desejada
-                                                                );
-                                                              },
-                                                            ),
+                                                            // Se houver dados (usuário já curtiu), mostre o ícone de coração cheio
+                                                            return SizedBox(
+                                                                width: 22,
+                                                                child: Image.asset(
+                                                                    'assets/curtir_02.png'));
+                                                          },
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 5),
                                                             StreamBuilder<
                                                                 DocumentSnapshot>(
                                                               stream: FirebaseFirestore
@@ -1102,11 +1100,12 @@ class _feedState extends State<feed> {
                                                               MainAxisAlignment
                                                                   .end,
                                                           children: [
-                                                            const Icon(
-                                                                Icons
-                                                                    .comment_outlined,
-                                                                color: Colors
-                                                                    .white),
+                                                            SizedBox(
+                                                                width: 22,
+                                                                child: Image.asset(
+                                                                    'assets/comment_04.png')),
+                                                            const SizedBox(
+                                                                height: 5),
                                                             StreamBuilder<
                                                                 DocumentSnapshot>(
                                                               stream: FirebaseFirestore
@@ -1308,23 +1307,23 @@ class _feedState extends State<feed> {
                                                                         .data!
                                                                         .exists) {
                                                                   // Se não houver dados (usuário não curtiu), mostre o ícone de coração vazio
-                                                                  return const Icon(
-                                                                    Icons
-                                                                        .bookmark_border,
-                                                                    color: Colors
-                                                                        .white,
-                                                                  );
+                                                                  return SizedBox(
+                                                                      width: 22,
+                                                                      child: Image
+                                                                          .asset(
+                                                                              'assets/salvar_03.png'));
                                                                 }
 
                                                                 // Se houver dados (usuário já curtiu), mostre o ícone de coração cheio
-                                                                return const Icon(
-                                                                  Icons
-                                                                      .bookmark,
-                                                                  color: Colors
-                                                                      .white, // Ou qualquer outra cor desejada
-                                                                );
+                                                                return SizedBox(
+                                                                    width: 22,
+                                                                    child: Image
+                                                                        .asset(
+                                                                            'assets/salvar_04.png'));
                                                               },
                                                             ),
+                                                            const SizedBox(
+                                                                height: 5),
                                                             StreamBuilder<
                                                                 DocumentSnapshot>(
                                                               stream: FirebaseFirestore
@@ -1422,9 +1421,8 @@ class _feedState extends State<feed> {
                                                         Navigator.push(
                                                           context,
                                                           MaterialPageRoute(
-                                                            builder:
-                                                                ((context) =>
-                                                                    const perfil()),
+                                                            builder: ((context) =>
+                                                                const perfil()),
                                                           ),
                                                         );
                                                       } else {
@@ -1780,22 +1778,22 @@ class _feedState extends State<feed> {
                                                                 !snapshot.data!
                                                                     .exists) {
                                                               // Se não houver dados (usuário não curtiu), mostre o ícone de coração vazio
-                                                              return const Icon(
-                                                                Icons
-                                                                    .favorite_border,
-                                                                color: Colors
-                                                                    .black,
-                                                              );
+                                                              return SizedBox(
+                                                                  width: 22,
+                                                                  child: Image
+                                                                      .asset(
+                                                                          'assets/curtir_01.png'));
                                                             }
 
                                                             // Se houver dados (usuário já curtiu), mostre o ícone de coração cheio
-                                                            return const Icon(
-                                                              Icons.favorite,
-                                                              color: Colors
-                                                                  .red, // Ou qualquer outra cor desejada
-                                                            );
+                                                            return SizedBox(
+                                                                width: 22,
+                                                                child: Image.asset(
+                                                                    'assets/curtir_02.png'));
                                                           },
                                                         ),
+                                                        const SizedBox(
+                                                            height: 5),
                                                         StreamBuilder<
                                                             DocumentSnapshot>(
                                                           stream: FirebaseFirestore
@@ -1865,12 +1863,12 @@ class _feedState extends State<feed> {
                                                             ),
                                                           );
                                                         },
-                                                        child: const Icon(
-                                                            Icons
-                                                                .comment_outlined,
-                                                            color:
-                                                                Colors.black),
+                                                        child: SizedBox(
+                                                            width: 22,
+                                                            child: Image.asset(
+                                                                'assets/comment_03.png')),
                                                       ),
+                                                      const SizedBox(height: 5),
                                                       StreamBuilder<
                                                           DocumentSnapshot>(
                                                         stream: FirebaseFirestore
@@ -2034,8 +2032,11 @@ class _feedState extends State<feed> {
                                                     width: 40,
                                                     height: 50,
                                                     child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.end,
-                                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
                                                       children: [
                                                         StreamBuilder<
                                                             DocumentSnapshot>(
@@ -2057,22 +2058,22 @@ class _feedState extends State<feed> {
                                                                 !snapshot.data!
                                                                     .exists) {
                                                               // Se não houver dados (usuário não curtiu), mostre o ícone de coração vazio
-                                                              return const Icon(
-                                                                Icons
-                                                                    .bookmark_border,
-                                                                color: Colors
-                                                                    .black,
-                                                              );
+                                                              return SizedBox(
+                                                                  width: 22,
+                                                                  child: Image
+                                                                      .asset(
+                                                                          'assets/salvar_01.png'));
                                                             }
 
                                                             // Se houver dados (usuário já curtiu), mostre o ícone de coração cheio
-                                                            return const Icon(
-                                                              Icons.bookmark,
-                                                              color: Colors
-                                                                  .black, // Ou qualquer outra cor desejada
-                                                            );
+                                                            return SizedBox(
+                                                                width: 22,
+                                                                child: Image.asset(
+                                                                    'assets/salvar_02.png'));
                                                           },
                                                         ),
+                                                        const SizedBox(
+                                                            height: 5),
                                                         StreamBuilder<
                                                             DocumentSnapshot>(
                                                           stream: FirebaseFirestore

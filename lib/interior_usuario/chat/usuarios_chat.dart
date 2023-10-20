@@ -1,3 +1,4 @@
+import 'package:editora_izyncor_app/interior_usuario/chat/mensagens_chat.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil_visita/perfil_visita.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -45,14 +46,14 @@ class _usuarios_chatState extends State<usuarios_chat> {
       usuario.username = dados["username"];
       usuario.sobrenome = dados["sobrenome"];
       usuario.urlImagem = dados["urlImagem"];
-      usuario.cadastro = dados["Cadastro"];
-      usuario.biografia = dados['biografia'];
+      usuario.cadastro = dados["Cadastro"]; // Atualize o campo cadastro
 
-      // Verifique se o nome de usuário ou o nome começa com a pesquisa
+      // Verifique se o nome de usuário, nome ou tipo de cadastro corresponde à pesquisa
       if (usuario.username.toLowerCase().startsWith(pesquisa.toLowerCase()) ||
           ("${usuario.nome} ${usuario.sobrenome}")
               .toLowerCase()
-              .startsWith(pesquisa.toLowerCase())) {
+              .startsWith(pesquisa.toLowerCase()) ||
+          usuario.cadastro.toLowerCase().startsWith(pesquisa.toLowerCase())) {
         listaUsuarios.add(usuario);
       }
     }
@@ -79,105 +80,158 @@ class _usuarios_chatState extends State<usuarios_chat> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Card(
-          color: Colors.white,
-          child: TextField(
-            decoration: const InputDecoration(
-              prefixIcon: Icon(Icons.search),
-              hintText: 'Pesquisar usuários...',
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          title: SizedBox(
+            width: double.infinity,
+            height: 30,
+            child: TextField(
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(borderSide: BorderSide.none),
+                prefixIcon: Image.asset('assets/pesquisa.png', scale: 3),
+                fillColor: const Color.fromARGB(255, 243, 242, 242),
+                filled: true,
+              ),
+              onChanged: (val) {
+                setState(() {
+                  pesquisa = val;
+                });
+              },
             ),
-            onChanged: (val) {
-              setState(() {
-                pesquisa = val;
-              });
-            },
-          ),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: pesquisa.isEmpty
-            ? const Align(
-                alignment: Alignment.center,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.public, color: Colors.black12, size: 90),
-                    Text(
-                      'Pesquise por usuários',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black26,
-                          fontSize: 18),
-                    )
-                  ],
-                ),
-              )
-            : FutureBuilder<List<Usuario>>(
-                future: _recuperarContatos(),
-                builder: (context, snapshot) {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.none:
-                    case ConnectionState.waiting:
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    case ConnectionState.active:
-                    case ConnectionState.done:
-                      if (snapshot.hasData) {
-                        List<Usuario>? listaUsuarios = snapshot.data;
-                        return ListView.builder(
-                          itemCount: listaUsuarios?.length,
-                          itemBuilder: (context, index) {
-                            Usuario usuario = listaUsuarios![index];
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 10),
-                              child: ListTile(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => perfil_visita(
-                                          uidPerfil: usuario.idUsuario,
-                                          nome: usuario.nome,
-                                          imagemPerfil: usuario.urlImagem,
-                                          sobrenome: usuario.sobrenome,
-                                          cadastro: usuario.cadastro),
-                                    ),
-                                  );
-                                },
-                                title: Text(
-                                  "${usuario.nome} ${usuario.sobrenome}",
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    color: Colors.black54,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+          )),
+      body: pesquisa.isEmpty
+          ? const Align(
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.public, color: Colors.black12, size: 90),
+                  Text(
+                    'Pesquise por usuários',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black26,
+                        fontSize: 18),
+                  )
+                ],
+              ),
+            )
+          : FutureBuilder<List<Usuario>>(
+              future: _recuperarContatos(),
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.none:
+                  case ConnectionState.waiting:
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  case ConnectionState.active:
+                  case ConnectionState.done:
+                    if (snapshot.hasData) {
+                      List<Usuario>? listaUsuarios = snapshot.data;
+                      return ListView.builder(
+                        itemCount: listaUsuarios?.length,
+                        itemBuilder: (context, index) {
+                          Usuario usuario = listaUsuarios![index];
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Column(
+                              children: [
+                                ListTile(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => perfil_visita(
+                                            uidPerfil: usuario.idUsuario,
+                                            nome: usuario.nome,
+                                            imagemPerfil: usuario.urlImagem,
+                                            sobrenome: usuario.sobrenome,
+                                            cadastro: usuario.cadastro),
+                                      ),
+                                    );
+                                  },
+                                  title: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "${usuario.nome} ${usuario.sobrenome}",
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              color: Colors.black54,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 5),
+                                          Text(
+                                            usuario.cadastro,
+                                            style: const TextStyle(
+                                              color: Colors.black54,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      Mensagens(
+                                                          uidPerfil:
+                                                              usuario.idUsuario,
+                                                          nome: usuario.nome,
+                                                          imagemPerfil:
+                                                              usuario.urlImagem,
+                                                          sobrenome: usuario
+                                                              .sobrenome)));
+                                        },
+                                        child: ClipRRect(
+                                          child: SizedBox(
+                                            width: 23,
+                                            child:
+                                                Image.asset('assets/send3.png'),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  leading: CircleAvatar(
+                                    radius: 25,
+                                    backgroundColor: Colors.grey,
+                                    backgroundImage:
+                                        NetworkImage(usuario.urlImagem),
                                   ),
                                 ),
-                                leading: CircleAvatar(
-                                  radius: 25,
-                                  backgroundColor: Colors.grey,
-                                  backgroundImage:
-                                      NetworkImage(usuario.urlImagem),
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      } else {
-                        return const Center(
-                          child: Text("Não há contatos"),
-                        );
-                      }
-                  }
-                },
-              ),
-      ),
+                                const SizedBox(height: 10),
+                                Container(
+                                  width: double.infinity,
+                                  height: 1,
+                                  color: Colors.black12,
+                                )
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    } else {
+                      return const Center(
+                        child: Text("Não há contatos"),
+                      );
+                    }
+                }
+              },
+            ),
     );
   }
 }

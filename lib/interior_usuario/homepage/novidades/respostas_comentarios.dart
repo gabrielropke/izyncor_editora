@@ -293,18 +293,16 @@ class _respostas_comentariosState extends State<respostas_comentarios> {
                                 if (!snapshot.hasData ||
                                     !snapshot.data!.exists) {
                                   // Se não houver dados (usuário não curtiu), mostre o ícone de coração vazio
-                                  return const Icon(
-                                    Icons.favorite_border,
-                                    color: Colors.black26,
-                                  );
+                                  return SizedBox(
+                                      width: 22,
+                                      child:
+                                          Image.asset('assets/curtir_01.png'));
                                 }
 
                                 // Se houver dados (usuário já curtiu), mostre o ícone de coração cheio
-                                return const Icon(
-                                  Icons.favorite,
-                                  color: Colors
-                                      .red, // Ou qualquer outra cor desejada
-                                );
+                                return SizedBox(
+                                    width: 22,
+                                    child: Image.asset('assets/curtir_02.png'));
                               },
                             ),
                           ),
@@ -321,7 +319,7 @@ class _respostas_comentariosState extends State<respostas_comentarios> {
                                     '0', // Ou qualquer outro valor padrão
                                     style: TextStyle(
                                         fontSize: 12,
-                                        color: Colors.grey,
+                                        color: Colors.black,
                                         fontWeight: FontWeight.bold));
                               }
 
@@ -329,7 +327,7 @@ class _respostas_comentariosState extends State<respostas_comentarios> {
                               return Text('$curtidas',
                                   style: const TextStyle(
                                       fontSize: 12,
-                                      color: Colors.grey,
+                                      color: Colors.black,
                                       fontWeight: FontWeight.bold));
                             },
                           ),
@@ -435,30 +433,30 @@ class _respostas_comentariosState extends State<respostas_comentarios> {
                                 showModalBottomSheet(
                                   context: context,
                                   shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(
-                                            20.0), // Defina o raio para bordas arredondadas superiores
-                                      ),
+                                    borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(
+                                          20.0), // Defina o raio para bordas arredondadas superiores
                                     ),
+                                  ),
                                   builder: (BuildContext context) {
                                     return Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Center(
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 10),
-                                              child: Container(
-                                                width: 40,
-                                                height: 4,
-                                                decoration: BoxDecoration(
-                                                    color: Colors.black38,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12)),
-                                              ),
+                                          child: Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 10),
+                                            child: Container(
+                                              width: 40,
+                                              height: 4,
+                                              decoration: BoxDecoration(
+                                                  color: Colors.black38,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          12)),
                                             ),
                                           ),
+                                        ),
                                         ListTile(
                                           leading: const Icon(
                                             Icons.delete_sweep_rounded,

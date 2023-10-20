@@ -800,14 +800,23 @@ class _MensagensState extends State<Mensagens> {
                                                     },
                                                     child: ClipRRect(
                                                       borderRadius:
-                                                          const BorderRadius
-                                                              .only(
+                                                          BorderRadius.only(
                                                         bottomRight:
                                                             Radius.circular(10),
                                                         bottomLeft:
                                                             Radius.circular(10),
-                                                        topLeft:
-                                                            Radius.circular(10),
+                                                        topLeft: Radius.circular(
+                                                            _idUsuarioLogado !=
+                                                                    item[
+                                                                        "idUsuario"]
+                                                                ? 0
+                                                                : 8),
+                                                        topRight: Radius.circular(
+                                                            _idUsuarioLogado ==
+                                                                    item[
+                                                                        "idUsuario"]
+                                                                ? 0
+                                                                : 8),
                                                       ),
                                                       child: Stack(
                                                         alignment:

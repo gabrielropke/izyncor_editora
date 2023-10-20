@@ -440,18 +440,19 @@ class _comentarios_postagemState extends State<comentarios_postagem> {
                                                           !snapshot
                                                               .data!.exists) {
                                                         // Se não houver dados (usuário não curtiu), mostre o ícone de coração vazio
-                                                        return const Icon(
-                                                          Icons.favorite_border,
-                                                          color: Colors.black26,
-                                                        );
+                                                        return SizedBox(
+                                                                  width: 20,
+                                                                  child: Image
+                                                                      .asset(
+                                                                          'assets/curtir_01.png'));
                                                       }
 
                                                       // Se houver dados (usuário já curtiu), mostre o ícone de coração cheio
-                                                      return const Icon(
-                                                        Icons.favorite,
-                                                        color: Colors
-                                                            .red, // Ou qualquer outra cor desejada
-                                                      );
+                                                      return SizedBox(
+                                                                  width: 20,
+                                                                  child: Image
+                                                                      .asset(
+                                                                          'assets/curtir_02.png'));
                                                     },
                                                   ),
                                                   StreamBuilder<

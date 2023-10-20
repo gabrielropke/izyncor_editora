@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:editora_izyncor_app/configuracao/tela_config.dart';
+import 'package:editora_izyncor_app/interior_usuario/chat/visualizar_chat.dart';
 import 'package:editora_izyncor_app/interior_usuario/homepage/feed/feed.dart';
 import 'package:editora_izyncor_app/interior_usuario/homepage/novidades/novidades.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -106,12 +106,9 @@ class _principalState extends State<principal> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: ((context) => const home_config())));
+                          builder: ((context) => const visualizar_chat())));
                 },
-                icon: const Icon(
-                  Icons.settings_suggest_rounded,
-                  color: Colors.black,
-                ),
+                icon: SizedBox(width: 20, child: Image.asset('assets/send.png')),
               )
             ],
           ),

@@ -247,21 +247,21 @@ class _novidadesState extends State<novidades> {
                                       if (!snapshot.hasData ||
                                           !snapshot.data!.exists) {
                                         // Se não houver dados (usuário não curtiu), mostre o ícone de coração vazio
-                                        return const Icon(
-                                          Icons.favorite_border,
-                                          color: Colors.white,
-                                        );
+                                        return SizedBox(
+                                            width: 22,
+                                            child: Image.asset(
+                                                'assets/curtir_03.png'));
                                       }
 
                                       // Se houver dados (usuário já curtiu), mostre o ícone de coração cheio
-                                      return const Icon(
-                                        Icons.favorite,
-                                        color: Colors
-                                            .red, // Ou qualquer outra cor desejada
-                                      );
+                                      return SizedBox(
+                                          width: 22,
+                                          child: Image.asset(
+                                              'assets/curtir_02.png'));
                                     },
                                   ),
                                 ),
+                                const SizedBox(height: 5),
                                 StreamBuilder<DocumentSnapshot>(
                                   stream: FirebaseFirestore.instance
                                       .collection('novidades')
@@ -306,11 +306,12 @@ class _novidadesState extends State<novidades> {
                                       ),
                                     );
                                   },
-                                  child: const Icon(
-                                    Icons.comment_outlined,
-                                    color: Colors.white,
-                                  ),
+                                  child: SizedBox(
+                                      width: 22,
+                                      child:
+                                          Image.asset('assets/comment_04.png')),
                                 ),
+                                const SizedBox(height: 5),
                                 StreamBuilder<DocumentSnapshot>(
                                   stream: FirebaseFirestore.instance
                                       .collection('novidades')
