@@ -40,7 +40,7 @@ class _recepcaoState extends State<recepcao> {
                 ? Align(
                     alignment: Alignment.bottomCenter,
                     child: Padding(
-                      padding: const EdgeInsets.all(18.0),
+                      padding: const EdgeInsets.all(32.0),
                       child: GestureDetector(
                         onTap: () {
                           Navigator.pushReplacement(
@@ -70,7 +70,7 @@ class _recepcaoState extends State<recepcao> {
                 : Container(
                     alignment: Alignment(0, 1),
                     child: Padding(
-                      padding: const EdgeInsets.all(18.0),
+                      padding: const EdgeInsets.all(32.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [

@@ -58,25 +58,20 @@ class _editar_perfilState extends State<editar_perfil> {
         });
   }
 
-  Future _recuperarImagem(String origemImagem) async {
-    final ImagePicker _picker = ImagePicker();
-    XFile? imagemSelecionada;
+  Future _recuperarImagem() async {
+  final ImagePicker _picker = ImagePicker();
+  final XFile? imagemSelecionada = await _picker.pickImage(source: ImageSource.gallery);
 
-    if (origemImagem == "camera") {
-      imagemSelecionada = await _picker.pickImage(source: ImageSource.camera);
-    } else if (origemImagem == "galeria") {
-      imagemSelecionada = await _picker.pickImage(source: ImageSource.gallery);
-    }
-
-    if (imagemSelecionada != null) {
-      File imagemCortada = await cortarImagem(File(imagemSelecionada.path));
-      setState(() {
-        _imagem = XFile(imagemCortada.path);
-        _uploadImagem();
-        subindoImagem = true;
-      });
-    }
+  if (imagemSelecionada != null) {
+    File imagemCortada = await cortarImagem(File(imagemSelecionada.path));
+    setState(() {
+      _imagem = XFile(imagemCortada.path);
+      _uploadImagem();
+      subindoImagem = true;
+    });
   }
+}
+
 
   Future _uploadImagem() async {
     File file = File(_imagem!.path);
@@ -301,9 +296,7 @@ class _editar_perfilState extends State<editar_perfil> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(64),
                               child: GestureDetector(
-                                onTap: () {
-                                  _recuperarImagem("galeria");
-                                },
+                                onTap: () async => await _recuperarImagem(),
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: Colors.grey,
@@ -335,9 +328,7 @@ class _editar_perfilState extends State<editar_perfil> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         GestureDetector(
-                          onTap: () {
-                            _recuperarImagem("galeria");
-                          },
+                          onTap: () async => await _recuperarImagem(),
                           child: Text(
                             '$nome $sobrenome',
                             style: const TextStyle(
@@ -347,9 +338,7 @@ class _editar_perfilState extends State<editar_perfil> {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () {
-                            _recuperarImagem("galeria");
-                          },
+                          onTap: () async => await _recuperarImagem(),
                           child: const Text(
                             'Alterar imagem',
                             style: TextStyle(

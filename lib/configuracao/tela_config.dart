@@ -108,40 +108,40 @@ class _home_configState extends State<home_config> {
                         )),
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
-                      child: TextButton.icon(
-                          onPressed: () {
-                            setState(() {
-                              _isSwitched = !_isSwitched;
-                            });
-                          },
-                          icon: const Icon(
-                            Icons.notifications_active_outlined,
-                            color: Colors.black,
-                          ),
-                          label: const Text(
-                            "Notificações",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 17,
-                                color: Colors.black),
-                          )),
-                    ),
-                    Switch(
-                      value: _isSwitched,
-                      onChanged: (value) {
-                        setState(() {
-                          _isSwitched = value;
-                        });
-                      },
-                      activeTrackColor: Color.fromARGB(255, 238, 215, 223),
-                      activeColor: Color.fromARGB(255, 192, 19, 76),
-                    ),
-                  ],
-                ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     SizedBox(
+                //       child: TextButton.icon(
+                //           onPressed: () {
+                //             setState(() {
+                //               _isSwitched = !_isSwitched;
+                //             });
+                //           },
+                //           icon: const Icon(
+                //             Icons.notifications_active_outlined,
+                //             color: Colors.black,
+                //           ),
+                //           label: const Text(
+                //             "Notificações",
+                //             style: TextStyle(
+                //                 fontWeight: FontWeight.w400,
+                //                 fontSize: 17,
+                //                 color: Colors.black),
+                //           )),
+                //     ),
+                //     Switch(
+                //       value: _isSwitched,
+                //       onChanged: (value) {
+                //         setState(() {
+                //           _isSwitched = value;
+                //         });
+                //       },
+                //       activeTrackColor: Color.fromARGB(255, 238, 215, 223),
+                //       activeColor: Color.fromARGB(255, 192, 19, 76),
+                //     ),
+                //   ],
+                // ),
                 SizedBox(
                   width: 400,
                   height: 40,

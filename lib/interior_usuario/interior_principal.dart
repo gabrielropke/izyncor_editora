@@ -95,6 +95,7 @@ class _principalState extends State<principal> {
             foregroundColor: Colors.black,
             elevation: 0,
             backgroundColor: Colors.transparent,
+            centerTitle: false,
             title: Image.asset(
               'assets/izyncor.png',
               width: 100, // ajuste a largura conforme necessário

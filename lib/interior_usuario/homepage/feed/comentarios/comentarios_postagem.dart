@@ -626,7 +626,7 @@ class _comentarios_postagemState extends State<comentarios_postagem> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(26),
             child: Align(
               alignment: Alignment.bottomCenter,
               child: Row(

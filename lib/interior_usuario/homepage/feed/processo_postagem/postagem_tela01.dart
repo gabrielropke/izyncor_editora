@@ -305,7 +305,7 @@ class _postagem_tela01State extends State<postagem_tela01> {
                       borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(color: Colors.white)),
                   contentPadding: const EdgeInsets.fromLTRB(32, 15, 32, 16),
-                  hintText: "Compartilhe seus pensamentos...",
+                  hintText: "Compartilhe seus pensamentos... com moderação!",
                   hintStyle: const TextStyle(
                       color: Colors.black45,
                       fontSize: 18,

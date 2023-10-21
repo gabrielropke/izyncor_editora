@@ -111,6 +111,10 @@ class _perfilState extends State<perfil> {
                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const editar_perfil()));
               },
             ),
+            const SizedBox(
+              width: double.infinity,
+              height: 40,
+            )
           ],
         );
       },
@@ -194,6 +198,7 @@ class _perfilState extends State<perfil> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          centerTitle: false,
           foregroundColor: Colors.black,
           elevation: 0,
           leadingWidth: 26,

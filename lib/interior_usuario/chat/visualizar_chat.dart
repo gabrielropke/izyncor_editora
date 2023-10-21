@@ -21,7 +21,12 @@ class _visualizar_chatState extends State<visualizar_chat> {
             foregroundColor: Colors.black,
             elevation: 0,
             backgroundColor: Colors.transparent,
-            title: const Text('Rede Izyncor'),
+            centerTitle: false,
+            title: Image.asset(
+              'assets/izyncor.png',
+              width: 100, // ajuste a largura conforme necessário
+              height: 40, // ajuste a altura conforme necessário
+            ),
           ),
           body: Column(
             children: [

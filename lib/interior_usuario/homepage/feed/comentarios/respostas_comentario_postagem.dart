@@ -612,7 +612,7 @@ class _respostas_comentario_postagemState
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(26),
           child: Align(
             alignment: Alignment.bottomCenter,
             child: Row(

@@ -274,6 +274,12 @@ class _conversas_chatState extends State<conversas_chat> {
                                     ],
                                   ),
                                 ),
+                                const SizedBox(height: 3),
+                                Container(
+                                  width: double.infinity,
+                                  height: 1,
+                                  color: Colors.black12,
+                                )
                               ],
                             ),
                           );

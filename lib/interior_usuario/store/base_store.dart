@@ -206,7 +206,12 @@ class _storeState extends State<store> {
         elevation: 0,
         leadingWidth: 26,
         backgroundColor: Colors.transparent,
-        title: const Text('Loja Izyncor'),
+        centerTitle: false,
+            title: Image.asset(
+              'assets/izyncor.png',
+              width: 100, // ajuste a largura conforme necessário
+              height: 40, // ajuste a altura conforme necessário
+            ),
         actions: [
           IconButton(
               onPressed: () {
