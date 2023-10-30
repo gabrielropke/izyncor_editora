@@ -179,245 +179,255 @@ class _novidadesState extends State<novidades> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: ListView.builder(
-        itemCount: novidades.length,
-        itemBuilder: (context, index) {
-          var novidade = novidades[index];
+      body: novidades.isEmpty
+          ? const Center(
+              child: Text(
+              'Em breve...',
+              style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black26,
+                  fontSize: 16),
+            ))
+          : ListView.builder(
+              itemCount: novidades.length,
+              itemBuilder: (context, index) {
+                var novidade = novidades[index];
 
-          return Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Stack(
+                return Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
                     children: [
-                      GestureDetector(
-                        onDoubleTap: () {
-                          enviarCurtida(novidade['titulo']);
-                        },
-                        child: CachedNetworkImage(
-                          imageUrl: novidade['imagem'],
-                        ),
-                      ),
-                      Positioned(
-                          top: 10,
-                          right: 10,
-                          child: Row(
-                            children: [
-                              GestureDetector(
-                                  onTap: () {
-                                    opcoesPost(context, index);
-                                  },
-                                  child: const Icon(Icons.more_horiz,
-                                      color: Colors.white, size: 26)),
-                              const SizedBox(width: 10),
-                              const Icon(Icons.share_rounded,
-                                  color: Colors.white)
-                            ],
-                          )),
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        child: Container(
-                          width: 400,
-                          height: 70,
-                          color: Colors.black54,
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 15,
-                        right: 15,
-                        child: Row(
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Stack(
                           children: [
-                            Column(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    enviarCurtida(novidade['titulo']);
-                                  },
-                                  child: StreamBuilder<DocumentSnapshot>(
-                                    stream: FirebaseFirestore.instance
-                                        .collection('novidades')
-                                        .doc(novidade['titulo'])
-                                        .collection('curtir')
-                                        .doc(_idUsuarioLogado)
-                                        .snapshots(),
-                                    builder: (context, snapshot) {
-                                      if (!snapshot.hasData ||
-                                          !snapshot.data!.exists) {
-                                        // Se não houver dados (usuário não curtiu), mostre o ícone de coração vazio
-                                        return SizedBox(
+                            GestureDetector(
+                              onDoubleTap: () {
+                                enviarCurtida(novidade['titulo']);
+                              },
+                              child: CachedNetworkImage(
+                                imageUrl: novidade['imagem'],
+                              ),
+                            ),
+                            Positioned(
+                                top: 10,
+                                right: 10,
+                                child: Row(
+                                  children: [
+                                    GestureDetector(
+                                        onTap: () {
+                                          opcoesPost(context, index);
+                                        },
+                                        child: const Icon(Icons.more_horiz,
+                                            color: Colors.white, size: 26)),
+                                    const SizedBox(width: 10),
+                                    const Icon(Icons.share_rounded,
+                                        color: Colors.white)
+                                  ],
+                                )),
+                            Positioned(
+                              bottom: 0,
+                              left: 0,
+                              child: Container(
+                                width: 400,
+                                height: 70,
+                                color: Colors.black54,
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 15,
+                              right: 15,
+                              child: Row(
+                                children: [
+                                  Column(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          enviarCurtida(novidade['titulo']);
+                                        },
+                                        child: StreamBuilder<DocumentSnapshot>(
+                                          stream: FirebaseFirestore.instance
+                                              .collection('novidades')
+                                              .doc(novidade['titulo'])
+                                              .collection('curtir')
+                                              .doc(_idUsuarioLogado)
+                                              .snapshots(),
+                                          builder: (context, snapshot) {
+                                            if (!snapshot.hasData ||
+                                                !snapshot.data!.exists) {
+                                              // Se não houver dados (usuário não curtiu), mostre o ícone de coração vazio
+                                              return SizedBox(
+                                                  width: 22,
+                                                  child: Image.asset(
+                                                      'assets/curtir_03.png'));
+                                            }
+
+                                            // Se houver dados (usuário já curtiu), mostre o ícone de coração cheio
+                                            return SizedBox(
+                                                width: 22,
+                                                child: Image.asset(
+                                                    'assets/curtir_02.png'));
+                                          },
+                                        ),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      StreamBuilder<DocumentSnapshot>(
+                                        stream: FirebaseFirestore.instance
+                                            .collection('novidades')
+                                            .doc(novidade[
+                                                'titulo']) // Use o título como ID do documento
+                                            .snapshots(),
+                                        builder: (context, snapshot) {
+                                          if (!snapshot.hasData) {
+                                            return const Text(
+                                              '0', // Ou qualquer outro valor padrão
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.white,
+                                              ),
+                                            );
+                                          }
+
+                                          final curtidas =
+                                              snapshot.data!.get('curtidas');
+                                          return Text(
+                                            '$curtidas',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.white,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(width: 15),
+                                  Column(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: ((context) =>
+                                                  comentarios_novidades(
+                                                      titulo:
+                                                          novidade['titulo'])),
+                                            ),
+                                          );
+                                        },
+                                        child: SizedBox(
                                             width: 22,
                                             child: Image.asset(
-                                                'assets/curtir_03.png'));
-                                      }
+                                                'assets/comment_04.png')),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      StreamBuilder<DocumentSnapshot>(
+                                        stream: FirebaseFirestore.instance
+                                            .collection('novidades')
+                                            .doc(novidade[
+                                                'titulo']) // Use o título como ID do documento
+                                            .snapshots(),
+                                        builder: (context, snapshot) {
+                                          if (!snapshot.hasData) {
+                                            return const Text(
+                                              '0', // Ou qualquer outro valor padrão
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.white,
+                                              ),
+                                            );
+                                          }
 
-                                      // Se houver dados (usuário já curtiu), mostre o ícone de coração cheio
-                                      return SizedBox(
-                                          width: 22,
-                                          child: Image.asset(
-                                              'assets/curtir_02.png'));
-                                    },
+                                          final comentarios =
+                                              snapshot.data!.get('comentarios');
+                                          return Text(
+                                            '$comentarios',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.white,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                const SizedBox(height: 5),
-                                StreamBuilder<DocumentSnapshot>(
-                                  stream: FirebaseFirestore.instance
-                                      .collection('novidades')
-                                      .doc(novidade[
-                                          'titulo']) // Use o título como ID do documento
-                                      .snapshots(),
-                                  builder: (context, snapshot) {
-                                    if (!snapshot.hasData) {
-                                      return const Text(
-                                        '0', // Ou qualquer outro valor padrão
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.white,
-                                        ),
-                                      );
-                                    }
-
-                                    final curtidas =
-                                        snapshot.data!.get('curtidas');
-                                    return Text(
-                                      '$curtidas',
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.white,
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                            const SizedBox(width: 15),
-                            Column(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: ((context) =>
-                                            comentarios_novidades(
-                                                titulo: novidade['titulo'])),
-                                      ),
-                                    );
-                                  },
-                                  child: SizedBox(
-                                      width: 22,
-                                      child:
-                                          Image.asset('assets/comment_04.png')),
-                                ),
-                                const SizedBox(height: 5),
-                                StreamBuilder<DocumentSnapshot>(
-                                  stream: FirebaseFirestore.instance
-                                      .collection('novidades')
-                                      .doc(novidade[
-                                          'titulo']) // Use o título como ID do documento
-                                      .snapshots(),
-                                  builder: (context, snapshot) {
-                                    if (!snapshot.hasData) {
-                                      return const Text(
-                                        '0', // Ou qualquer outro valor padrão
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.white,
-                                        ),
-                                      );
-                                    }
-
-                                    final comentarios =
-                                        snapshot.data!.get('comentarios');
-                                    return Text(
-                                      '$comentarios',
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.white,
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
+                            Positioned(
+                              bottom: 10,
+                              left: 10,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    novidade['titulo'],
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    novidade['subtitulo'],
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
                       ),
-                      Positioned(
-                        bottom: 10,
-                        left: 10,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              novidade['titulo'],
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
+                      Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 10, left: 5),
+                          child: ReadMoreText(
+                            novidade['descricao'],
+                            trimLines: 2,
+                            colorClickableText: Colors.blue,
+                            trimMode: TrimMode.Line,
+                            trimCollapsedText: 'ver mais',
+                            trimExpandedText: ' ver menos',
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 16,
                             ),
-                            const SizedBox(height: 5),
-                            Text(
-                              novidade['subtitulo'],
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.white,
-                              ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10, left: 5),
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            formatDataHora(novidade['hora']),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
                             ),
-                          ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 15),
+                        child: Container(
+                          width: double.infinity,
+                          height: 1,
+                          color: Colors.black12,
                         ),
                       ),
                     ],
                   ),
-                ),
-                Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 10, left: 5),
-                    child: ReadMoreText(
-                      novidade['descricao'],
-                      trimLines: 2,
-                      colorClickableText: Colors.blue,
-                      trimMode: TrimMode.Line,
-                      trimCollapsedText: 'ver mais',
-                      trimExpandedText: ' ver menos',
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10, left: 5),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      formatDataHora(novidade['hora']),
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 15),
-                  child: Container(
-                    width: double.infinity,
-                    height: 1,
-                    color: Colors.black12,
-                  ),
-                ),
-              ],
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }

@@ -17,7 +17,6 @@ class home_config extends StatefulWidget {
 }
 
 class _home_configState extends State<home_config> {
-  bool _isSwitched = false;
 
   _deslogarUsuario() {
     FirebaseAuth auth = FirebaseAuth.instance;

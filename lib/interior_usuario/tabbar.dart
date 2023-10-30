@@ -125,6 +125,7 @@ Widget build(BuildContext context) {
               child: ClipOval(
                 child: CachedNetworkImage(
                   imageUrl: urlImagem,
+                  fit: BoxFit.cover,
                 ),
               ),
             ),

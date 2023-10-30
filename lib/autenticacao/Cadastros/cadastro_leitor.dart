@@ -326,6 +326,7 @@ class _cadastroState extends State<cadastro> {
                     child: TextField(
                       controller: _controllerUsername,
                       keyboardType: TextInputType.name,
+                      maxLength: 20,
                       style: const TextStyle(
                         color: Colors.black,
                         fontSize: 16,

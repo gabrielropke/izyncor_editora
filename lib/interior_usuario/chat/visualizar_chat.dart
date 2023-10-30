@@ -17,7 +17,7 @@ class _visualizar_chatState extends State<visualizar_chat> {
         child: Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
-            automaticallyImplyLeading: true,
+            automaticallyImplyLeading: false,
             foregroundColor: Colors.black,
             elevation: 0,
             backgroundColor: Colors.transparent,
@@ -50,13 +50,13 @@ class _visualizar_chatState extends State<visualizar_chat> {
                       tabs: const [
                         Tab(
                           child: Text(
-                            'Usuários',
+                            'Conversas',
                             style: TextStyle(fontSize: 12),
                           ),
                         ),
                         Tab(
                           child: Text(
-                            'Conversas',
+                            'Usuários',
                             style: TextStyle(fontSize: 12),
                           ),
                         ),
@@ -66,8 +66,9 @@ class _visualizar_chatState extends State<visualizar_chat> {
               const SizedBox(height: 10,),
               const Expanded(
                 child: TabBarView(children: [
-                  usuarios_chat(),
                   conversas_chat(),
+                  usuarios_chat(),
+                  
                 ]),
               )
             ],

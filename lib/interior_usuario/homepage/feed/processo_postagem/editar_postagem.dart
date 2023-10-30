@@ -57,6 +57,7 @@ class _editar_postagemState extends State<editar_postagem> {
       await postagemRef.update({
         'legenda': legenda,
         'titulo': titulo,
+        'editado': 'sim'
       });
 
       // ignore: use_build_context_synchronously
@@ -78,6 +79,7 @@ class _editar_postagemState extends State<editar_postagem> {
             .doc(idPostagem)
             .update({
           'legenda': legenda,
+          'editado': 'sim'
         });
 
         // ignore: use_build_context_synchronously
@@ -276,7 +278,7 @@ class _editar_postagemState extends State<editar_postagem> {
                       borderRadius: BorderRadius.circular(12)),
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Colors.white)),
+                      borderSide: const BorderSide(color: Colors.black12)),
                   contentPadding: const EdgeInsets.fromLTRB(32, 15, 32, 16),
                   hintText: "Compartilhe seus pensamentos...",
                   hintStyle: const TextStyle(

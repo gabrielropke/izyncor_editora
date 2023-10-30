@@ -81,10 +81,8 @@ class _MensagensState extends State<Mensagens> {
                 ),
               ),
               ListTile(
-                leading: const Icon(
-                  Icons.delete_outline,
-                  color: Colors.black,
-                ),
+                leading: SizedBox(
+                    width: 25, child: Image.asset('assets/lixeira.png')),
                 title: const Text('Apagar conversa'),
                 onTap: () {
                   void apagarConversa() async {
@@ -120,6 +118,11 @@ class _MensagensState extends State<Mensagens> {
                   Navigator.pop(context);
                 },
               ),
+              if (Platform.isIOS)
+                const SizedBox(
+                  width: double.infinity,
+                  height: 40,
+                )
             ],
           );
         });
@@ -226,7 +229,7 @@ class _MensagensState extends State<Mensagens> {
       String idRemetente, String idDestinatario, Mensagem msg) async {
     msg.lida = false;
     await _firebaseFirestore
-        .collection("mensagens_backup")
+        .collection("backup_mensagens")
         .doc(idRemetente)
         .collection(idDestinatario)
         .add(msg.toMap());
@@ -381,21 +384,40 @@ class _MensagensState extends State<Mensagens> {
                 ),
               ),
               ListTile(
-                leading: const Icon(Icons.image),
-                title: const Text('Imagens'),
+                leading: Opacity(
+                  opacity:
+                      0.5, // Defina o valor desejado de opacidade entre 0.0 e 1.0
+                  child: SizedBox(
+                    width: 25,
+                    child: Image.asset('assets/galeria.png'),
+                  ),
+                ),
+                title: const Text('Galeria'),
                 onTap: () {
                   Navigator.pop(context);
                   _enviarFoto();
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.camera_alt),
+                leading: Opacity(
+                  opacity:
+                      0.5, // Defina o valor desejado de opacidade entre 0.0 e 1.0
+                  child: SizedBox(
+                    width: 26,
+                    child: Image.asset('assets/camera2.png'),
+                  ),
+                ),
                 title: const Text('Câmera'),
                 onTap: () {
                   Navigator.pop(context);
                   _enviarFotoCamera();
                 },
-              )
+              ),
+              if (Platform.isIOS)
+                const SizedBox(
+                  width: double.infinity,
+                  height: 40,
+                )
             ],
           );
         });
@@ -450,21 +472,8 @@ class _MensagensState extends State<Mensagens> {
         .doc(_idUsuarioLogado!)
         .collection(_idUsuarioDestinatario!)
         .doc(idMensagem)
-        .update({'mensagem': 'Mensagem apagada'});
+        .delete();
 
-    // Atualize a lista de mensagens exibidas na tela
-    setState(() {});
-  }
-
-  _apagarMensagemUsuarioDestinatario(String idMensagem) async {
-    await _firebaseFirestore
-        .collection("mensagens")
-        .doc(_idUsuarioDestinatario!)
-        .collection(_idUsuarioLogado!)
-        .doc(idMensagem)
-        .update({'mensagem': 'Mensagem apagada'});
-
-    // Atualize a lista de mensagens exibidas na tela
     setState(() {});
   }
 
@@ -496,38 +505,6 @@ class _MensagensState extends State<Mensagens> {
     var caixaMensagem = Row(
       children: <Widget>[
         Visibility(
-          visible: _enviandoAudio == true,
-          child: Expanded(
-            child: Container(
-              width: 300,
-              height: 55,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Gravando audio'),
-                  Container(
-                    width: 55,
-                    height: 55,
-                    decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 69, 111, 224),
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                      border: Border.all(color: Colors.white, width: 0),
-                    ),
-                    child: IconButton(
-                      color: const Color.fromARGB(255, 255, 255, 255),
-                      onPressed: () {
-                        _toggleContainerVisibility(); // Call the function here
-                      },
-                      icon: const Icon(Icons.pause, size: 28),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        Visibility(
           visible: _enviandoAudio == false,
           child: Expanded(
             child: Padding(
@@ -546,8 +523,14 @@ class _MensagensState extends State<Mensagens> {
                     onPressed: () {
                       _opcoes(context);
                     },
-                    icon: const Icon(Icons.image,
-                        color: Colors.black26, size: 22),
+                    icon: Opacity(
+                      opacity:
+                          0.4, // Defina o valor desejado de opacidade entre 0.0 e 1.0
+                      child: SizedBox(
+                        width: 22,
+                        child: Image.asset('assets/galeria.png'),
+                      ),
+                    ),
                   ),
                   contentPadding: EdgeInsets.fromLTRB(10.0, 25.0, 35.0, 10.0),
                   hintText: "Digite uma mensagem...",
@@ -573,28 +556,19 @@ class _MensagensState extends State<Mensagens> {
         Visibility(
           visible: _enviandoAudio == false,
           child: Container(
-            width: 55,
-            height: 55,
-            decoration: BoxDecoration(
-              color: Color.fromARGB(255, 69, 111, 224),
-              shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.all(Radius.circular(32.0)),
-              border: Border.all(color: Colors.white, width: 0),
-            ),
-            child: _controllerMensagem.text.isNotEmpty
-                ? IconButton(
-                    color: const Color.fromARGB(255, 255, 255, 255),
-                    onPressed: _enviarMensagem,
-                    icon: const Icon(Icons.send, size: 24),
-                  )
-                : IconButton(
-                    color: const Color.fromARGB(255, 255, 255, 255),
-                    onPressed: () {
-                      _toggleContainerVisibility(); // Call the function here
-                    },
-                    icon: const Icon(Icons.mic, size: 28),
-                  ),
-          ),
+              width: 55,
+              height: 55,
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 69, 111, 224),
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                border: Border.all(color: Colors.white, width: 0),
+              ),
+              child: IconButton(
+                color: const Color.fromARGB(255, 255, 255, 255),
+                onPressed: _enviarMensagem,
+                icon: const Icon(Icons.send, size: 24),
+              )),
         ),
       ],
     );
@@ -687,20 +661,23 @@ class _MensagensState extends State<Mensagens> {
                                               ),
                                             ),
                                             ListTile(
-                                              leading: const Icon(
-                                                Icons.delete_outline,
-                                                color: Colors.black,
-                                              ),
+                                              leading: SizedBox(
+                                                  width: 25,
+                                                  child: Image.asset(
+                                                      'assets/lixeira.png')),
                                               title: const Text(
-                                                  'Apagar mensagem para min'),
+                                                  'Apagar mensagem (para min)'),
                                               onTap: () {
                                                 Navigator.pop(context);
-                                                _apagarMensagemUsuarioDestinatario(
-                                                    item.id);
                                                 _apagarMensagemUsuarioLogado(
                                                     item.id);
                                               },
                                             ),
+                                            if (Platform.isIOS)
+                                              const SizedBox(
+                                                width: double.infinity,
+                                                height: 40,
+                                              )
                                           ],
                                         );
                                       });
@@ -921,6 +898,7 @@ class _MensagensState extends State<Mensagens> {
                   ),
                   child: ClipOval(
                     child: CachedNetworkImage(
+                      fit: BoxFit.cover,
                       imageUrl: widget.imagemPerfil,
                       placeholder: (context, url) =>
                           const CircularProgressIndicator(

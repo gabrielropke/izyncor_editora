@@ -182,10 +182,15 @@ class _avaliacoesState extends State<avaliacoes> {
 
                 if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
                   return const Center(
-                      child: Text(
-                    'Sem comentários disponíveis...',
-                    style: TextStyle(fontSize: 16),
-                  ));
+                    child: Text(
+                      'Sem comentários disponíveis',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black26,
+                        fontSize: 16,
+                      ),
+                    ),
+                  );
                 }
 
                 return ListView.builder(

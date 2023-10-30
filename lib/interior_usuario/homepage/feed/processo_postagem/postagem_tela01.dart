@@ -37,9 +37,13 @@ class _postagem_tela01State extends State<postagem_tela01> {
     String legenda = controllerLegenda.text;
     String titulo = controllerTitulo.text;
 
+    // Gere um ID único para a postagem
+    final String postId =
+        FirebaseFirestore.instance.collection('feed').doc().id;
+
     if (imagem == null) {
-      final postagemRef = FirebaseFirestore.instance.collection('feed').doc();
-      await postagemRef.set({
+      // Para postagens sem imagem
+      await FirebaseFirestore.instance.collection('feed').doc(postId).set({
         'autorId': idUsuarioLogado,
         'legenda': legenda,
         'titulo': titulo,
@@ -48,38 +52,38 @@ class _postagem_tela01State extends State<postagem_tela01> {
         'curtidas': 0,
         'comentarios': 0,
         'salvos': 0,
+        'idPostagem': postId,
+        'editado': ''
       });
 
       await FirebaseFirestore.instance
-          .collection('usuarios')
-          .doc(idUsuarioLogado)
-          .update({
-        'postagens': FieldValue.increment(1),
+          .collection('backup_feed')
+          .doc(postId)
+          .set({
+        'autorId': idUsuarioLogado,
+        'legenda': legenda,
+        'titulo': titulo,
+        'imagemUrl': 'vazio',
+        'hora': DateTime.now().toString(),
+        'curtidas': 0,
+        'comentarios': 0,
+        'salvos': 0,
+        'idPostagem': postId,
+        'editado': ''
       });
-
-      await postagemRef.update({'idPostagem': postagemRef.id});
-
-      // ignore: use_build_context_synchronously
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: ((context) => const home_principal()),
-        ),
-      );
     } else {
       try {
         final storageRef = FirebaseStorage.instance
             .ref()
             .child('imagens_postagens')
-            .child(DateTime.now().millisecondsSinceEpoch.toString());
+            .child(postId); // Use o mesmo ID para o nome do arquivo
 
         final uploadTask = storageRef.putFile(imagem!);
         final TaskSnapshot downloadUrl = await uploadTask;
 
         final String imageUrl = await downloadUrl.ref.getDownloadURL();
 
-        final postagemDocRef =
-            await FirebaseFirestore.instance.collection('feed').add({
+        await FirebaseFirestore.instance.collection('feed').doc(postId).set({
           'autorId': idUsuarioLogado,
           'legenda': legenda,
           'titulo': '',
@@ -88,28 +92,44 @@ class _postagem_tela01State extends State<postagem_tela01> {
           'curtidas': 0,
           'comentarios': 0,
           'salvos': 0,
+          'idPostagem': postId,
+          'editado': ''
         });
 
         await FirebaseFirestore.instance
-          .collection('usuarios')
-          .doc(idUsuarioLogado)
-          .update({
-        'postagens': FieldValue.increment(1),
-      });
-
-        await postagemDocRef.update({'idPostagem': postagemDocRef.id});
-
-        // ignore: use_build_context_synchronously
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: ((context) => const home_principal()),
-          ),
-        );
+            .collection('backup_feed')
+            .doc(postId)
+            .set({
+          'autorId': idUsuarioLogado,
+          'legenda': legenda,
+          'titulo': '',
+          'imagemUrl': imageUrl,
+          'hora': DateTime.now().toString(),
+          'curtidas': 0,
+          'comentarios': 0,
+          'salvos': 0,
+          'idPostagem': postId,
+          'editado': ''
+        });
       } catch (error) {
         showAlertErro();
       }
     }
+
+    await FirebaseFirestore.instance
+        .collection('usuarios')
+        .doc(idUsuarioLogado)
+        .update({
+      'postagens': FieldValue.increment(1),
+    });
+
+    // ignore: use_build_context_synchronously
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: ((context) => const home_principal()),
+      ),
+    );
   }
 
   void showAlertErro() {
@@ -368,46 +388,51 @@ class _postagem_tela01State extends State<postagem_tela01> {
                     ],
                   ),
                   const SizedBox(width: 20),
-                  legendaVazia
-                      ? Container(
-                          width: 180,
-                          height: 60,
-                          decoration: BoxDecoration(
-                              color: Colors.black12,
-                              borderRadius: BorderRadius.circular(32)),
-                          child: const Center(
-                              child: Text(
+                  if (legendaVazia && imagem == null)
+                    Container(
+                        width: 180,
+                        height: 60,
+                        decoration: BoxDecoration(
+                            color: Colors.black12,
+                            borderRadius: BorderRadius.circular(32)),
+                        child: const Center(
+                            child: Text(
+                          'Publicar',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 20,
+                              color: Colors.black38),
+                        ))),
+                  if (!legendaVazia || imagem != null)
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: ((context) => const home_principal()),
+                          ),
+                        );
+                        publicarPostagem();
+                      },
+                      child: Container(
+                        width: 180,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 63, 122, 209),
+                          borderRadius: BorderRadius.circular(32),
+                        ),
+                        child: const Center(
+                          child: Text(
                             'Publicar',
                             style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 20,
-                                color: Colors.black38),
-                          )))
-                      : GestureDetector(
-                          onTap: () {
-                            Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: ((context) =>
-                                              const home_principal())));
-                            publicarPostagem();
-                          },
-                          child: Container(
-                              width: 180,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                  color:
-                                      const Color.fromARGB(255, 63, 122, 209),
-                                  borderRadius: BorderRadius.circular(32)),
-                              child: const Center(
-                                  child: Text(
-                                'Publicar',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 20,
-                                    color: Colors.white),
-                              ))),
+                              fontWeight: FontWeight.w500,
+                              fontSize: 20,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
+                      ),
+                    ),
                 ],
               )
             ],

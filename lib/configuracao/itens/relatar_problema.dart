@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
@@ -10,21 +12,26 @@ class relatar_problema extends StatefulWidget {
 }
 
 class _relatar_problemaState extends State<relatar_problema> {
-  final bugController = TextEditingController();
+  FirebaseAuth auth = FirebaseAuth.instance;
+  TextEditingController legendaBug = TextEditingController();
+  late String nome;
+  String? idUsuarioLogado;
 
-  @override
-  void dispose() {
-    bugController.dispose();
-    super.dispose();
-  }
-
-  void showAlertErro() {
-    QuickAlert.show(
-        context: context,
-        title: 'Atenção',
-        text: 'Este e-mail não existe em nosso banco de dados.',
-        confirmBtnText: 'Ok',
-        type: QuickAlertType.error);
+  Future<void> recuperarDadosUsuario() async {
+    User? usuarioLogado = auth.currentUser;
+    if (usuarioLogado != null) {
+      idUsuarioLogado = usuarioLogado.uid;
+      DocumentSnapshot<Map<String, dynamic>> userData = await FirebaseFirestore
+          .instance
+          .collection('usuarios')
+          .doc(idUsuarioLogado)
+          .get();
+      if (userData.exists) {
+        setState(() {
+          nome = userData['nome'];
+        });
+      }
+    }
   }
 
   void showAlertSucesso() {
@@ -34,6 +41,32 @@ class _relatar_problemaState extends State<relatar_problema> {
         text: 'Enviamos para o seu e-mail um link para resetar a senha.',
         confirmBtnText: 'Ok',
         type: QuickAlertType.success);
+  }
+
+  Future<void> enviarbug() async {
+    String bug = legendaBug.text;
+
+    // Gere um ID único para a postagem
+    final String denunciaId =
+        FirebaseFirestore.instance.collection('relatos_bugs').doc().id;
+
+      // Para postagens sem imagem
+      await FirebaseFirestore.instance.collection('relatos_bugs').doc(denunciaId).set({
+        'autorId': idUsuarioLogado,
+        'legendaBug': bug,
+        'hora': DateTime.now().toString(),
+        'idDenuncia': denunciaId,
+      });
+
+    
+    Navigator.pop(context);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    recuperarDadosUsuario();
   }
 
   @override
@@ -86,7 +119,7 @@ class _relatar_problemaState extends State<relatar_problema> {
                     child: SizedBox(
                       width: 310,
                       child: TextField(
-                        controller: bugController,
+                        controller: legendaBug,
                         keyboardType: TextInputType.text,
                         style: const TextStyle(
                           color: Colors.black,
@@ -128,7 +161,7 @@ class _relatar_problemaState extends State<relatar_problema> {
                           backgroundColor: Color(0xFFBB2649),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(13))),
-                      onPressed: () {},
+                      onPressed: () {enviarbug();},
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [

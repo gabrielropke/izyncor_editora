@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:editora_izyncor_app/interior_usuario/store/carrinho.dart';
 import 'package:editora_izyncor_app/interior_usuario/store/info_livros.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -201,7 +200,7 @@ class _storeState extends State<store> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        automaticallyImplyLeading: true,
+        automaticallyImplyLeading: false,
         foregroundColor: Colors.black,
         elevation: 0,
         leadingWidth: 26,
@@ -212,16 +211,6 @@ class _storeState extends State<store> {
               width: 100, // ajuste a largura conforme necessário
               height: 40, // ajuste a altura conforme necessário
             ),
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: ((context) => const carrinho())));
-              },
-              icon: const Icon(Icons.shopping_cart_outlined))
-        ],
       ),
       body: SafeArea(
         child: Padding(

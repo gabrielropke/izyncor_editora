@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:editora_izyncor_app/interior_usuario/chat/mensagens_chat.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil_visita/perfil_visita.dart';
 import 'package:flutter/material.dart';
@@ -206,11 +207,24 @@ class _usuarios_chatState extends State<usuarios_chat> {
                                       )
                                     ],
                                   ),
-                                  leading: CircleAvatar(
-                                    radius: 25,
-                                    backgroundColor: Colors.grey,
-                                    backgroundImage:
-                                        NetworkImage(usuario.urlImagem),
+                                  leading: Container(
+                                    width: 48,
+                                    height: 48,
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: ClipOval(
+                                      child: CachedNetworkImage(
+                                        imageUrl: usuario.urlImagem,
+                                        fit: BoxFit.cover,
+                                        placeholder: (context, url) =>
+                                            const CircularProgressIndicator(
+                                          color: Colors.white,
+                                        ),
+                                        errorWidget: (context, url, error) =>
+                                            const Icon(Icons.error),
+                                      ),
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(height: 10),

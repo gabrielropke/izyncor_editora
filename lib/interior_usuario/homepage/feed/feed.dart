@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:editora_izyncor_app/interior_usuario/homepage/feed/comentarios/comentarios_postagem.dart';
+import 'package:editora_izyncor_app/interior_usuario/homepage/feed/denuncias/denunciar.dart';
 import 'package:editora_izyncor_app/interior_usuario/homepage/feed/processo_postagem/editar_postagem.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil/meu_perfil.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil_visita/perfil_visita.dart';
@@ -66,6 +69,7 @@ class _feedState extends State<feed> {
         'comentarios': doc.get('comentarios'),
         'legenda': doc.get('legenda'),
         'titulo': doc.get('titulo'),
+        'editado': doc.get('editado'),
       };
 
       // Consulta para obter o nome do autor com base no 'autorId'
@@ -167,202 +171,228 @@ class _feedState extends State<feed> {
                                         Padding(
                                           padding:
                                               const EdgeInsets.only(left: 5),
-                                          child: Text(
-                                            postagem['titulo'],
-                                            style: const TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.black),
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                postagem['titulo'],
+                                                style: const TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black),
+                                              ),
+                                              if (postagem['editado'] == 'sim')
+                                                const Padding(
+                                                  padding:
+                                                      EdgeInsets.only(left: 5),
+                                                  child: Text(
+                                                    '[Editado]',
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: Colors.black38),
+                                                  ),
+                                                ),
+                                            ],
                                           ),
                                         ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            GestureDetector(
-                                                onTap: () {
-                                                  void verItem(
-                                                      BuildContext context) {
-                                                    showModalBottomSheet(
-                                                      context: context,
-                                                      shape:
-                                                          const RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .vertical(
-                                                          top: Radius.circular(
-                                                              20.0), // Defina o raio para bordas arredondadas superiores
-                                                        ),
-                                                      ),
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        return Column(
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          children: <Widget>[
-                                                            Center(
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .only(
-                                                                        top:
-                                                                            10),
-                                                                child:
-                                                                    Container(
-                                                                  width: 40,
-                                                                  height: 4,
-                                                                  decoration: BoxDecoration(
-                                                                      color: Colors
-                                                                          .black38,
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              12)),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            ListTile(
-                                                              leading:
-                                                                  const Icon(
-                                                                Icons.copy,
-                                                                color: Colors
-                                                                    .black,
-                                                              ),
-                                                              title: const Text(
-                                                                  'Copiar url'),
-                                                              onTap: () {
-                                                                // Lógica de copiar URL
-                                                                Navigator.pop(
-                                                                    context);
-                                                              },
-                                                            ),
-                                                            ListTile(
-                                                              leading:
-                                                                  const Icon(
-                                                                Icons
-                                                                    .warning_amber_outlined,
-                                                                color: Colors
-                                                                    .black,
-                                                              ),
-                                                              title: const Text(
-                                                                  'Denunciar'),
-                                                              onTap: () {
-                                                                // Lógica de copiar URL
-                                                                Navigator.pop(
-                                                                    context);
-                                                              },
-                                                            ),
-                                                            Visibility(
-                                                              visible: postagem[
-                                                                      'autorId'] ==
-                                                                  idUsuarioLogado,
-                                                              child: ListTile(
-                                                                leading:
-                                                                    const Icon(
-                                                                  Icons
-                                                                      .delete_outline_sharp,
+                                        GestureDetector(
+                                            onTap: () {
+                                              void verItem(
+                                                  BuildContext context) {
+                                                showModalBottomSheet(
+                                                  context: context,
+                                                  shape:
+                                                      const RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.vertical(
+                                                      top: Radius.circular(
+                                                          20.0), // Defina o raio para bordas arredondadas superiores
+                                                    ),
+                                                  ),
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: <Widget>[
+                                                        Center(
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    top: 10),
+                                                            child: Container(
+                                                              width: 40,
+                                                              height: 4,
+                                                              decoration: BoxDecoration(
                                                                   color: Colors
-                                                                      .black,
-                                                                ),
-                                                                title: const Text(
-                                                                    'Excluir'),
-                                                                onTap:
-                                                                    () async {
-                                                                  void excluirPost(
-                                                                      String
-                                                                          titulo) {
-                                                                    if (postagem[
-                                                                            'autorId'] ==
-                                                                        idUsuarioLogado) {
-                                                                      CollectionReference
-                                                                          novidadesCollection =
-                                                                          FirebaseFirestore
-                                                                              .instance
-                                                                              .collection('feed');
-
-                                                                      // Excluir o documento do Firestore
-                                                                      novidadesCollection
-                                                                          .doc(postagem[
-                                                                              'idPostagem'])
-                                                                          .delete();
-
+                                                                      .black38,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              12)),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        ListTile(
+                                                          leading: SizedBox(
+                                                              width: 25,
+                                                              child: Image.asset(
+                                                                  'assets/copiar.png')),
+                                                          title: const Text(
+                                                              'Copiar url'),
+                                                          onTap: () {
+                                                            // Lógica de copiar URL
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                        ),
+                                                        if (idUsuarioLogado !=
+                                                            postagem['autorId'])
+                                                          ListTile(
+                                                            leading: SizedBox(
+                                                                width: 30,
+                                                                child: Image.asset(
+                                                                    'assets/denunciar_01.png')),
+                                                            title: const Text(
+                                                              'Denunciar',
+                                                              style: TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  color: Colors
+                                                                      .red),
+                                                            ),
+                                                            onTap: () {
+                                                              // Lógica de copiar URL
+                                                              Navigator.pop(
+                                                                  context);
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder: (context) =>
+                                                                          denunciar(
+                                                                            idPostagem:
+                                                                                postagem['idPostagem'],
+                                                                            autor:
+                                                                                postagem['autorId'],
+                                                                            nomeAutor:
+                                                                                postagem['username'],
+                                                                          )));
+                                                            },
+                                                          ),
+                                                        Visibility(
+                                                          visible: postagem[
+                                                                  'autorId'] ==
+                                                              idUsuarioLogado,
+                                                          child: ListTile(
+                                                            leading: SizedBox(
+                                                                width: 25,
+                                                                child: Image.asset(
+                                                                    'assets/lixeira.png')),
+                                                            title: const Text(
+                                                                'Excluir'),
+                                                            onTap: () async {
+                                                              void excluirPost(
+                                                                  String
+                                                                      titulo) {
+                                                                if (postagem[
+                                                                        'autorId'] ==
+                                                                    idUsuarioLogado) {
+                                                                  CollectionReference
+                                                                      novidadesCollection =
                                                                       FirebaseFirestore
                                                                           .instance
                                                                           .collection(
-                                                                              'usuarios')
-                                                                          .doc(
-                                                                              idUsuarioLogado)
-                                                                          .update({
-                                                                        'postagens':
-                                                                            FieldValue.increment(-1),
-                                                                      });
+                                                                              'feed');
 
-                                                                      setState(
-                                                                          () {
-                                                                        postagens.removeWhere((postagem) =>
-                                                                            postagem['idPostagem'] ==
-                                                                            postagem['idPostagem']);
-                                                                      });
-                                                                      // Chamar fetchFeed novamente após a exclusão
-                                                                      fetchFeed();
-                                                                    }
-                                                                  }
+                                                                  // Excluir o documento do Firestore
+                                                                  novidadesCollection
+                                                                      .doc(postagem[
+                                                                          'idPostagem'])
+                                                                      .delete();
 
-                                                                  excluirPost(
-                                                                      postagem[
-                                                                          'idPostagem']);
+                                                                  FirebaseFirestore
+                                                                      .instance
+                                                                      .collection(
+                                                                          'usuarios')
+                                                                      .doc(
+                                                                          idUsuarioLogado)
+                                                                      .update({
+                                                                    'postagens':
+                                                                        FieldValue.increment(
+                                                                            -1),
+                                                                  });
 
-                                                                  // Lógica de copiar URL
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                },
-                                                              ),
-                                                            ),
-                                                            Visibility(
-                                                              visible: postagem[
-                                                                      'autorId'] ==
-                                                                  idUsuarioLogado,
-                                                              child: ListTile(
-                                                                leading:
-                                                                    const Icon(
-                                                                  Icons
-                                                                      .edit_outlined,
-                                                                  color: Colors
-                                                                      .black,
-                                                                ),
-                                                                title: const Text(
-                                                                    'Editar'),
-                                                                onTap: () {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                  Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                          builder: (context) => editar_postagem(
-                                                                                idPostagem: postagem['idPostagem'],
-                                                                                legenda: postagem['legenda'],
-                                                                                imagemPostagem: postagem['imagemUrl'],
-                                                                                titulo: postagem['titulo'],
-                                                                              )));
-                                                                },
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        );
-                                                      },
+                                                                  setState(() {
+                                                                    postagens.removeWhere((postagem) =>
+                                                                        postagem[
+                                                                            'idPostagem'] ==
+                                                                        postagem[
+                                                                            'idPostagem']);
+                                                                  });
+                                                                  // Chamar fetchFeed novamente após a exclusão
+                                                                  fetchFeed();
+                                                                }
+                                                              }
+
+                                                              excluirPost(postagem[
+                                                                  'idPostagem']);
+
+                                                              // Lógica de copiar URL
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                          ),
+                                                        ),
+                                                        Visibility(
+                                                          visible: postagem[
+                                                                  'autorId'] ==
+                                                              idUsuarioLogado,
+                                                          child: ListTile(
+                                                            leading: SizedBox(
+                                                                width: 25,
+                                                                child: Image.asset(
+                                                                    'assets/textos_02.png')),
+                                                            title: const Text(
+                                                                'Editar'),
+                                                            onTap: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder: (context) =>
+                                                                          editar_postagem(
+                                                                            idPostagem:
+                                                                                postagem['idPostagem'],
+                                                                            legenda:
+                                                                                postagem['legenda'],
+                                                                            imagemPostagem:
+                                                                                postagem['imagemUrl'],
+                                                                            titulo:
+                                                                                postagem['titulo'],
+                                                                          )));
+                                                            },
+                                                          ),
+                                                        ),
+                                                        if (Platform.isIOS)
+                                                          const SizedBox(
+                                                            width:
+                                                                double.infinity,
+                                                            height: 40,
+                                                          )
+                                                      ],
                                                     );
-                                                  }
+                                                  },
+                                                );
+                                              }
 
-                                                  verItem(context);
-                                                },
-                                                child: const Icon(
-                                                    Icons.more_horiz,
-                                                    color: Colors.black,
-                                                    size: 26)),
-                                            const SizedBox(width: 10),
-                                            const Icon(Icons.share_rounded,
-                                                color: Colors.black)
-                                          ],
-                                        ),
+                                              verItem(context);
+                                            },
+                                            child: const Icon(Icons.more_horiz,
+                                                color: Colors.black, size: 26)),
                                       ],
                                     ),
                                   ),
@@ -444,192 +474,221 @@ class _feedState extends State<feed> {
                                           child: CachedNetworkImage(
                                               imageUrl: postagem['imagemUrl']),
                                         ),
+                                        if (postagem['editado'] == 'sim')
+                                          const Positioned(
+                                            top: 10,
+                                            left: 10,
+                                            child: Padding(
+                                              padding: EdgeInsets.only(left: 5),
+                                              child: Text(
+                                                '[Editado]',
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.white54),
+                                              ),
+                                            ),
+                                          ),
                                         Positioned(
                                             top: 10,
                                             right: 10,
-                                            child: Row(
-                                              children: [
-                                                GestureDetector(
-                                                    onTap: () {
-                                                      void verItem(
-                                                          BuildContext
-                                                              context) {
-                                                        showModalBottomSheet(
-                                                          context: context,
-                                                          shape:
-                                                              const RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .vertical(
-                                                              top: Radius.circular(
-                                                                  20.0), // Defina o raio para bordas arredondadas superiores
-                                                            ),
-                                                          ),
-                                                          builder: (BuildContext
-                                                              context) {
-                                                            return Column(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .min,
-                                                              children: <Widget>[
-                                                                Center(
-                                                                  child:
-                                                                      Padding(
-                                                                    padding: const EdgeInsets
+                                            child: GestureDetector(
+                                                onTap: () {
+                                                  void verItem(
+                                                      BuildContext context) {
+                                                    showModalBottomSheet(
+                                                      context: context,
+                                                      shape:
+                                                          const RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .vertical(
+                                                          top: Radius.circular(
+                                                              20.0), // Defina o raio para bordas arredondadas superiores
+                                                        ),
+                                                      ),
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: <Widget>[
+                                                            Center(
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets
                                                                         .only(
                                                                         top:
                                                                             10),
-                                                                    child:
-                                                                        Container(
-                                                                      width: 40,
-                                                                      height: 4,
-                                                                      decoration: BoxDecoration(
-                                                                          color: Colors
-                                                                              .black38,
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(12)),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                ListTile(
-                                                                  leading:
-                                                                      const Icon(
-                                                                    Icons.copy,
-                                                                    color: Colors
-                                                                        .black,
-                                                                  ),
-                                                                  title: const Text(
-                                                                      'Copiar url'),
-                                                                  onTap: () {
-                                                                    // Lógica de copiar URL
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  },
-                                                                ),
-                                                                ListTile(
-                                                                  leading:
-                                                                      const Icon(
-                                                                    Icons
-                                                                        .warning_amber_outlined,
-                                                                    color: Colors
-                                                                        .black,
-                                                                  ),
-                                                                  title: const Text(
-                                                                      'Denunciar'),
-                                                                  onTap: () {
-                                                                    // Lógica de copiar URL
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  },
-                                                                ),
-                                                                Visibility(
-                                                                  visible: postagem[
-                                                                          'autorId'] ==
-                                                                      idUsuarioLogado,
-                                                                  child:
-                                                                      ListTile(
-                                                                    leading:
-                                                                        const Icon(
-                                                                      Icons
-                                                                          .delete_outline_sharp,
+                                                                child:
+                                                                    Container(
+                                                                  width: 40,
+                                                                  height: 4,
+                                                                  decoration: BoxDecoration(
                                                                       color: Colors
-                                                                          .black,
-                                                                    ),
-                                                                    title: const Text(
-                                                                        'Excluir'),
-                                                                    onTap:
-                                                                        () async {
-                                                                      void excluirPost(
-                                                                          String
-                                                                              titulo) {
-                                                                        if (postagem['autorId'] ==
-                                                                            idUsuarioLogado) {
-                                                                          CollectionReference
-                                                                              novidadesCollection =
-                                                                              FirebaseFirestore.instance.collection('feed');
-
-                                                                          // Excluir o documento do Firestore
-                                                                          novidadesCollection
-                                                                              .doc(postagem['idPostagem'])
-                                                                              .delete();
-
+                                                                          .black38,
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              12)),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            ListTile(
+                                                              leading: SizedBox(
+                                                                  width: 25,
+                                                                  child: Image
+                                                                      .asset(
+                                                                          'assets/copiar.png')),
+                                                              title: const Text(
+                                                                  'Copiar url'),
+                                                              onTap: () {
+                                                                // Lógica de copiar URL
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                            ),
+                                                            if (idUsuarioLogado !=
+                                                                postagem[
+                                                                    'autorId'])
+                                                              ListTile(
+                                                                leading: SizedBox(
+                                                                    width: 30,
+                                                                    child: Image
+                                                                        .asset(
+                                                                            'assets/denunciar_01.png')),
+                                                                title:
+                                                                    const Text(
+                                                                  'Denunciar',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                      color: Colors
+                                                                          .red),
+                                                                ),
+                                                                onTap: () {
+                                                                  // Lógica de copiar URL
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => denunciar(
+                                                                                idPostagem: postagem['idPostagem'],
+                                                                                autor: postagem['autorId'],
+                                                                                nomeAutor: postagem['username'],
+                                                                              )));
+                                                                },
+                                                              ),
+                                                            Visibility(
+                                                              visible: postagem[
+                                                                      'autorId'] ==
+                                                                  idUsuarioLogado,
+                                                              child: ListTile(
+                                                                leading: SizedBox(
+                                                                    width: 25,
+                                                                    child: Image
+                                                                        .asset(
+                                                                            'assets/lixeira.png')),
+                                                                title: const Text(
+                                                                    'Excluir'),
+                                                                onTap:
+                                                                    () async {
+                                                                  void excluirPost(
+                                                                      String
+                                                                          titulo) {
+                                                                    if (postagem[
+                                                                            'autorId'] ==
+                                                                        idUsuarioLogado) {
+                                                                      CollectionReference
+                                                                          novidadesCollection =
                                                                           FirebaseFirestore
                                                                               .instance
-                                                                              .collection('usuarios')
-                                                                              .doc(idUsuarioLogado)
-                                                                              .update({
-                                                                            'postagens':
-                                                                                FieldValue.increment(-1),
-                                                                          });
+                                                                              .collection('feed');
 
-                                                                          setState(
-                                                                              () {
-                                                                            postagens.removeWhere((postagem) =>
-                                                                                postagem['idPostagem'] ==
-                                                                                postagem['idPostagem']);
-                                                                          });
-                                                                          // Chamar fetchFeed novamente após a exclusão
-                                                                          fetchFeed();
-                                                                        }
-                                                                      }
+                                                                      // Excluir o documento do Firestore
+                                                                      novidadesCollection
+                                                                          .doc(postagem[
+                                                                              'idPostagem'])
+                                                                          .delete();
 
-                                                                      excluirPost(
-                                                                          postagem[
-                                                                              'idPostagem']);
+                                                                      FirebaseFirestore
+                                                                          .instance
+                                                                          .collection(
+                                                                              'usuarios')
+                                                                          .doc(
+                                                                              idUsuarioLogado)
+                                                                          .update({
+                                                                        'postagens':
+                                                                            FieldValue.increment(-1),
+                                                                      });
 
-                                                                      // Lógica de copiar URL
-                                                                      Navigator.pop(
-                                                                          context);
-                                                                    },
-                                                                  ),
-                                                                ),
-                                                                Visibility(
-                                                                  visible: postagem[
-                                                                          'autorId'] ==
-                                                                      idUsuarioLogado,
-                                                                  child:
-                                                                      ListTile(
-                                                                    leading:
-                                                                        const Icon(
-                                                                      Icons
-                                                                          .edit_outlined,
-                                                                      color: Colors
-                                                                          .black,
-                                                                    ),
-                                                                    title: const Text(
-                                                                        'Editar'),
-                                                                    onTap: () {
-                                                                      Navigator.pop(
-                                                                          context);
-                                                                      Navigator.push(
-                                                                          context,
-                                                                          MaterialPageRoute(
-                                                                              builder: (context) => editar_postagem(
-                                                                                    idPostagem: postagem['idPostagem'],
-                                                                                    legenda: postagem['legenda'],
-                                                                                    imagemPostagem: postagem['imagemUrl'],
-                                                                                    titulo: postagem['titulo'],
-                                                                                  )));
-                                                                    },
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            );
-                                                          },
+                                                                      setState(
+                                                                          () {
+                                                                        postagens.removeWhere((postagem) =>
+                                                                            postagem['idPostagem'] ==
+                                                                            postagem['idPostagem']);
+                                                                      });
+                                                                      // Chamar fetchFeed novamente após a exclusão
+                                                                      fetchFeed();
+                                                                    }
+                                                                  }
+
+                                                                  excluirPost(
+                                                                      postagem[
+                                                                          'idPostagem']);
+
+                                                                  // Lógica de copiar URL
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                },
+                                                              ),
+                                                            ),
+                                                            Visibility(
+                                                              visible: postagem[
+                                                                      'autorId'] ==
+                                                                  idUsuarioLogado,
+                                                              child: ListTile(
+                                                                leading: SizedBox(
+                                                                    width: 25,
+                                                                    child: Image
+                                                                        .asset(
+                                                                            'assets/textos_02.png')),
+                                                                title: const Text(
+                                                                    'Editar'),
+                                                                onTap: () {
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => editar_postagem(
+                                                                                idPostagem: postagem['idPostagem'],
+                                                                                legenda: postagem['legenda'],
+                                                                                imagemPostagem: postagem['imagemUrl'],
+                                                                                titulo: postagem['titulo'],
+                                                                              )));
+                                                                },
+                                                              ),
+                                                            ),
+                                                            if (Platform.isIOS)
+                                                              const SizedBox(
+                                                                width: double
+                                                                    .infinity,
+                                                                height: 40,
+                                                              )
+                                                          ],
                                                         );
-                                                      }
+                                                      },
+                                                    );
+                                                  }
 
-                                                      verItem(context);
-                                                    },
-                                                    child: const Icon(
-                                                        Icons.more_horiz,
-                                                        color: Colors.white,
-                                                        size: 26)),
-                                                const SizedBox(width: 10),
-                                                const Icon(Icons.share_rounded,
-                                                    color: Colors.white)
-                                              ],
-                                            )),
+                                                  verItem(context);
+                                                },
+                                                child: const Icon(
+                                                    Icons.more_horiz,
+                                                    color: Colors.white,
+                                                    size: 26))),
                                         Positioned(
                                           bottom: 0,
                                           left: 0,
@@ -694,6 +753,7 @@ class _feedState extends State<feed> {
                                                             CachedNetworkImage(
                                                           imageUrl: postagem[
                                                               'urlImagem'],
+                                                              fit: BoxFit.cover,
                                                         ),
                                                       ),
                                                     ),
@@ -878,14 +938,30 @@ class _feedState extends State<feed> {
                                                     );
                                                   }
                                                 },
-                                                child: Text(
-                                                  // ignore: prefer_interpolation_to_compose_strings
-                                                  '@' + postagem['username'],
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: Colors.white,
-                                                      fontSize: 16),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      postagem['nome'],
+                                                      style: const TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: Colors.white,
+                                                          fontSize: 16),
+                                                    ),
+                                                    const SizedBox(height: 3),
+                                                    Text(
+                                                      formatDataHora(
+                                                          postagem['hora']),
+                                                      style: const TextStyle(
+                                                        fontSize: 12,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
                                             ],
@@ -980,7 +1056,6 @@ class _feedState extends State<feed> {
                                                       },
                                                       child: SizedBox(
                                                         width: 40,
-                                                        height: 50,
                                                         child: Column(
                                                           crossAxisAlignment:
                                                               CrossAxisAlignment
@@ -1004,28 +1079,36 @@ class _feedState extends State<feed> {
                                                                   .snapshots(),
                                                               builder: (context,
                                                                   snapshot) {
-                                                                if (!snapshot
-                                                                        .hasData ||
-                                                                    !snapshot
+                                                                bool usuarioCurtiu = snapshot
+                                                                        .hasData &&
+                                                                    snapshot
                                                                         .data!
-                                                                        .exists) {
-                                                                  // Se não houver dados (usuário não curtiu), mostre o ícone de coração vazio
-                                                                  return SizedBox(
-                                                                  width: 22,
-                                                                  child: Image
-                                                                      .asset(
-                                                                          'assets/curtir_03.png'));
-                                                            }
+                                                                        .exists;
 
-                                                            // Se houver dados (usuário já curtiu), mostre o ícone de coração cheio
-                                                            return SizedBox(
-                                                                width: 22,
-                                                                child: Image.asset(
-                                                                    'assets/curtir_02.png'));
-                                                          },
-                                                        ),
-                                                        const SizedBox(
-                                                            height: 5),
+                                                                return AnimatedContainer(
+                                                                  curve: usuarioCurtiu
+                                                                      ? Curves
+                                                                          .elasticOut
+                                                                      : Curves
+                                                                          .linear,
+                                                                  duration: Duration(
+                                                                      milliseconds: usuarioCurtiu
+                                                                          ? 1100
+                                                                          : 0),
+                                                                  width:
+                                                                      usuarioCurtiu
+                                                                          ? 37
+                                                                          : 21,
+                                                                  child: usuarioCurtiu
+                                                                      ? Image.asset(
+                                                                          'assets/coracao_02.png')
+                                                                      : Image.asset(
+                                                                          'assets/coracao_01_branco.png'),
+                                                                );
+                                                              },
+                                                            ),
+                                                            const SizedBox(
+                                                                height: 5),
                                                             StreamBuilder<
                                                                 DocumentSnapshot>(
                                                               stream: FirebaseFirestore
@@ -1101,9 +1184,9 @@ class _feedState extends State<feed> {
                                                                   .end,
                                                           children: [
                                                             SizedBox(
-                                                                width: 22,
+                                                                width: 23,
                                                                 child: Image.asset(
-                                                                    'assets/comment_04.png')),
+                                                                    'assets/comentar_branco.png')),
                                                             const SizedBox(
                                                                 height: 5),
                                                             StreamBuilder<
@@ -1301,25 +1384,33 @@ class _feedState extends State<feed> {
                                                                   .snapshots(),
                                                               builder: (context,
                                                                   snapshot) {
-                                                                if (!snapshot
-                                                                        .hasData ||
-                                                                    !snapshot
+                                                                bool usuarioCurtiu = snapshot
+                                                                        .hasData &&
+                                                                    snapshot
                                                                         .data!
-                                                                        .exists) {
-                                                                  // Se não houver dados (usuário não curtiu), mostre o ícone de coração vazio
-                                                                  return SizedBox(
-                                                                      width: 22,
-                                                                      child: Image
-                                                                          .asset(
-                                                                              'assets/salvar_03.png'));
-                                                                }
+                                                                        .exists;
 
-                                                                // Se houver dados (usuário já curtiu), mostre o ícone de coração cheio
-                                                                return SizedBox(
-                                                                    width: 22,
-                                                                    child: Image
-                                                                        .asset(
-                                                                            'assets/salvar_04.png'));
+                                                                return AnimatedContainer(
+                                                                  curve: usuarioCurtiu
+                                                                      ? Curves
+                                                                          .elasticOut
+                                                                      : Curves
+                                                                          .linear,
+                                                                  duration: Duration(
+                                                                      milliseconds:
+                                                                          usuarioCurtiu
+                                                                              ? 700
+                                                                              : 0),
+                                                                  width:
+                                                                      usuarioCurtiu
+                                                                          ? 24
+                                                                          : 22,
+                                                                  child: usuarioCurtiu
+                                                                      ? Image.asset(
+                                                                          'assets/disquete_08_branco.png')
+                                                                      : Image.asset(
+                                                                          'assets/disquete_06_branco.png'),
+                                                                );
                                                               },
                                                             ),
                                                             const SizedBox(
@@ -1372,32 +1463,44 @@ class _feedState extends State<feed> {
                                                     ),
                                                   ],
                                                 ),
+                                                const SizedBox(width: 5),
+                                                Column(
+                                                  children: [
+                                                    SizedBox(
+                                                        width: 23,
+                                                        child: Image.asset(
+                                                            'assets/compartilhar_branco.png')),
+                                                    const Text(''),
+                                                  ],
+                                                ),
+                                                const SizedBox(width: 15),
                                               ],
                                             ))
                                       ],
                                     ),
                                   ),
                                 ),
-                                Align(
-                                  alignment: Alignment.bottomLeft,
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.only(top: 10, left: 5),
-                                    child: ReadMoreText(
-                                      postagem['legenda'],
-                                      trimLines: 4,
-                                      colorClickableText: Colors.blue,
-                                      trimMode: TrimMode.Line,
-                                      trimCollapsedText: 'ver mais',
-                                      trimExpandedText: ' ver menos',
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 16,
+                                if (postagem['legenda'] != '')
+                                  Align(
+                                    alignment: Alignment.bottomLeft,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 10, left: 15),
+                                      child: ReadMoreText(
+                                        postagem['legenda'],
+                                        trimLines: 4,
+                                        colorClickableText: Colors.blue,
+                                        trimMode: TrimMode.Line,
+                                        trimCollapsedText: 'ver mais',
+                                        trimExpandedText: ' ver menos',
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 16,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
                                 Visibility(
                                   visible: postagem['imagemUrl'] != null &&
                                       postagem['imagemUrl'] == 'vazio',
@@ -1462,6 +1565,7 @@ class _feedState extends State<feed> {
                                                             CachedNetworkImage(
                                                           imageUrl: postagem[
                                                               'urlImagem'],
+                                                          fit: BoxFit.cover,
                                                           placeholder: (context,
                                                                   url) =>
                                                               const CircularProgressIndicator(
@@ -1655,13 +1759,31 @@ class _feedState extends State<feed> {
                                                   );
                                                 }
                                               },
-                                              child: Text(
-                                                // ignore: prefer_interpolation_to_compose_strings
-                                                '@' + postagem['username'],
-                                                style: const TextStyle(
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Colors.black,
-                                                    fontSize: 16),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    // ignore: prefer_interpolation_to_compose_strings
+                                                    postagem['nome'],
+                                                    style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: Colors.black,
+                                                        fontSize: 16),
+                                                  ),
+                                                  const SizedBox(height: 3),
+                                                  Text(
+                                                    formatDataHora(
+                                                        postagem['hora']),
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                      color: Colors.grey,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ],
@@ -1750,7 +1872,6 @@ class _feedState extends State<feed> {
                                                   },
                                                   child: Container(
                                                     width: 40,
-                                                    height: 50,
                                                     child: Column(
                                                       crossAxisAlignment:
                                                           CrossAxisAlignment
@@ -1773,23 +1894,33 @@ class _feedState extends State<feed> {
                                                               .snapshots(),
                                                           builder: (context,
                                                               snapshot) {
-                                                            if (!snapshot
-                                                                    .hasData ||
-                                                                !snapshot.data!
-                                                                    .exists) {
-                                                              // Se não houver dados (usuário não curtiu), mostre o ícone de coração vazio
-                                                              return SizedBox(
-                                                                  width: 22,
-                                                                  child: Image
-                                                                      .asset(
-                                                                          'assets/curtir_01.png'));
-                                                            }
+                                                            bool usuarioCurtiu =
+                                                                snapshot.hasData &&
+                                                                    snapshot
+                                                                        .data!
+                                                                        .exists;
 
-                                                            // Se houver dados (usuário já curtiu), mostre o ícone de coração cheio
-                                                            return SizedBox(
-                                                                width: 22,
-                                                                child: Image.asset(
-                                                                    'assets/curtir_02.png'));
+                                                            return AnimatedContainer(
+                                                              curve: usuarioCurtiu
+                                                                  ? Curves
+                                                                      .elasticOut
+                                                                  : Curves
+                                                                      .linear,
+                                                              duration: Duration(
+                                                                  milliseconds:
+                                                                      usuarioCurtiu
+                                                                          ? 1100
+                                                                          : 0),
+                                                              width:
+                                                                  usuarioCurtiu
+                                                                      ? 37
+                                                                      : 21,
+                                                              child: usuarioCurtiu
+                                                                  ? Image.asset(
+                                                                      'assets/coracao_02.png')
+                                                                  : Image.asset(
+                                                                      'assets/coracao_01.png'),
+                                                            );
                                                           },
                                                         ),
                                                         const SizedBox(
@@ -1864,9 +1995,9 @@ class _feedState extends State<feed> {
                                                           );
                                                         },
                                                         child: SizedBox(
-                                                            width: 22,
+                                                            width: 23,
                                                             child: Image.asset(
-                                                                'assets/comment_03.png')),
+                                                                'assets/comentar_post.png')),
                                                       ),
                                                       const SizedBox(height: 5),
                                                       StreamBuilder<
@@ -1910,6 +2041,7 @@ class _feedState extends State<feed> {
                                                 ),
                                               ],
                                             ),
+                                            const SizedBox(width: 5),
                                             Column(
                                               children: [
                                                 GestureDetector(
@@ -2053,23 +2185,33 @@ class _feedState extends State<feed> {
                                                               .snapshots(),
                                                           builder: (context,
                                                               snapshot) {
-                                                            if (!snapshot
-                                                                    .hasData ||
-                                                                !snapshot.data!
-                                                                    .exists) {
-                                                              // Se não houver dados (usuário não curtiu), mostre o ícone de coração vazio
-                                                              return SizedBox(
-                                                                  width: 22,
-                                                                  child: Image
-                                                                      .asset(
-                                                                          'assets/salvar_01.png'));
-                                                            }
+                                                            bool usuarioCurtiu =
+                                                                snapshot.hasData &&
+                                                                    snapshot
+                                                                        .data!
+                                                                        .exists;
 
-                                                            // Se houver dados (usuário já curtiu), mostre o ícone de coração cheio
-                                                            return SizedBox(
-                                                                width: 22,
-                                                                child: Image.asset(
-                                                                    'assets/salvar_02.png'));
+                                                            return AnimatedContainer(
+                                                              curve: usuarioCurtiu
+                                                                  ? Curves
+                                                                      .elasticOut
+                                                                  : Curves
+                                                                      .linear,
+                                                              duration: Duration(
+                                                                  milliseconds:
+                                                                      usuarioCurtiu
+                                                                          ? 700
+                                                                          : 0),
+                                                              width:
+                                                                  usuarioCurtiu
+                                                                      ? 24
+                                                                      : 22,
+                                                              child: usuarioCurtiu
+                                                                  ? Image.asset(
+                                                                      'assets/disquete_08.png')
+                                                                  : Image.asset(
+                                                                      'assets/disquete.png'),
+                                                            );
                                                           },
                                                         ),
                                                         const SizedBox(
@@ -2120,26 +2262,37 @@ class _feedState extends State<feed> {
                                                 ),
                                               ],
                                             ),
+                                            const SizedBox(width: 5),
+                                            Column(
+                                              children: [
+                                                SizedBox(
+                                                    width: 23,
+                                                    child: Image.asset(
+                                                        'assets/compartilhar.png')),
+                                                const Text(''),
+                                              ],
+                                            ),
+                                            const SizedBox(width: 15),
                                           ],
                                         )
                                       ],
                                     ),
                                   ),
                                 ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.only(top: 10, left: 5),
-                                  child: Align(
-                                    alignment: Alignment.topLeft,
-                                    child: Text(
-                                      formatDataHora(postagem['hora']),
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                                // Padding(
+                                //   padding:
+                                //       const EdgeInsets.only(top: 10, left: 5),
+                                //   child: Align(
+                                //     alignment: Alignment.topLeft,
+                                //     child: Text(
+                                //       formatDataHora(postagem['hora']),
+                                //       style: const TextStyle(
+                                //         fontSize: 12,
+                                //         color: Colors.grey,
+                                //       ),
+                                //     ),
+                                //   ),
+                                // ),
                                 Padding(
                                   padding: const EdgeInsets.only(top: 20),
                                   child: Container(
@@ -2151,7 +2304,8 @@ class _feedState extends State<feed> {
                               ],
                             ),
                           ],
-                        ));
+                        )
+                        );
                   },
                 );
               }

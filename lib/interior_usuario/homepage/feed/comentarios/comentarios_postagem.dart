@@ -1,10 +1,13 @@
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:editora_izyncor_app/interior_usuario/homepage/feed/comentarios/respostas_comentario_postagem.dart';
+import 'package:editora_izyncor_app/interior_usuario/homepage/feed/denuncias/denunciar.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil/meu_perfil.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil_visita/perfil_visita.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:readmore/readmore.dart';
 
 class comentarios_postagem extends StatefulWidget {
@@ -20,8 +23,10 @@ class comentarios_postagem extends StatefulWidget {
 class _comentarios_postagemState extends State<comentarios_postagem> {
   late String idPostagem;
   String? novoComentarioId;
+  late List<Map<String, dynamic>> comentarios;
 
   TextEditingController comentarioController = TextEditingController();
+  List<Map<String, dynamic>> comentariosLocais = [];
 
   String? _idUsuarioComentado;
   String? uidUsuario;
@@ -83,6 +88,12 @@ class _comentarios_postagemState extends State<comentarios_postagem> {
       setState(() {
         uidUsuario = value;
       });
+      // Carrega os comentários da postagem
+      getComentariosDaPostagem(idPostagem).then((comentarios) {
+        setState(() {
+          this.comentarios = comentarios;
+        });
+      });
     });
   }
 
@@ -119,8 +130,14 @@ class _comentarios_postagemState extends State<comentarios_postagem> {
           novidadesCollection.doc(idPostagem).update({
             'comentarios': FieldValue.increment(1),
           });
+
+          // Use setState para atualizar a página
+          setState(() {
+            // Atualize o estado do widget
+          });
+
+          comentarioController.clear();
         });
-        comentarioController.clear();
       }
     }
   }
@@ -145,6 +162,28 @@ class _comentarios_postagemState extends State<comentarios_postagem> {
     }
   }
 
+  Future<List<Map<String, dynamic>>> getComentariosDaPostagem(
+      String idPostagem) async {
+    try {
+      QuerySnapshot comentariosSnapshot = await FirebaseFirestore.instance
+          .collection('feed')
+          .doc(idPostagem)
+          .collection('comentar')
+          .get();
+
+      List<Map<String, dynamic>> comentarios = [];
+
+      comentariosSnapshot.docs.forEach((doc) {
+        comentarios.add(doc.data() as Map<String, dynamic>);
+      });
+
+      return comentarios;
+    } catch (e) {
+      print('Erro ao obter os comentários da postagem: $e');
+      return [];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -159,65 +198,126 @@ class _comentarios_postagemState extends State<comentarios_postagem> {
       body: Column(
         children: [
           Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('feed')
-                  .doc(idPostagem)
-                  .collection('comentar')
-                  .orderBy('hora', descending: true)
-                  .snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.hasError) {
-                  return const Text(
-                    'Ocorreu um erro ao carregar os comentários',
-                    style: TextStyle(fontSize: 16),
-                  );
-                }
-
+            child: FutureBuilder<List<Map<String, dynamic>>>(
+              future: getComentariosDaPostagem(idPostagem),
+              builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
+                  return const CircularProgressIndicator(color: Colors.white);
+                } else if (snapshot.hasError) {
+                  return const Text("Erro ao carregar dados do Firestore");
+                } else if (snapshot.data!.isEmpty) {
                   return const Center(
-                      child: Text(
-                    'Sem comentários disponíveis...',
-                    style: TextStyle(fontSize: 16),
-                  ));
-                }
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.public, color: Colors.black12, size: 82),
+                        Text(
+                          'Nenhum comentário ainda... :(',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black26,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                } else {
+                  return ListView.builder(
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      var comentario = snapshot.data![index];
 
-                return ListView.builder(
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    Map<String, dynamic> comentario = snapshot.data!.docs[index]
-                        .data() as Map<String, dynamic>;
-                    String texto = comentario['texto'];
-                    String hora = comentario['hora'];
-                    String uidUsuario = comentario['uidusuario'];
-                    String refComentario = comentario['ref'];
+                      String refComentario = comentario['ref'];
+                      var autorId = comentario['uidusuario'];
+                      String texto = comentario['texto'];
+                      String hora = comentario['hora'];
+                      String uidUsuario = comentario['uidusuario'];
 
-                    bool idUsuarioLogado = uidUsuario == _idUsuarioComentado;
+                      return FutureBuilder<Map<String, String>?>(
+                        future: getUserData(
+                            autorId), // Use a função para obter os dados do usuário
+                        builder: (context, userSnapshot) {
+                          if (userSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            // Se os dados do usuário estão carregando, exiba um indicador de progresso
+                            return const CircularProgressIndicator(
+                              color: Colors.white,
+                            );
+                          } else if (userSnapshot.hasError) {
+                            // Se ocorrer um erro ao carregar os dados do usuário, trate o erro
+                            return const Text(
+                                "Erro ao carregar dados do usuário");
+                          } else {
+                            if (userSnapshot.data != null) {
+                              String? urlImagem =
+                                  userSnapshot.data!['urlImagem'];
+                              String userName = userSnapshot.data!['nome']!;
 
-                    return FutureBuilder<Map<String, String>?>(
-                      future: getUserData(uidUsuario),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<Map<String, String>?> snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const SizedBox(); // Espaço em branco enquanto aguarda a resposta
-                        } else if (snapshot.hasError || !snapshot.hasData) {
-                          return const Text(
-                              'Erro ao carregar os dados do usuário');
-                        } else {
-                          String userName = snapshot.data!['nome']!;
-                          String imageUrl = snapshot.data!['urlImagem']!;
+                              return GestureDetector(
+                                onDoubleTap: () {
+                                  void enviarCurtida(String titulo) {
+                                    if (_idUsuarioComentado != null) {
+                                      CollectionReference novidadesCollection =
+                                          FirebaseFirestore.instance
+                                              .collection('feed');
 
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 20),
-                            child: GestureDetector(
-                              onLongPress: () {
-                                if (idUsuarioLogado) {
+                                      // Verificar se o idUsuarioLogado já existe na coleção de curtir
+                                      novidadesCollection
+                                          .doc(idPostagem)
+                                          .collection('comentar')
+                                          .doc(refComentario)
+                                          .collection('curtirComentario')
+                                          .doc(_idUsuarioComentado)
+                                          .get()
+                                          .then((doc) {
+                                        if (doc.exists) {
+                                          // O usuário já curtiu, então remova a curtida
+                                          doc.reference.delete().then((_) {
+                                            // Atualize o campo 'curtidas' na novidade (reduza em 1)
+                                            novidadesCollection
+                                                .doc(idPostagem)
+                                                .collection('comentar')
+                                                .doc(refComentario)
+                                                .update({
+                                              'curtidas': FieldValue.increment(
+                                                  -1), // Reduz o contador de curtidas em 1
+                                            });
+                                          });
+                                        } else {
+                                          // O usuário ainda não curtiu, adicione a curtida
+                                          Map<String, dynamic> curtidaData = {
+                                            'hora': DateTime.now().toString(),
+                                            'uidusuario': _idUsuarioComentado,
+                                          };
+
+                                          // Adicione a curtida na coleção 'curtir' da novidade
+                                          novidadesCollection
+                                              .doc(idPostagem)
+                                              .collection('comentar')
+                                              .doc(refComentario)
+                                              .collection('curtirComentario')
+                                              .doc(_idUsuarioComentado)
+                                              .set(curtidaData)
+                                              .then((_) {
+                                            // Atualize o campo 'curtidas' na novidade (aumente em 1)
+                                            novidadesCollection
+                                                .doc(idPostagem)
+                                                .collection('comentar')
+                                                .doc(refComentario)
+                                                .update({
+                                              'curtidas': FieldValue.increment(
+                                                  1), // Incrementa o contador de curtidas
+                                            });
+                                          });
+                                        }
+                                      });
+                                    }
+                                  }
+
+                                  enviarCurtida(idPostagem);
+                                },
+                                onLongPress: () {
                                   showModalBottomSheet(
                                     context: context,
                                     shape: const RoundedRectangleBorder(
@@ -245,81 +345,120 @@ class _comentarios_postagemState extends State<comentarios_postagem> {
                                               ),
                                             ),
                                           ),
-                                          ListTile(
-                                            leading: const Icon(
-                                              Icons.delete_sweep_rounded,
-                                              color: Colors.black,
-                                            ),
-                                            title: const Text('Excluir'),
-                                            onTap: () {
-                                              FirebaseFirestore.instance
-                                                  .collection('feed')
-                                                  .doc(idPostagem)
-                                                  .collection('comentar')
-                                                  .doc(refComentario)
-                                                  .delete()
-                                                  .then((_) {
+                                          if (_idUsuarioComentado == autorId)
+                                            ListTile(
+                                              leading: SizedBox(
+                                                  width: 25,
+                                                  child: Image.asset(
+                                                      'assets/lixeira.png')),
+                                              title: const Text('Excluir'),
+                                              onTap: () {
                                                 FirebaseFirestore.instance
                                                     .collection('feed')
                                                     .doc(idPostagem)
-                                                    .update({
-                                                  'comentarios':
-                                                      FieldValue.increment(-1),
+                                                    .collection('comentar')
+                                                    .doc(refComentario)
+                                                    .delete()
+                                                    .then((_) {
+                                                  FirebaseFirestore.instance
+                                                      .collection('feed')
+                                                      .doc(idPostagem)
+                                                      .update({
+                                                    'comentarios':
+                                                        FieldValue.increment(
+                                                            -1),
+                                                  });
                                                 });
-                                              });
-                                              // Lógica de copiar URL
-                                              Navigator.pop(context);
-                                            },
-                                          ),
+                                                // Lógica de copiar URL
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                          if (_idUsuarioComentado != autorId)
+                                            ListTile(
+                                              leading: SizedBox(
+                                                  width: 30,
+                                                  child: Image.asset(
+                                                      'assets/denunciar_01.png')),
+                                              title: const Text(
+                                                'Denunciar',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.red),
+                                              ),
+                                              onTap: () {
+                                                // Lógica de copiar URL
+                                                Navigator.pop(context);
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            denunciar(
+                                                              idPostagem:
+                                                                  refComentario,
+                                                              autor: autorId,
+                                                              nomeAutor:
+                                                                  userName,
+                                                            )));
+                                              },
+                                            ),
+                                          if (Platform.isIOS)
+                                            const SizedBox(
+                                              width: double.infinity,
+                                              height: 40,
+                                            )
                                         ],
                                       );
                                     },
                                   );
-                                }
-                              },
-                              child: ListTile(
-                                leading: GestureDetector(
-                                  onTap: () {
-                                    if (uidUsuario != _idUsuarioComentado) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => perfil_visita(
-                                                uidPerfil: uidUsuario,
-                                                nome: userName,
-                                                imagemPerfil: imageUrl,
-                                                sobrenome: 'nulo',
-                                                cadastro: 'nulo')));
-                                    } else {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => const perfil()));
-                                    }
-                                  },
-                                  child: Container(
-                                    width: 48,
-                                    height: 48,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                          color: const Color.fromARGB(
-                                              255, 202, 30, 82),
-                                          width: 2),
-                                    ),
-                                    child: ClipOval(
-                                      child: CachedNetworkImage(
-                                        imageUrl: imageUrl,
-                                        placeholder: (context, url) =>
-                                            const CircularProgressIndicator(
-                                          color: Colors.white,
+                                },
+                                child: Container(
+                                  width: double.infinity,
+                                  color: Colors.white,
+                                  child: ListTile(
+                                    leading: GestureDetector(
+                                      onTap: () {
+                                        if (uidUsuario != _idUsuarioComentado) {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      perfil_visita(
+                                                          uidPerfil: uidUsuario,
+                                                          nome: userName,
+                                                          imagemPerfil:
+                                                              urlImagem,
+                                                          sobrenome: 'nulo',
+                                                          cadastro: 'nulo')));
+                                        } else {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const perfil()));
+                                        }
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(top: 5),
+                                        child: Container(
+                                          width: 48,
+                                          height: 48,
+                                          decoration: const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: ClipOval(
+                                            child: CachedNetworkImage(
+                                              imageUrl: urlImagem!,
+                                              placeholder: (context, url) =>
+                                                  const CircularProgressIndicator(
+                                                color: Colors.white,
+                                              ),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
                                         ),
-                                        errorWidget: (context, url, error) =>
-                                            const Icon(Icons.error),
                                       ),
                                     ),
-                                  ),
-                                ),
-                                title: Stack(
-                                  children: [
-                                    Column(
+                                    title: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
@@ -352,72 +491,86 @@ class _comentarios_postagemState extends State<comentarios_postagem> {
                                             ),
                                             GestureDetector(
                                               onTap: () {
-                                                void curtirComentario(
+                                                void enviarCurtida(
                                                     String titulo) {
-                                                  CollectionReference
-                                                      novidadesCollection =
-                                                      FirebaseFirestore.instance
-                                                          .collection('feed');
+                                                  if (_idUsuarioComentado !=
+                                                      null) {
+                                                    CollectionReference
+                                                        novidadesCollection =
+                                                        FirebaseFirestore
+                                                            .instance
+                                                            .collection('feed');
 
-                                                  novidadesCollection
-                                                      .doc(idPostagem)
-                                                      .collection('comentar')
-                                                      .doc(refComentario)
-                                                      .collection(
-                                                          'curtirComentario')
-                                                      .doc(_idUsuarioComentado)
-                                                      .get()
-                                                      .then((doc) {
-                                                    if (doc.exists) {
-                                                      doc.reference
-                                                          .delete()
-                                                          .then((_) {
+                                                    // Verificar se o idUsuarioLogado já existe na coleção de curtir
+                                                    novidadesCollection
+                                                        .doc(idPostagem)
+                                                        .collection('comentar')
+                                                        .doc(refComentario)
+                                                        .collection(
+                                                            'curtirComentario')
+                                                        .doc(
+                                                            _idUsuarioComentado)
+                                                        .get()
+                                                        .then((doc) {
+                                                      if (doc.exists) {
+                                                        // O usuário já curtiu, então remova a curtida
+                                                        doc.reference
+                                                            .delete()
+                                                            .then((_) {
+                                                          // Atualize o campo 'curtidas' na novidade (reduza em 1)
+                                                          novidadesCollection
+                                                              .doc(idPostagem)
+                                                              .collection(
+                                                                  'comentar')
+                                                              .doc(
+                                                                  refComentario)
+                                                              .update({
+                                                            'curtidas': FieldValue
+                                                                .increment(
+                                                                    -1), // Reduz o contador de curtidas em 1
+                                                          });
+                                                        });
+                                                      } else {
+                                                        // O usuário ainda não curtiu, adicione a curtida
+                                                        Map<String, dynamic>
+                                                            curtidaData = {
+                                                          'hora': DateTime.now()
+                                                              .toString(),
+                                                          'uidusuario':
+                                                              _idUsuarioComentado,
+                                                        };
+
+                                                        // Adicione a curtida na coleção 'curtir' da novidade
                                                         novidadesCollection
                                                             .doc(idPostagem)
                                                             .collection(
                                                                 'comentar')
                                                             .doc(refComentario)
-                                                            .update({
-                                                          'curtidas': FieldValue
-                                                              .increment(-1),
-                                                        });
-                                                      });
-                                                    } else {
-                                                      Map<String, dynamic>
-                                                          curtidaComentario = {
-                                                        'hora': DateTime.now()
-                                                            .toString(),
-                                                        'uidusuario':
-                                                            _idUsuarioComentado,
-                                                      };
-
-                                                      novidadesCollection
-                                                          .doc(idPostagem)
-                                                          .collection(
-                                                              'comentar')
-                                                          .doc(refComentario)
-                                                          .collection(
-                                                              'curtirComentario')
-                                                          .doc(
-                                                              _idUsuarioComentado)
-                                                          .set(
-                                                              curtidaComentario)
-                                                          .then((_) {
-                                                        novidadesCollection
-                                                            .doc(idPostagem)
                                                             .collection(
-                                                                'comentar')
-                                                            .doc(refComentario)
-                                                            .update({
-                                                          'curtidas': FieldValue
-                                                              .increment(1),
+                                                                'curtirComentario')
+                                                            .doc(
+                                                                _idUsuarioComentado)
+                                                            .set(curtidaData)
+                                                            .then((_) {
+                                                          // Atualize o campo 'curtidas' na novidade (aumente em 1)
+                                                          novidadesCollection
+                                                              .doc(idPostagem)
+                                                              .collection(
+                                                                  'comentar')
+                                                              .doc(
+                                                                  refComentario)
+                                                              .update({
+                                                            'curtidas': FieldValue
+                                                                .increment(
+                                                                    1), // Incrementa o contador de curtidas
+                                                          });
                                                         });
-                                                      });
-                                                    }
-                                                  });
+                                                      }
+                                                    });
+                                                  }
                                                 }
 
-                                                curtirComentario(idPostagem);
+                                                enviarCurtida(idPostagem);
                                               },
                                               child: Column(
                                                 children: [
@@ -436,23 +589,29 @@ class _comentarios_postagemState extends State<comentarios_postagem> {
                                                         .snapshots(),
                                                     builder:
                                                         (context, snapshot) {
-                                                      if (!snapshot.hasData ||
-                                                          !snapshot
-                                                              .data!.exists) {
-                                                        // Se não houver dados (usuário não curtiu), mostre o ícone de coração vazio
-                                                        return SizedBox(
-                                                                  width: 20,
-                                                                  child: Image
-                                                                      .asset(
-                                                                          'assets/curtir_01.png'));
-                                                      }
+                                                      bool usuarioCurtiu =
+                                                          snapshot.hasData &&
+                                                              snapshot
+                                                                  .data!.exists;
 
-                                                      // Se houver dados (usuário já curtiu), mostre o ícone de coração cheio
-                                                      return SizedBox(
-                                                                  width: 20,
-                                                                  child: Image
-                                                                      .asset(
-                                                                          'assets/curtir_02.png'));
+                                                      return AnimatedContainer(
+                                                        curve: usuarioCurtiu
+                                                            ? Curves.elasticOut
+                                                            : Curves.linear,
+                                                        duration: Duration(
+                                                            milliseconds:
+                                                                usuarioCurtiu
+                                                                    ? 1100
+                                                                    : 0),
+                                                        width: usuarioCurtiu
+                                                            ? 37
+                                                            : 21,
+                                                        child: usuarioCurtiu
+                                                            ? Image.asset(
+                                                                'assets/coracao_02.png')
+                                                            : Image.asset(
+                                                                'assets/coracao_04.png'),
+                                                      );
                                                     },
                                                   ),
                                                   StreamBuilder<
@@ -494,7 +653,7 @@ class _comentarios_postagemState extends State<comentarios_postagem> {
                                                   ),
                                                 ],
                                               ),
-                                            ),
+                                            )
                                           ],
                                         ),
                                         Wrap(
@@ -506,6 +665,16 @@ class _comentarios_postagemState extends State<comentarios_postagem> {
                                               trimMode: TrimMode.Line,
                                               trimCollapsedText: 'ver mais',
                                               trimExpandedText: ' ver menos',
+                                              moreStyle: const TextStyle(
+                                                color: Colors.black26,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14,
+                                              ),
+                                              lessStyle: const TextStyle(
+                                                color: Colors.black26,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14,
+                                              ),
                                               style: const TextStyle(
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.w400,
@@ -514,119 +683,116 @@ class _comentarios_postagemState extends State<comentarios_postagem> {
                                             ),
                                           ],
                                         ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 8),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              GestureDetector(
-                                                onTap: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: ((context) =>
-                                                          respostas_comentario_postagem(
-                                                              uidUsuario:
-                                                                  uidUsuario,
-                                                              refComentario:
-                                                                  refComentario,
-                                                              idPostagem:
-                                                                  idPostagem,
-                                                              texto: texto,
-                                                              hora: hora,
-                                                              imageUrl:
-                                                                  imageUrl)),
-                                                    ),
-                                                  );
-                                                },
-                                                child: const Text(
-                                                  'Responder',
-                                                  style: TextStyle(
-                                                      fontSize: 12,
-                                                      color: Colors.grey,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
+                                        const SizedBox(height: 10),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: ((context) =>
+                                                        respostas_comentario_postagem(
+                                                            uidUsuario:
+                                                                uidUsuario,
+                                                            refComentario:
+                                                                refComentario,
+                                                            idPostagem:
+                                                                idPostagem,
+                                                            texto: texto,
+                                                            hora: hora,
+                                                            imageUrl:
+                                                                urlImagem)),
+                                                  ),
+                                                );
+                                              },
+                                              child: const Text(
+                                                'Responder',
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.grey,
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                               ),
-                                              StreamBuilder<DocumentSnapshot>(
-                                                stream: FirebaseFirestore
-                                                    .instance
-                                                    .collection('feed')
-                                                    .doc(idPostagem)
-                                                    .collection('comentar')
-                                                    .doc(refComentario)
-                                                    .snapshots(),
-                                                builder: (context, snapshot) {
-                                                  if (!snapshot.hasData) {
-                                                    return const Text(
-                                                        '0', // Ou qualquer outro valor padrão
-                                                        style: TextStyle(
-                                                            fontSize: 12,
-                                                            color: Colors.grey,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold));
-                                                  }
+                                            ),
+                                            StreamBuilder<DocumentSnapshot>(
+                                              stream: FirebaseFirestore.instance
+                                                  .collection('feed')
+                                                  .doc(idPostagem)
+                                                  .collection('comentar')
+                                                  .doc(refComentario)
+                                                  .snapshots(),
+                                              builder: (context, snapshot) {
+                                                if (!snapshot.hasData) {
+                                                  return const Text(
+                                                      '0', // Ou qualquer outro valor padrão
+                                                      style: TextStyle(
+                                                          fontSize: 12,
+                                                          color: Colors.grey,
+                                                          fontWeight:
+                                                              FontWeight.bold));
+                                                }
 
-                                                  final respostas = snapshot
-                                                      .data!
-                                                      .get('respostas');
-                                                  return respostas == 0
-                                                      ? const SizedBox.shrink()
-                                                      : GestureDetector(
-                                                          onTap: () {
-                                                            Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                builder: ((context) => respostas_comentario_postagem(
-                                                                    uidUsuario:
-                                                                        uidUsuario,
-                                                                    refComentario:
-                                                                        refComentario,
-                                                                    idPostagem:
-                                                                        idPostagem,
-                                                                    texto:
-                                                                        texto,
-                                                                    hora: hora,
-                                                                    imageUrl:
-                                                                        imageUrl)),
-                                                              ),
-                                                            );
-                                                          },
-                                                          child: Text(
-                                                              '    -    Ver $respostas respostas',
-                                                              style: const TextStyle(
-                                                                  fontSize: 12,
-                                                                  color: Colors
-                                                                      .grey,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold)),
-                                                        );
-                                                },
-                                              ),
-                                            ],
-                                          ),
+                                                final respostas = snapshot.data!
+                                                    .get('respostas');
+                                                return respostas == 0
+                                                    ? const SizedBox.shrink()
+                                                    : GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: ((context) => respostas_comentario_postagem(
+                                                                  uidUsuario:
+                                                                      uidUsuario,
+                                                                  refComentario:
+                                                                      refComentario,
+                                                                  idPostagem:
+                                                                      idPostagem,
+                                                                  texto: texto,
+                                                                  hora: hora,
+                                                                  imageUrl:
+                                                                      urlImagem)),
+                                                            ),
+                                                          );
+                                                        },
+                                                        child: Text(
+                                                            '  -  Ver $respostas respostas',
+                                                            style: const TextStyle(
+                                                                fontSize: 12,
+                                                                color:
+                                                                    Colors.grey,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold)),
+                                                      );
+                                              },
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                    );
-                  },
-                );
+                              );
+                            } else {
+                              // Trate o caso em que os dados do usuário não foram encontrados
+                              return const Text(
+                                  "Dados do usuário não encontrados");
+                            }
+                          }
+                        },
+                      );
+                    },
+                  );
+                }
               },
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(26),
+            padding: const EdgeInsets.all(12),
             child: Align(
               alignment: Alignment.bottomCenter,
               child: Row(

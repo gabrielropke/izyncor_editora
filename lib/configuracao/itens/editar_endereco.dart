@@ -535,55 +535,24 @@ class _editar_enderecoState extends State<editar_endereco> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 40),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const home_principal()));
-                                },
-                                child: Container(
-                                  width: 110,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      border: Border.all(
-                                          width: 1, color: Colors.blue),
-                                      borderRadius: BorderRadius.circular(8)),
-                                  child: const Center(
-                                      child: Text(
-                                    'Cancelar',
-                                    style: TextStyle(
-                                        color: Colors.blue,
-                                        fontWeight: FontWeight.bold),
-                                  )),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              GestureDetector(
-                                onTap: () {
-                                  atualizarEndereco();
-                                },
-                                child: Container(
-                                  width: 110,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                      color: Colors.blue,
-                                      borderRadius: BorderRadius.circular(8)),
-                                  child: const Center(
-                                      child: Text(
-                                    'Salvar',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
-                                  )),
-                                ),
-                              )
-                            ],
+                          child: GestureDetector(
+                            onTap: () {
+                              atualizarEndereco();
+                            },
+                            child: Container(
+                              width: 110,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                  color: Colors.blue,
+                                  borderRadius: BorderRadius.circular(8)),
+                              child: const Center(
+                                  child: Text(
+                                'Salvar',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              )),
+                            ),
                           ),
                         )
                       ],

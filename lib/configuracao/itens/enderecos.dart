@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:editora_izyncor_app/configuracao/itens/base%20endere%C3%A7o.dart';
-import 'package:editora_izyncor_app/interior_usuario/tabbar.dart';
 import 'package:editora_izyncor_app/model/endereco.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -556,32 +555,6 @@ class _enderecos_cadastroState extends State<enderecos_cadastro> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const home_principal()));
-                                },
-                                child: Container(
-                                  width: 110,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      border: Border.all(
-                                          width: 1, color: Colors.blue),
-                                      borderRadius: BorderRadius.circular(8)),
-                                  child: const Center(
-                                      child: Text(
-                                    'Cancelar',
-                                    style: TextStyle(
-                                        color: Colors.blue,
-                                        fontWeight: FontWeight.bold),
-                                  )),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
                               GestureDetector(
                                 onTap: () {
                                   cadastrarEndereco(Endereco());

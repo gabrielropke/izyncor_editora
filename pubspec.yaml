@@ -65,7 +65,22 @@ dependencies:
   flutter_sound_lite: ^8.5.0
   permission_handler: ^11.0.0
   url_launcher: ^6.1.14
-  
+  flutter_native_splash: ^2.2.16
+  flutter_launcher_icons: ^0.11.0
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: "assets/splash2.png"
+  android: true
+  ios: true
+
+flutter_icons:
+  image_path: "assets/icone2.png"
+  ios: true
+  remove_alpha_ios: true
+  android: "launcher_icon"
+  adaptive_icon_backgroud: "#ffffff"
+  adaptive_icon_foreground: "assets/icone.png"
 
 dev_dependencies:
   flutter_test:
@@ -122,7 +137,7 @@ flutter:
     - assets/carrinho.png
     - assets/logoizyncor.png
     - assets/logobanner.png
-    - assets/logobanner2.png
+    - assets/splash.png
     - assets/oculosicone.png
     - assets/relogioicone.png
     - assets/boleto.jpg
@@ -167,6 +182,34 @@ flutter:
     - assets/salvar_02.png
     - assets/salvar_03.png
     - assets/salvar_04.png
+    - assets/ds_01.png
+    - assets/ds_02.png
+    - assets/galeria.png
+    - assets/galeria_02.png
+    - assets/textos_02.png
+    - assets/coracao_03.png
+    - assets/comentar_post.png
+    - assets/coracao_02.png
+    - assets/coracao_01.png
+    - assets/coracao_04.png
+    - assets/disquete.png
+    - assets/disquete_08.png
+    - assets/options_02.png
+    - assets/options.png
+    - assets/compartilhar.png
+    - assets/compartilhar_branco.png
+    - assets/disquete_08_branco.png
+    - assets/disquete_06_branco.png
+    - assets/comentar_branco.png
+    - assets/coracao_01_branco.png
+    - assets/denunciar_01.png
+    - assets/copiar.png
+    - assets/lixeira.png
+    - assets/settings.png
+    - assets/logo.png
+    - assets/logo2.png
+    - assets/logo3.png
+    - assets/camera2.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

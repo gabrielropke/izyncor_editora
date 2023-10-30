@@ -2,10 +2,10 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:editora_izyncor_app/interior_usuario/store/comentarios/avalicaoes.dart';
-import 'package:editora_izyncor_app/interior_usuario/store/metodos/webview.dart';
 import 'package:editora_izyncor_app/interior_usuario/store/sobre.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class info_livros extends StatefulWidget {
   final String titulo;
@@ -433,65 +433,26 @@ class _info_livrosState extends State<info_livros> {
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 20),
-                                child: Row(
+                                child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     SizedBox(
-                                      width: 70,
-                                      height: 30,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                              width: 1, color: Colors.black45),
-                                          borderRadius:
-                                              BorderRadius.circular(32),
-                                          color: Colors.white,
-                                        ),
-                                        child: const Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Icon(Icons.star,
-                                                size: 20, color: Colors.amber),
-                                            SizedBox(width: 5),
-                                            Text('4,8'),
-                                          ],
-                                        ),
-                                      ),
+                                        width: 40,
+                                        child: Image.asset(
+                                            'assets/oculosicone.png')),
+                                    const SizedBox(height: 5),
+                                    StreamBuilder<int>(
+                                      stream: contadorStream,
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          int contadorAtual =
+                                              snapshot.data!;
+                                          return Text("$contadorAtual");
+                                        } else {
+                                          return Text("...");
+                                        }
+                                      },
                                     ),
-                                    const SizedBox(width: 30),
-                                    Column(
-                                      children: [
-                                        SizedBox(
-                                            width: 40,
-                                            child: Image.asset(
-                                                'assets/oculosicone.png')),
-                                        const SizedBox(height: 5),
-                                        StreamBuilder<int>(
-                                          stream: contadorStream,
-                                          builder: (context, snapshot) {
-                                            if (snapshot.hasData) {
-                                              int contadorAtual =
-                                                  snapshot.data!;
-                                              return Text("$contadorAtual");
-                                            } else {
-                                              return Text("...");
-                                            }
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                    // const SizedBox(width: 30),
-                                    // Column(
-                                    //   children: [
-                                    //     SizedBox(
-                                    //         width: 17,
-                                    //         child: Image.asset(
-                                    //             'assets/relogioicone.png')),
-                                    //     const SizedBox(height: 5),
-                                    //     const Text('72 hrs'),
-                                    //   ],
-                                    // ),
                                   ],
                                 ),
                               ),
@@ -718,92 +679,54 @@ class _info_livrosState extends State<info_livros> {
               ),
             ),
           ),
-          Align(
-              alignment: Alignment.bottomCenter,
-              child: SizedBox(
-                width: double.infinity,
-                height: 130,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 60,
-                      height: 60,
+          Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Align(
+                alignment: Alignment.bottomCenter,
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 60,
+                  child: SizedBox(
+                    width: 260,
+                    height: 60,
+                    child: GestureDetector(
+                      onTap: () async {
+                        final ecos = Uri.parse('https://loja.izyncor.org/produto/ecos-de-melancolia/');
+                        final caligem = Uri.parse('https://loja.izyncor.org/produto/caligem/');
+                        final quintal = Uri.parse('https://loja.izyncor.org/produto/quintal-fantastico/');
+                        if (titulo == 'Ecos de Melancolia' &&
+                            await canLaunchUrl(ecos)) {
+                          await launchUrl(ecos);
+                        }
+                        if (titulo == 'Caligem' &&
+                            await canLaunchUrl(caligem)) {
+                          await launchUrl(caligem);
+                        }
+                        if (titulo == 'Quintal Fantástico' &&
+                            await canLaunchUrl(quintal)) {
+                          await launchUrl(quintal);
+                        }
+                      },
                       child: Container(
                         decoration: BoxDecoration(
                             border: Border.all(width: 2, color: Colors.white),
                             borderRadius: BorderRadius.circular(12),
-                            color: Color.fromARGB(255, 174, 190, 224)),
+                            color: Color.fromARGB(255, 116, 139, 189)),
                         child: Center(
-                            child: GestureDetector(
-                          onTap: () {
-                            addCarrinho();
-                          },
-                          child: StreamBuilder<DocumentSnapshot>(
-                            stream: FirebaseFirestore.instance
-                                .collection('carrinho')
-                                .doc(_idUsuarioLogado)
-                                .collection('meuslivros')
-                                .doc(isbn)
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData || !snapshot.data!.exists) {
-                                // Se não houver dados (usuário não curtiu), mostre o ícone de coração vazio
-                                return const Icon(
-                                  Icons.shopping_cart_outlined,
-                                  color: Colors.white,
-                                );
-                              }
-
-                              // Se houver dados (usuário já curtiu), mostre o ícone de coração cheio
-                              return const Icon(
-                                Icons.check,
-                                color: Colors
-                                    .white, // Ou qualquer outra cor desejada
-                              );
-                            },
-                          ),
-                        )),
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    SizedBox(
-                      width: 260,
-                      height: 60,
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => mp_tela(
-                                        nomeUsuario: nomeUsuario,
-                                        emailUsuario: emailUsuario,
-                                        isbn: isbn,
-                                        titulo: titulo,
-                                        valor: valor,
-                                      )));
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(width: 2, color: Colors.white),
-                              borderRadius: BorderRadius.circular(12),
-                              color: Color.fromARGB(255, 116, 139, 189)),
-                          child: Center(
-                            child: Text(
-                              'Comprar por R\$ $valor',
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500),
-                              textAlign: TextAlign.center,
-                            ),
+                          child: Text(
+                            'Comprar por R\$ $valor',
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500),
+                            textAlign: TextAlign.center,
                           ),
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ))
+                  ),
+                )),
+          )
         ],
       ),
     );

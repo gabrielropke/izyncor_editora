@@ -382,6 +382,7 @@ class _mais_dados_googleState extends State<mais_dados_google> {
                     child: TextField(
                       controller: controllerUsername,
                       keyboardType: TextInputType.name,
+                      maxLength: 20,
                       style: const TextStyle(
                         color: Colors.black,
                         fontSize: 16,
@@ -459,7 +460,7 @@ class _mais_dados_googleState extends State<mais_dados_google> {
                         width: 260,
                         height: 55,
                         decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 255, 255, 255),
+                          color: const Color.fromARGB(255, 255, 255, 255),
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.circular(13),
                         ),
@@ -472,7 +473,7 @@ class _mais_dados_googleState extends State<mais_dados_google> {
                                     .format(_selectedDate!),
                             style: TextStyle(
                               color: _selectedDate == null
-                                  ? Color.fromARGB(255, 189, 185, 185)
+                                  ? const Color.fromARGB(255, 189, 185, 185)
                                   : Colors.black,
                               fontWeight: FontWeight.w400,
                               fontSize: 16,
@@ -484,7 +485,7 @@ class _mais_dados_googleState extends State<mais_dados_google> {
                         width: 80,
                         height: 60,
                         decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 255, 255, 255),
+                          color: const Color.fromARGB(255, 255, 255, 255),
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.circular(13),
                         ),
@@ -511,7 +512,7 @@ class _mais_dados_googleState extends State<mais_dados_google> {
                       height: 50,
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFFBB2649),
+                              backgroundColor: const Color(0xFFBB2649),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(13))),
                           onPressed: () {

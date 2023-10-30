@@ -176,214 +176,210 @@ class _respostas_comentario_postagemState
         elevation: 0,
         leadingWidth: 26,
         backgroundColor: Colors.transparent,
-        title: const Text('Comentários'),
+        title: const Text('Respostas'),
       ),
       body: Column(children: [
-        Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: ListTile(
-            leading: GestureDetector(
-              onTap: () {
-                if (uidUsuario == _idUsuarioLogado) {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const perfil()));
-                } else {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context1) => perfil_visita(
-                              uidPerfil: uidUsuario!,
-                              nome: nomeComentario,
-                              imagemPerfil: imageUrl!,
-                              sobrenome: '',
-                              cadastro: 'cadastro')));
-                }
-              },
-              child: Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                      color: const Color.fromARGB(255, 235, 187, 55), width: 2),
-                ),
-                child: ClipOval(
-                  child: CachedNetworkImage(
-                    imageUrl: imageUrl!,
-                    placeholder: (context, url) =>
-                        const CircularProgressIndicator(
-                      color: Colors.white,
-                    ),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
+        ListTile(
+          leading: GestureDetector(
+            onTap: () {
+              if (uidUsuario == _idUsuarioLogado) {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const perfil()));
+              } else {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context1) => perfil_visita(
+                            uidPerfil: uidUsuario!,
+                            nome: nomeComentario,
+                            imagemPerfil: imageUrl!,
+                            sobrenome: '',
+                            cadastro: 'cadastro')));
+              }
+            },
+            child: Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                    color: const Color.fromARGB(255, 235, 187, 55), width: 2),
+              ),
+              child: ClipOval(
+                child: CachedNetworkImage(
+                  imageUrl: imageUrl!,
+                  placeholder: (context, url) =>
+                      const CircularProgressIndicator(
+                    color: Colors.white,
                   ),
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
-            title: Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(
-                            nomeComentario,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          const Text(
-                            ' • ',
-                            style: TextStyle(color: Colors.grey, fontSize: 16),
-                          ),
-                          Text(
-                            formatarHora(hora!),
-                            style: const TextStyle(
-                                fontSize: 13,
-                                color: Colors.grey,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              curtirComentario() {
-                                CollectionReference novidadesCollection =
-                                    FirebaseFirestore.instance
-                                        .collection('feed');
+          ),
+          title: Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          nomeComentario,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                        const Text(
+                          ' • ',
+                          style: TextStyle(color: Colors.grey, fontSize: 16),
+                        ),
+                        Text(
+                          formatarHora(hora!),
+                          style: const TextStyle(
+                              fontSize: 13,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            curtirComentario() {
+                              CollectionReference novidadesCollection =
+                                  FirebaseFirestore.instance
+                                      .collection('feed');
 
-                                novidadesCollection
-                                    .doc(idPostagem)
-                                    .collection('comentar')
-                                    .doc(refComentario)
-                                    .collection('curtirComentario')
-                                    .doc(_idUsuarioLogado)
-                                    .get()
-                                    .then((doc) {
-                                  if (doc.exists) {
-                                    doc.reference.delete().then((_) {
-                                      novidadesCollection
-                                          .doc(idPostagem)
-                                          .collection('comentar')
-                                          .doc(refComentario)
-                                          .update({
-                                        'curtidas': FieldValue.increment(-1),
-                                      });
-                                    });
-                                  } else {
-                                    Map<String, dynamic> curtidaComentario = {
-                                      'hora': DateTime.now().toString(),
-                                      'uidusuario': uidUsuario,
-                                    };
-
-                                    novidadesCollection
-                                        .doc(idPostagem)
-                                        .collection('comentar')
-                                        .doc(refComentario)
-                                        .collection('curtirComentario')
-                                        .doc(_idUsuarioLogado)
-                                        .set(curtidaComentario)
-                                        .then((_) {
-                                      novidadesCollection
-                                          .doc(idPostagem)
-                                          .collection('comentar')
-                                          .doc(refComentario)
-                                          .update({
-                                        'curtidas': FieldValue.increment(1),
-                                      });
-                                    });
-                                  }
-                                });
-                              }
-
-                              curtirComentario();
-                            },
-                            child: StreamBuilder<DocumentSnapshot>(
-                              stream: FirebaseFirestore.instance
-                                  .collection('feed')
+                              novidadesCollection
                                   .doc(idPostagem)
                                   .collection('comentar')
                                   .doc(refComentario)
                                   .collection('curtirComentario')
                                   .doc(_idUsuarioLogado)
-                                  .snapshots(),
-                              builder: (context, snapshot) {
-                                if (!snapshot.hasData ||
-                                    !snapshot.data!.exists) {
-                                  // Se não houver dados (usuário não curtiu), mostre o ícone de coração vazio
-                                  return SizedBox(
-                                      width: 20,
-                                      child:
-                                          Image.asset('assets/curtir_01.png'));
-                                }
+                                  .get()
+                                  .then((doc) {
+                                if (doc.exists) {
+                                  doc.reference.delete().then((_) {
+                                    novidadesCollection
+                                        .doc(idPostagem)
+                                        .collection('comentar')
+                                        .doc(refComentario)
+                                        .update({
+                                      'curtidas': FieldValue.increment(-1),
+                                    });
+                                  });
+                                } else {
+                                  Map<String, dynamic> curtidaComentario = {
+                                    'hora': DateTime.now().toString(),
+                                    'uidusuario': uidUsuario,
+                                  };
 
-                                // Se houver dados (usuário já curtiu), mostre o ícone de coração cheio
-                                return SizedBox(
-                                    width: 20,
-                                    child: Image.asset('assets/curtir_02.png'));
-                              },
-                            ),
-                          ),
-                          StreamBuilder<DocumentSnapshot>(
+                                  novidadesCollection
+                                      .doc(idPostagem)
+                                      .collection('comentar')
+                                      .doc(refComentario)
+                                      .collection('curtirComentario')
+                                      .doc(_idUsuarioLogado)
+                                      .set(curtidaComentario)
+                                      .then((_) {
+                                    novidadesCollection
+                                        .doc(idPostagem)
+                                        .collection('comentar')
+                                        .doc(refComentario)
+                                        .update({
+                                      'curtidas': FieldValue.increment(1),
+                                    });
+                                  });
+                                }
+                              });
+                            }
+
+                            curtirComentario();
+                          },
+                          child: StreamBuilder<DocumentSnapshot>(
                             stream: FirebaseFirestore.instance
                                 .collection('feed')
                                 .doc(idPostagem)
                                 .collection('comentar')
                                 .doc(refComentario)
+                                .collection('curtirComentario')
+                                .doc(_idUsuarioLogado)
                                 .snapshots(),
                             builder: (context, snapshot) {
-                              if (!snapshot.hasData) {
-                                return const Text(
-                                    '0', // Ou qualquer outro valor padrão
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.bold));
-                              }
+                              bool usuarioCurtiu =
+                                  snapshot.hasData && snapshot.data!.exists;
 
-                              final curtidas = snapshot.data!.get('curtidas');
-                              return Text('$curtidas',
-                                  style: const TextStyle(
+                              return AnimatedContainer(
+                                curve: usuarioCurtiu
+                                    ? Curves.elasticOut
+                                    : Curves.linear,
+                                duration: Duration(
+                                    milliseconds: usuarioCurtiu ? 1100 : 0),
+                                width: usuarioCurtiu ? 37 : 21,
+                                child: usuarioCurtiu
+                                    ? Image.asset('assets/coracao_02.png')
+                                    : Image.asset('assets/coracao_04.png'),
+                              );
+                            },
+                          ),
+                        ),
+                        StreamBuilder<DocumentSnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('feed')
+                              .doc(idPostagem)
+                              .collection('comentar')
+                              .doc(refComentario)
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return const Text(
+                                  '0', // Ou qualquer outro valor padrão
+                                  style: TextStyle(
                                       fontSize: 12,
                                       color: Colors.grey,
                                       fontWeight: FontWeight.bold));
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Wrap(
-                    children: [
-                      Align(
-                        alignment: Alignment.bottomLeft,
-                        child: ReadMoreText(
-                          texto!,
-                          trimLines: 2,
-                          colorClickableText: Colors.blue,
-                          trimMode: TrimMode.Line,
-                          trimCollapsedText: 'ver mais',
-                          trimExpandedText: ' ver menos',
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 16,
-                          ),
+                            }
+
+                            final curtidas = snapshot.data!.get('curtidas');
+                            return Text('$curtidas',
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.bold));
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                Wrap(
+                  children: [
+                    Align(
+                      alignment: Alignment.bottomLeft,
+                      child: ReadMoreText(
+                        texto!,
+                        trimLines: 2,
+                        colorClickableText: Colors.blue,
+                        trimMode: TrimMode.Line,
+                        trimCollapsedText: 'ver mais',
+                        trimExpandedText: ' ver menos',
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 16,
                         ),
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
-        const SizedBox(height: 10),
         Padding(
           padding: const EdgeInsets.all(12),
           child: Container(
@@ -449,7 +445,7 @@ class _respostas_comentario_postagemState
                         String imageUrl = snapshot.data!['urlImagem']!;
 
                         return Padding(
-                          padding: const EdgeInsets.all(12.0),
+                          padding: const EdgeInsets.only(top: 10),
                           child: GestureDetector(
                             onLongPress: () {
                               if (idUsuarioLogado) {
@@ -523,12 +519,8 @@ class _respostas_comentario_postagemState
                                   child: Container(
                                     width: 48,
                                     height: 48,
-                                    decoration: BoxDecoration(
+                                    decoration: const BoxDecoration(
                                       shape: BoxShape.circle,
-                                      border: Border.all(
-                                          color: const Color.fromARGB(
-                                              255, 202, 30, 82),
-                                          width: 2),
                                     ),
                                     child: ClipOval(
                                       child: CachedNetworkImage(
@@ -537,8 +529,7 @@ class _respostas_comentario_postagemState
                                             const CircularProgressIndicator(
                                           color: Colors.white,
                                         ),
-                                        errorWidget: (context, url, error) =>
-                                            const Icon(Icons.error),
+                                        fit: BoxFit.cover,
                                       ),
                                     ),
                                   ),
@@ -578,6 +569,7 @@ class _respostas_comentario_postagemState
                                             ),
                                           ],
                                         ),
+                                        const SizedBox(height: 5),
                                         Wrap(
                                           children: [
                                             ReadMoreText(
@@ -595,6 +587,7 @@ class _respostas_comentario_postagemState
                                             ),
                                           ],
                                         ),
+                                        const SizedBox(height: 15)
                                       ],
                                     ),
                                   ],
@@ -644,8 +637,6 @@ class _respostas_comentario_postagemState
                             borderRadius: BorderRadius.all(Radius.circular(32)),
                           ),
                           focusedBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Color.fromARGB(255, 206, 38, 88)),
                             borderRadius: BorderRadius.all(Radius.circular(32)),
                           ),
                         ),

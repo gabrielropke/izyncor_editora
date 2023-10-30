@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:editora_izyncor_app/interior_usuario/chat/mensagens_chat.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,6 +22,7 @@ class _conversas_chatState extends State<conversas_chat> {
   String? _idUsuarioLogado;
 
   final _controller = StreamController<QuerySnapshot>.broadcast();
+  String pesquisa = ""; // Variável para armazenar o texto de pesquisa
 
   // RECUPERAR DADOS UM USUARIO
   _carregaarDadosIniciais() async {
@@ -54,12 +56,37 @@ class _conversas_chatState extends State<conversas_chat> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: SizedBox(
+          width: double.infinity,
+          height: 30,
+          child: TextField(
+            decoration: InputDecoration(
+              border: const OutlineInputBorder(borderSide: BorderSide.none),
+              prefixIcon: Image.asset('assets/pesquisa.png', scale: 3),
+              fillColor: const Color.fromARGB(255, 243, 242, 242),
+              filled: true,
+            ),
+            onChanged: (val) {
+              setState(() {
+                pesquisa = val;
+              });
+            },
+          ),
+        ),
+      ),
       body: Stack(
         children: [
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage("assets/back2.jpg"), fit: BoxFit.cover),
+                image: AssetImage("assets/back2.jpg"),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           StreamBuilder<QuerySnapshot>(
@@ -80,8 +107,9 @@ class _conversas_chatState extends State<conversas_chat> {
                             child: Text(
                               "carregando conversas....",
                               style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black26,
+                                fontSize: 16,
                               ),
                             ),
                           ),
@@ -97,193 +125,207 @@ class _conversas_chatState extends State<conversas_chat> {
                     QuerySnapshot querySnapshot = snapshot.data!;
                     if (querySnapshot.docs.isEmpty) {
                       return const Center(
-                          child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.chat_outlined, color: Colors.black12, size: 90),
-                          Text(
-                            'Você ainda não tem mensagens.',
-                            style: TextStyle(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.chat_outlined, color: Colors.black12, size: 90),
+                            Text(
+                              'Você ainda não tem mensagens.',
+                              style: TextStyle(
                                 fontWeight: FontWeight.w500,
                                 color: Colors.black26,
-                                fontSize: 18),
-                          )
-                        ],
-                      ));
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
                     }
+
+                    // Filtrar as conversas com base no nome pesquisado
+                    List<DocumentSnapshot> conversas = querySnapshot.docs.where((conversa) {
+                      String nomeCompleto = conversa["nome"] + " " + conversa['sobrenome'];
+                      return nomeCompleto.toLowerCase().contains(pesquisa.toLowerCase());
+                    }).toList();
+
+                    if (conversas.isEmpty) {
+                      return const Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.chat_outlined, color: Colors.black12, size: 90),
+                            Text(
+                              'Nenhuma conversa encontrada.',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black26,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+
                     return ListView.builder(
-                        itemCount: querySnapshot.docs.length,
-                        itemBuilder: (context, indice) {
-                          List<DocumentSnapshot> conversas =
-                              querySnapshot.docs.toList();
-                          DocumentSnapshot item = conversas[indice];
+                      itemCount: conversas.length,
+                      itemBuilder: (context, indice) {
+                        DocumentSnapshot item = conversas[indice];
+                        String urlImagem = item["caminhoFoto"];
+                        String tipo = item["tipoMensagem"];
+                        String mensagem = item["mensagem"];
+                        String nome = item["nome"];
+                        String sobrenome = item['sobrenome'];
+                        String idUsuarioConversa = item['idDestinatario'];
+                        String autorMensagem = item['autorMensagem'];
 
-                          String urlImagem = item["caminhoFoto"];
-                          String tipo = item["tipoMensagem"];
-                          String mensagem = item["mensagem"];
-                          String nome = item["nome"];
-                          String sobrenome = item['sobrenome'];
-                          String idUsuarioConversa = item['idDestinatario'];
-                          String autorMensagem = item['autorMensagem'];
-
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Mensagens(
-                                        uidPerfil: idUsuarioConversa,
-                                        nome: nome,
-                                        imagemPerfil: urlImagem,
-                                        sobrenome: sobrenome)),
-                              );
-                            },
-                            onLongPress: () {
-                              // ignore: no_leading_underscores_for_local_identifiers
-                              void _opcoesMensagem(BuildContext context) {
-                                showModalBottomSheet(
-                                    context: context,
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(
-                                            20.0), // Defina o raio para bordas arredondadas superiores
-                                      ),
-                                    ),
-                                    builder: (BuildContext context) {
-                                      return Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Center(
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 10),
-                                              child: Container(
-                                                width: 40,
-                                                height: 4,
-                                                decoration: BoxDecoration(
-                                                    color: Colors.black38,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12)),
-                                              ),
-                                            ),
-                                          ),
-                                          ListTile(
-                                            leading: const Icon(
-                                              Icons.delete_outline,
-                                              color: Colors.black,
-                                            ),
-                                            title:
-                                                const Text('Apagar conversa'),
-                                            onTap: () {
-                                              void apagarConversa() async {
-                                                await _firebaseFirestore
-                                                    .collection("conversas")
-                                                    .doc(_idUsuarioLogado)
-                                                    .collection(
-                                                        'ultima_conversa')
-                                                    .doc(
-                                                        idUsuarioConversa) // Substitua 'idDoDocumentoParaExcluir' pelo ID correto
-                                                    .delete();
-                                                setState(() {});
-                                              }
-
-                                              void apagarMensagens() async {
-                                                final ultimaConversaCollection =
-                                                    _firebaseFirestore
-                                                        .collection("mensagens")
-                                                        .doc(_idUsuarioLogado)
-                                                        .collection(
-                                                            idUsuarioConversa);
-
-                                                // Obtém todos os documentos da coleção 'ultima_conversa'
-                                                final documentos =
-                                                    await ultimaConversaCollection
-                                                        .get();
-
-                                                // Exclui todos os documentos em um lote
-                                                for (final documento
-                                                    in documentos.docs) {
-                                                  await documento.reference
-                                                      .delete();
-                                                }
-
-                                                setState(() {});
-                                              }
-
-                                              apagarConversa();
-                                              apagarMensagens();
-                                              Navigator.pop(context);
-                                            },
-                                          ),
-                                        ],
-                                      );
-                                    });
-                              }
-
-                              _opcoesMensagem(context);
-                            },
-                            child: Column(
-                              children: [
-                                ListTile(
-                                  contentPadding:
-                                      const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                                  leading: CircleAvatar(
-                                    maxRadius: 30,
-                                    backgroundColor: Colors.grey,
-                                    // ignore: unnecessary_null_comparison
-                                    backgroundImage: urlImagem != null
-                                        ? NetworkImage(urlImagem)
-                                        : null,
-                                  ),
-                                  title: Text(
-                                    '$nome $sobrenome',
-                                    style: const TextStyle(
-                                        color: Color.fromARGB(255, 0, 0, 0),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
-                                  ),
-                                  subtitle: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Text(
-                                              autorMensagem == _idUsuarioLogado
-                                                  ? 'Você: '
-                                                  : '',
-                                              style: TextStyle(
-                                                  color: Colors.grey[600],
-                                                  fontSize: 14)),
-                                          Text(
-                                              tipo == "texto"
-                                                  ? mensagem
-                                                  : "Imagem...",
-                                              style: TextStyle(
-                                                  color: Colors.grey[600],
-                                                  fontSize: 16)),
-                                        ],
-                                      ),
-                                      Text(
-                                        item["hora"] != null
-                                            ? DateFormat('HH:mm').format(
-                                                DateTime.parse(item["hora"]))
-                                            : '',
-                                      ),
-                                    ],
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Mensagens(
+                                  uidPerfil: idUsuarioConversa,
+                                  nome: nome,
+                                  imagemPerfil: urlImagem,
+                                  sobrenome: sobrenome,
+                                ),
+                              ),
+                            );
+                          },
+                          onLongPress: () {
+                            void _opcoesMensagem(BuildContext context) {
+                              showModalBottomSheet(
+                                context: context,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20.0),
                                   ),
                                 ),
-                                const SizedBox(height: 3),
-                                Container(
-                                  width: double.infinity,
-                                  height: 1,
-                                  color: Colors.black12,
-                                )
-                              ],
-                            ),
-                          );
-                        });
+                                builder: (BuildContext context) {
+                                  return Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Center(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(top: 10),
+                                          child: Container(
+                                            width: 40,
+                                            height: 4,
+                                            decoration: BoxDecoration(
+                                              color: Colors.black38,
+                                              borderRadius: BorderRadius.circular(12),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      ListTile(
+                                        leading: const Icon(
+                                          Icons.delete_outline,
+                                          color: Colors.black,
+                                        ),
+                                        title: const Text('Apagar conversa'),
+                                        onTap: () {
+                                          void apagarConversa() async {
+                                            await _firebaseFirestore
+                                                .collection("conversas")
+                                                .doc(_idUsuarioLogado)
+                                                .collection('ultima_conversa')
+                                                .doc(idUsuarioConversa)
+                                                .delete();
+                                            setState(() {});
+                                          }
+
+                                          void apagarMensagens() async {
+                                            final ultimaConversaCollection =
+                                                _firebaseFirestore
+                                                    .collection("mensagens")
+                                                    .doc(_idUsuarioLogado)
+                                                    .collection(idUsuarioConversa);
+
+                                            final documentos = await ultimaConversaCollection.get();
+
+                                            for (final documento in documentos.docs) {
+                                              await documento.reference.delete();
+                                            }
+
+                                            setState(() {});
+                                          }
+
+                                          apagarConversa();
+                                          apagarMensagens();
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+
+                            _opcoesMensagem(context);
+                          },
+                          child: Column(
+                            children: [
+                              ListTile(
+                                contentPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                                leading: Container(
+                                  width: 48,
+                                  height: 48,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: ClipOval(
+                                    child: CachedNetworkImage(
+                                      imageUrl: urlImagem,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) => const CircularProgressIndicator(
+                                        color: Colors.white,
+                                      ),
+                                      errorWidget: (context, url, error) => const Icon(Icons.error),
+                                    ),
+                                  ),
+                                ),
+                                title: Text(
+                                  '$nome $sobrenome',
+                                  style: const TextStyle(
+                                    color: Color.fromARGB(255, 0, 0, 0),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                subtitle: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          autorMensagem == _idUsuarioLogado ? 'Você: ' : '',
+                                          style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                                        ),
+                                        Text(
+                                          tipo == "texto" ? mensagem : "Imagem...",
+                                          style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                                        ),
+                                      ],
+                                    ),
+                                    Text(
+                                      item["hora"] != null ? DateFormat('HH:mm').format(DateTime.parse(item["hora"])) : '',
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 3),
+                              Container(
+                                width: double.infinity,
+                                height: 1,
+                                color: Colors.black12,
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
                   }
               }
             },
