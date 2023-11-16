@@ -1,164 +1,116 @@
 import 'dart:async';
-import 'dart:convert';
-import 'package:editora_izyncor_app/interior_usuario/chat/visualizar_chat.dart';
 import 'package:editora_izyncor_app/interior_usuario/homepage/feed/feed.dart';
 import 'package:editora_izyncor_app/interior_usuario/homepage/novidades/novidades.dart';
+import 'package:editora_izyncor_app/widgets/drawer/drawer_widget.dart';
+import 'package:editora_izyncor_app/widgets/topo_appbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class principal extends StatefulWidget {
-  const principal({super.key});
+  const principal({Key? key}) : super(key: key);
 
   @override
   State<principal> createState() => _principalState();
 }
 
+
 class _principalState extends State<principal> {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  String? _idUsuarioLogado;
+  FirebaseAuth auth = FirebaseAuth.instance;
+  String? idUsuarioLogado;
   String? nome;
+  String urlImagem = '';
 
-  void _subirCompras() async {
-    String name = 'Teste enviado';
-    int age = int.tryParse('23') ?? 0;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-    if (name.isNotEmpty && age > 0) {
-      try {
-        await _firestore.collection('teste').add({
-          'name': name,
-          'age': age,
-          'timestamp': FieldValue.serverTimestamp(),
-        });
-
-        print('Data saved successfully!');
-      } catch (e) {
-        print('Error saving data: $e');
-      }
-    } else {
-      print('Invalid data');
-    }
-  }
-
-  Future<void> checkPurchaseStatus(String paymentId) async {
-    try {
-      final apiUrl =
-          'https://api-checkout-izyncor.onrender.com/check_purchase_status/1317029473';
-
-      final response = await http.get(Uri.parse(apiUrl));
-
-      if (response.statusCode == 200 && response.body.isNotEmpty) {
-        final responseData = jsonDecode(response.body);
-        final status = responseData['status'];
-        final message = responseData['message'];
-
-        print('Status da compra: $status');
-        print('Mensagem: $message');
-      } else {
-        throw Exception('Failed to check purchase status.');
-      }
-    } catch (e) {
-      // Handle error
-      print(e.toString());
-    }
-  }
-
-  _recuperarDadosUsuarioString() async {
-    FirebaseAuth auth = FirebaseAuth.instance;
+  Future<void> recuperarDadosUsuario() async {
     User? usuarioLogado = auth.currentUser;
-    _idUsuarioLogado = usuarioLogado?.uid;
-
-    FirebaseFirestore db = FirebaseFirestore.instance;
-    DocumentSnapshot snapshot =
-        await db.collection("usuarios").doc(_idUsuarioLogado).get();
-
-    Map<String, dynamic> dados = snapshot.data() as Map<String, dynamic>;
-    nome = dados['nome'];
+    if (usuarioLogado != null) {
+      idUsuarioLogado = usuarioLogado.uid;
+      DocumentSnapshot<Map<String, dynamic>> userData = await FirebaseFirestore
+          .instance
+          .collection('usuarios')
+          .doc(idUsuarioLogado)
+          .get();
+      if (userData.exists) {
+        setState(() {
+          urlImagem = userData['urlImagem'];
+          nome = userData['nome'];
+        });
+      }
+    }
   }
 
   @override
-  void initState() {
-    // TODO: implement initState
+  initState() {
     super.initState();
-    _recuperarDadosUsuarioString();
+    recuperarDadosUsuario();
   }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        length: 2,
-        child: Scaffold(
-          backgroundColor: Colors.white,
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            foregroundColor: Colors.black,
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            centerTitle: false,
-            title: Image.asset(
-              'assets/izyncor.png',
-              width: 100, // ajuste a largura conforme necessário
-              height: 40, // ajuste a altura conforme necessário
-            ),
-            actions: [
-              IconButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: ((context) => const visualizar_chat())));
-                },
-                icon: SizedBox(width: 20, child: Image.asset('assets/send.png')),
-              )
-            ],
-          ),
-          body: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 10, left: 40, right: 40),
-                child: Container(
-                  height: 35,
-                  decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 244, 244, 243),
-                      borderRadius: BorderRadius.circular(2)),
-                  child: TabBar(
-                      indicator: BoxDecoration(
-                        border: Border.all(
-                            color: const Color.fromARGB(255, 244, 244, 243),
-                            width: 3),
-                        color: Color.fromARGB(255, 255, 255, 255),
-                        borderRadius: BorderRadius.circular(2),
+      length: 2,
+      child: Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          centerTitle: false,
+          title: topo_appbar(scaffoldKey: _scaffoldKey,)
+        ),
+        drawer: const drawer_widget(),
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 10, left: 40, right: 40),
+              child: Container(
+                height: 35,
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 244, 244, 243),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+                child: TabBar(
+                  indicator: BoxDecoration(
+                    border: Border.all(
+                      color: const Color.fromARGB(255, 244, 244, 243),
+                      width: 3,
+                    ),
+                    color: Color.fromARGB(255, 255, 255, 255),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                  labelColor: Color.fromARGB(255, 0, 0, 0),
+                  unselectedLabelColor: Color.fromARGB(255, 211, 207, 207),
+                  tabs: const [
+                    Tab(
+                      child: Text(
+                        'Feed',
+                        style: TextStyle(fontSize: 12),
                       ),
-                      labelColor: Color.fromARGB(255, 0, 0, 0),
-                      unselectedLabelColor: Color.fromARGB(255, 211, 207, 207),
-                      tabs: const [
-                        Tab(
-                          child: Text(
-                            'Feed',
-                            style: TextStyle(fontSize: 12),
-                          ),
-                        ),
-                        Tab(
-                          child: Text(
-                            'Novidades',
-                            style: TextStyle(fontSize: 12),
-                          ),
-                        ),
-                      ]),
+                    ),
+                    Tab(
+                      child: Text(
+                        'Novidades',
+                        style: TextStyle(fontSize: 12),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(
-                height: 10,
-              ),
-              const Expanded(
-                child: TabBarView(children: [
-                  feed(),
-                  novidades(),
-                ]),
-              )
-            ],
-          ),
-        ));
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            const Expanded(
+              child: TabBarView(children: [
+                feed(),
+                novidades(),
+              ]),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

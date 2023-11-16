@@ -200,7 +200,7 @@ class _storeState extends State<store> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: true,
         foregroundColor: Colors.black,
         elevation: 0,
         leadingWidth: 26,

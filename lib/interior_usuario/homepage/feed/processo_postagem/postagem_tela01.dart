@@ -127,7 +127,7 @@ class _postagem_tela01State extends State<postagem_tela01> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: ((context) => const home_principal()),
+        builder: ((context) => const home_principal(indexPagina: 2,)),
       ),
     );
   }
@@ -229,7 +229,7 @@ class _postagem_tela01State extends State<postagem_tela01> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: ((context) => const home_principal()),
+                    builder: ((context) => const home_principal(indexPagina: 2,)),
                   ),
                 );
               },
@@ -409,7 +409,7 @@ class _postagem_tela01State extends State<postagem_tela01> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: ((context) => const home_principal()),
+                            builder: ((context) => const home_principal(indexPagina: 2,)),
                           ),
                         );
                         publicarPostagem();

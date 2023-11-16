@@ -1,4 +1,4 @@
-import 'package:editora_izyncor_app/interior_usuario/tabbar.dart';
+import 'package:editora_izyncor_app/configuracao/assuntos/assuntos_selecao.dart';
 import 'package:editora_izyncor_app/recepcao/paginas/pagina_dois.dart';
 import 'package:editora_izyncor_app/recepcao/paginas/pagina_tres.dart';
 import 'package:editora_izyncor_app/recepcao/paginas/pagina_um.dart';
@@ -46,7 +46,7 @@ class _recepcaoState extends State<recepcao> {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const home_principal()),
+                                builder: (context) => const assuntos_selecao()),
                           );
                         },
                         child: Container(

@@ -16,17 +16,39 @@ class _paginatresState extends State<paginatres> {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage("assets/tela_03_1.jpg"),
-                  fit: BoxFit.cover),
+                  image: AssetImage("assets/tela_03_1.jpg"), fit: BoxFit.cover),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 100, left: 10),
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: Image.asset('assets/inicio_texto3.png', width: 300,),
+          const SafeArea(
+            child: Padding(
+              padding: EdgeInsets.only(top: 35, left: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Explore nossas',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 26,
+                          color: Color.fromARGB(255, 122, 108, 108))),
+                  Text('possibilidades!',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 40,
+                          color: Color.fromARGB(255, 122, 108, 108))),
+                  SizedBox(height: 30),
+                  Padding(
+                    padding: EdgeInsets.only(right: 100),
+                    child: Text(
+                        'Seja qual for o seu estilo, nosso mmundo tem possibilidade spara você, pois Izyncor tem espaço para abrigar os mais diversos estilos autorais.',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 16,
+                            color: Color.fromARGB(255, 122, 108, 108))),
+                  ),
+                ],
+              ),
             ),
-          )
+          ),
         ],
       ),
     );

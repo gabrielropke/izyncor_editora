@@ -54,7 +54,7 @@ class _editar_perfilState extends State<editar_perfil> {
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: ((context) => const home_principal())));
+                  builder: ((context) => const home_principal(indexPagina: 2,))));
         });
   }
 

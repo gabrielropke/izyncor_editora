@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:editora_izyncor_app/interior_usuario/chat/mensagens_chat.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil_visita/perfil_visita.dart';
+import 'package:editora_izyncor_app/widgets/drawer/drawer_widget.dart';
+import 'package:editora_izyncor_app/widgets/topo_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,8 +17,13 @@ class usuarios_chat extends StatefulWidget {
 }
 
 class _usuarios_chatState extends State<usuarios_chat> {
+  FirebaseAuth auth = FirebaseAuth.instance;
   String pesquisa = '';
   String? _emailUsuarioLogado;
+  String? idUsuarioLogado;
+  String urlImagem = '';
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final List<String> cadastros = [
     'Leitor(a)',
@@ -65,14 +72,32 @@ class _usuarios_chatState extends State<usuarios_chat> {
   }
 
   _recuperarDadosUsuario() async {
-    FirebaseAuth auth = FirebaseAuth.instance;
+    
     var usuarioLogado = auth.currentUser;
     _emailUsuarioLogado = usuarioLogado?.email;
+  }
+
+  Future<void> recuperarDadosUsuario2() async {
+    User? usuarioLogado = auth.currentUser;
+    if (usuarioLogado != null) {
+      idUsuarioLogado = usuarioLogado.uid;
+      DocumentSnapshot<Map<String, dynamic>> userData = await FirebaseFirestore
+          .instance
+          .collection('usuarios')
+          .doc(idUsuarioLogado)
+          .get();
+      if (userData.exists) {
+        setState(() {
+          urlImagem = userData['urlImagem'];
+        });
+      }
+    }
   }
 
   @override
   void initState() {
     _recuperarDadosUsuario();
+    recuperarDadosUsuario2();
     super.initState();
   }
 
@@ -80,27 +105,39 @@ class _usuarios_chatState extends State<usuarios_chat> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      key: _scaffoldKey,
       appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          title: SizedBox(
-            width: double.infinity,
-            height: 30,
-            child: TextField(
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(borderSide: BorderSide.none),
-                prefixIcon: Image.asset('assets/pesquisa.png', scale: 3),
-                fillColor: const Color.fromARGB(255, 243, 242, 242),
-                filled: true,
+        toolbarHeight: 90,
+        automaticallyImplyLeading: false,
+        foregroundColor: Colors.black,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        centerTitle: false,
+        title: Column(
+          children: [
+            topo_appbar(scaffoldKey: _scaffoldKey),
+            const SizedBox(height: 10),
+            SizedBox(
+              width: double.infinity,
+              height: 30,
+              child: TextField(
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(borderSide: BorderSide.none),
+                  prefixIcon: Image.asset('assets/pesquisa.png', scale: 3),
+                  fillColor: const Color.fromARGB(255, 243, 242, 242),
+                  filled: true,
+                ),
+                onChanged: (val) {
+                  setState(() {
+                    pesquisa = val;
+                  });
+                },
               ),
-              onChanged: (val) {
-                setState(() {
-                  pesquisa = val;
-                });
-              },
-            ),
-          )),
+            )
+          ],
+        ),
+      ),
+      drawer: const drawer_widget(),
       body: pesquisa.isEmpty
           ? const Align(
               alignment: Alignment.center,

@@ -16,17 +16,39 @@ class _paginadoisState extends State<paginadois> {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage("assets/tela_02_1.jpg"),
-                  fit: BoxFit.cover),
+                  image: AssetImage("assets/tela_02_1.jpg"), fit: BoxFit.cover),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 100, left: 10),
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: Image.asset('assets/inicio_texto2.png', width: 300,),
+          const SafeArea(
+            child: Padding(
+              padding: EdgeInsets.only(top: 35, left: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Aventure-se em',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 26,
+                          color: Color.fromARGB(255, 122, 108, 108))),
+                  Text('nossas terras!',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 40,
+                          color: Color.fromARGB(255, 122, 108, 108))),
+                  SizedBox(height: 30),
+                  Padding(
+                    padding: EdgeInsets.only(right: 100),
+                    child: Text(
+                        'Em nossas estantes temos projetos como romance, ficção e fantasia, não ficção, suspense, folclore, terror e horror',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 16,
+                            color: Color.fromARGB(255, 122, 108, 108))),
+                  ),
+                ],
+              ),
             ),
-          )
+          ),
         ],
       ),
     );

@@ -1,21 +1,23 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:editora_izyncor_app/interior_usuario/chat/visualizar_chat.dart';
+import 'package:editora_izyncor_app/configuracao/tela_config.dart';
+import 'package:editora_izyncor_app/interior_usuario/chat/conversas_chat.dart';
+import 'package:editora_izyncor_app/interior_usuario/chat/usuarios_chat.dart';
+import 'package:editora_izyncor_app/interior_usuario/estante/estante_page.dart';
 import 'package:editora_izyncor_app/interior_usuario/homepage/feed/processo_postagem/postagem_tela01.dart';
 import 'package:editora_izyncor_app/interior_usuario/interior_principal.dart';
-import 'package:editora_izyncor_app/interior_usuario/perfil/meu_perfil.dart';
-import 'package:editora_izyncor_app/interior_usuario/store/base_store.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class home_principal extends StatefulWidget {
-  const home_principal({super.key});
+  final int indexPagina;
+  const home_principal({super.key, required this.indexPagina});
 
   @override
   State<home_principal> createState() => _home_principalState();
 }
 
 class _home_principalState extends State<home_principal> {
+  late int indexPagina;
   FirebaseAuth auth = FirebaseAuth.instance;
   int paginasIndex = 0;
   String urlImagem = '';
@@ -45,93 +47,95 @@ class _home_principalState extends State<home_principal> {
   }
 
   final List _paginas = [
+    const estante_page(),
+    const usuarios_chat(),
     const principal(),
-    const visualizar_chat(),
-    const postagem_tela01(),
-    const store(),
-    const perfil(),
+    const home_config(),
+    const conversas_chat(),
   ];
 
   @override
   initState() {
     super.initState();
     recuperarDadosUsuario();
+    paginasIndex = widget.indexPagina;
   }
 
   @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    body: _paginas[paginasIndex],  // Use the selected page based on paginasIndex
-    bottomNavigationBar: BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      onTap: navegarPaginas,
-      currentIndex: paginasIndex,
-      showSelectedLabels: false,
-      showUnselectedLabels: false,
-      elevation: 0,
-      items: [
-        BottomNavigationBarItem(
-          label: 'oi',
-          icon: SizedBox(
-            width: 20,
-            child: Image.asset(
-              paginasIndex == 0 ? 'assets/home_02.png' : 'assets/home_01.png',
-            ),
-          ),
-        ),
-        BottomNavigationBarItem(
-          label: 'oi',
-          icon: SizedBox(
-            width: 20,
-            child: Image.asset(
-              paginasIndex == 1 ? 'assets/user_02.png' : 'assets/user_01.png',
-            ),
-          ),
-        ),
-        BottomNavigationBarItem(
-          label: 'oi',
-          icon: GestureDetector(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const postagem_tela01()));
-            },
-            child: SizedBox(
-              width: 23,
-              child: Image.asset('assets/add_02.png'),
-            ),
-          ),
-        ),
-        BottomNavigationBarItem(
-          label: 'oi',
-          icon: SizedBox(
-            width: 20,
-            child: Image.asset(
-              paginasIndex == 3 ? 'assets/shop_02.png' : 'assets/shop_01.png',
-            ),
-          ),
-        ),
-        BottomNavigationBarItem(
-          label: 'oi',
-          icon: Padding(
-            padding: const EdgeInsets.only(top: 3),
-            child: Container(
-              width: 32,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(width: 2, color: paginasIndex == 4 ? Color.fromARGB(255, 185, 131, 144) : Colors.white)
-              ),
-              child: ClipOval(
-                child: CachedNetworkImage(
-                  imageUrl: urlImagem,
-                  fit: BoxFit.cover,
-                ),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body:
+          _paginas[paginasIndex], // Use the selected page based on paginasIndex
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        onTap: navegarPaginas,
+        currentIndex: paginasIndex,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        elevation: 0,
+        items: [
+          BottomNavigationBarItem(
+            label: 'oi',
+            icon: SizedBox(
+              width: 30,
+              child: Image.asset(
+                paginasIndex == 0
+                    ? 'assets/estante_02.png'
+                    : 'assets/estante_01.png',
               ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
-}}
+          BottomNavigationBarItem(
+            label: 'oi',
+            icon: SizedBox(
+              width: 22,
+              child: Image.asset(
+                paginasIndex == 1
+                    ? 'assets/pesquisar_icone.png'
+                    : 'assets/pesquisar_icone.png',
+              ),
+            ),
+          ),
+          BottomNavigationBarItem(
+            label: 'oi',
+            icon: SizedBox(
+              width: 22,
+              child: Image.asset(
+                paginasIndex == 2 ? 'assets/home_02.png' : 'assets/home_01.png',
+              ),
+            ),
+          ),
+          BottomNavigationBarItem(
+            label: 'oi',
+            icon: SizedBox(
+              width: 22,
+              child: Image.asset(
+                paginasIndex == 3
+                    ? 'assets/icone_sino_02.png'
+                    : 'assets/icone_sino_01.png',
+              ),
+            ),
+          ),
+          BottomNavigationBarItem(
+            label: 'oi',
+            icon: SizedBox(
+              width: 20,
+              child: Image.asset(
+                paginasIndex == 4 ? 'assets/user_02.png' : 'assets/user_01.png',
+              ),
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const postagem_tela01()));
+        },
+        backgroundColor: const Color.fromARGB(255, 42, 56, 66),
+        mini: false,
+        child: const Icon(Icons.add, size: 18),
+      ),
+    );
+  }
+}

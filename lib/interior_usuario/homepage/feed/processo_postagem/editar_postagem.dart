@@ -64,7 +64,7 @@ class _editar_postagemState extends State<editar_postagem> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: ((context) => const home_principal()),
+          builder: ((context) => const home_principal(indexPagina: 2,)),
         ),
       );
     } else {
@@ -86,7 +86,7 @@ class _editar_postagemState extends State<editar_postagem> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: ((context) => const home_principal()),
+            builder: ((context) => const home_principal(indexPagina: 2,)),
           ),
         );
       } catch (error) {

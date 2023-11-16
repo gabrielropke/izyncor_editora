@@ -64,7 +64,7 @@ class _MyWidgetState extends State<login> {
             email: usuario.email, password: usuario.senha)
         .then((FirebaseUser) {
       Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: ((context) => const home_principal())));
+          MaterialPageRoute(builder: ((context) => const home_principal(indexPagina: 2,))));
     }).catchError((error) {
       setState(() {
         showAlert();
@@ -83,7 +83,7 @@ class _MyWidgetState extends State<login> {
     if (usuarioLogado != null) {
       // ignore: use_build_context_synchronously
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: ((context) => home_principal())));
+          context, MaterialPageRoute(builder: ((context) => home_principal(indexPagina: 2,))));
     }
   }
 
@@ -112,7 +112,7 @@ class _MyWidgetState extends State<login> {
                     alignment: Alignment.topCenter,
                     child: SizedBox(
                         width: 350,
-                        child: Image.asset("assets/logo_izyncor01.png")),
+                        child: Image.asset("assets/logobanner.png")),
                   ),
                 ),
                 const Padding(

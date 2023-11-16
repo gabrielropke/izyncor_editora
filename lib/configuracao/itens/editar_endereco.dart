@@ -124,7 +124,7 @@ class _editar_enderecoState extends State<editar_endereco> {
       // ignore: use_build_context_synchronously
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const home_principal()),
+        MaterialPageRoute(builder: (context) => const home_principal(indexPagina: 2,)),
       );
     }
 

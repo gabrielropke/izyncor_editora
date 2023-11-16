@@ -331,7 +331,7 @@ class _base_enderecoState extends State<base_endereco> {
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          const home_principal()));
+                                                          const home_principal(indexPagina: 2,)));
                                             },
                                             type: QuickAlertType.warning);
                                       }

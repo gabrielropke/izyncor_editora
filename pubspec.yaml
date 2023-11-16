@@ -67,7 +67,8 @@ dependencies:
   url_launcher: ^6.1.14
   flutter_native_splash: ^2.2.16
   flutter_launcher_icons: ^0.11.0
-
+  google_fonts: ^4.0.4
+  
 flutter_native_splash:
   color: "#ffffff"
   image: "assets/splash2.png"
@@ -139,6 +140,7 @@ flutter:
     - assets/logobanner.png
     - assets/splash.png
     - assets/oculosicone.png
+    - assets/icone_centro.png
     - assets/relogioicone.png
     - assets/boleto.jpg
     - assets/moldura.png
@@ -210,7 +212,21 @@ flutter:
     - assets/logo2.png
     - assets/logo3.png
     - assets/camera2.png
-
+    - assets/estante_01.png
+    - assets/estante_02.png
+    - assets/icone_sino_01.png
+    - assets/icone_sino_02.png
+    - assets/pesquisar_icone.png
+    - assets/salvos2_icone.png
+    - assets/perfil4_icon.png
+    - assets/seguindo3_icone.png
+    - assets/salvar01_icone.png
+    - assets/salvar02_icone.png
+    - assets/ranking01_icone.png
+    - assets/assuntos05_icone.png
+    - assets/info2_icone.png
+    - assets/relatar2_icone.png
+    - assets/sair3_icone.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

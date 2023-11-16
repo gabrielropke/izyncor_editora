@@ -217,7 +217,7 @@ class _perfilState extends State<perfil> {
               children: [
                 const SizedBox(height: 10),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Stack(
                       children: [
@@ -227,36 +227,36 @@ class _perfilState extends State<perfil> {
                               onTap: () {
                                 _exibirImagemFullScreen(urlImagem);
                               },
-                              child: ClipOval(
-                                child: Container(
-                                  width: 75,
-                                  height: 75,
-                                  color: Colors.white,
-                                  child: CachedNetworkImage(
-                                    imageUrl: urlImagem,
-                                    fit: BoxFit
-                                        .cover, // ajuste de acordo com suas necessidades
-                                    placeholder: (context, url) =>
-                                        const CircularProgressIndicator(
-                                      color: Colors.white,
-                                    ), // um indicador de carregamento
-                                    errorWidget: (context, url, error) =>
-                                        const Icon(
-                                      Icons.error,
-                                      color: Colors.white,
-                                    ), // widget de erro
+                                child: ClipOval(
+                                  child: Container(
+                                    width: 75,
+                                    height: 75,
+                                    color: Colors.white,
+                                    child: CachedNetworkImage(
+                                      imageUrl: urlImagem,
+                                      fit: BoxFit
+                                          .cover, // ajuste de acordo com suas necessidades
+                                      placeholder: (context, url) =>
+                                          const CircularProgressIndicator(
+                                        color: Colors.white,
+                                      ), // um indicador de carregamento
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(
+                                        Icons.error,
+                                        color: Colors.white,
+                                      ), // widget de erro
+                                    ),
                                   ),
                                 ),
-                              ),
                             ),
-                            const SizedBox(height: 7),
-                            Text(
-                              '@$username',
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black,
-                                  fontSize: 16),
-                            ),
+                            // const SizedBox(height: 7),
+                            // Text(
+                            //   '@$username',
+                            //   style: const TextStyle(
+                            //       fontWeight: FontWeight.w500,
+                            //       color: Colors.black,
+                            //       fontSize: 16),
+                            // ),
                           ],
                         ),
                       ],

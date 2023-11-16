@@ -48,7 +48,7 @@ class AuthService {
           // ignore: use_build_context_synchronously
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => const home_principal(),
+              builder: (context) => const home_principal(indexPagina: 2,),
             ),
           );
         } else {

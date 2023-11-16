@@ -16,17 +16,39 @@ class _paginaumState extends State<paginaum> {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage("assets/tela_01_1.jpg"),
-                  fit: BoxFit.cover),
+                  image: AssetImage("assets/tela_01_1.jpg"), fit: BoxFit.cover),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 100, left: 10),
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: Image.asset('assets/inicio_texto1.png', width: 300,),
+          const SafeArea(
+            child: Padding(
+              padding: EdgeInsets.only(top: 35, left: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Boas vindas a',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 24,
+                          color: Color.fromARGB(255, 122, 108, 108))),
+                  Text('Izyncor!',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 50,
+                          color: Color.fromARGB(255, 122, 108, 108))),
+                  SizedBox(height: 30),
+                  Padding(
+                    padding: EdgeInsets.only(right: 100),
+                    child: Text(
+                        'Editora dedicada a crias obras de arte literárias, que transcendem a simples leitura e se tornam verdadeira experiências sensoriais para os amantes dos livros de luxo.',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 16,
+                            color: Color.fromARGB(255, 122, 108, 108))),
+                  ),
+                ],
+              ),
             ),
-          )
+          ),
         ],
       ),
     );
