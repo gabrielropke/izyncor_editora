@@ -1,7 +1,7 @@
 import 'package:editora_izyncor_app/configuracao/itens/base%20endere%C3%A7o.dart';
 import 'package:editora_izyncor_app/configuracao/itens/relatar_problema.dart';
 import 'package:editora_izyncor_app/configuracao/itens/sobre.dart';
-import 'package:editora_izyncor_app/interior_usuario/perfil/editar_perfil.dart';
+import 'package:editora_izyncor_app/interior_usuario/perfil/editar/editar_perfil.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:quickalert/models/quickalert_type.dart';

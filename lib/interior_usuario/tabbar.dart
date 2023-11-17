@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:editora_izyncor_app/configuracao/tela_config.dart';
 import 'package:editora_izyncor_app/interior_usuario/chat/conversas_chat.dart';
 import 'package:editora_izyncor_app/interior_usuario/chat/usuarios_chat.dart';
 import 'package:editora_izyncor_app/interior_usuario/estante/estante_page.dart';
 import 'package:editora_izyncor_app/interior_usuario/homepage/feed/processo_postagem/postagem_tela01.dart';
 import 'package:editora_izyncor_app/interior_usuario/interior_principal.dart';
+import 'package:editora_izyncor_app/interior_usuario/notificacoes/notificacao_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -50,7 +50,7 @@ class _home_principalState extends State<home_principal> {
     const estante_page(),
     const usuarios_chat(),
     const principal(),
-    const home_config(),
+    const notificacao_page(),
     const conversas_chat(),
   ];
 

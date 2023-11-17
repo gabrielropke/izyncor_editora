@@ -2,7 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:editora_izyncor_app/autenticacao/Login/tela_login_usuario.dart';
 import 'package:editora_izyncor_app/configuracao/assuntos/assuntos_selecao.dart';
-import 'package:editora_izyncor_app/interior_usuario/perfil/editar_perfil.dart';
+import 'package:editora_izyncor_app/interior_usuario/perfil/editar/configuracoes.dart';
+import 'package:editora_izyncor_app/interior_usuario/perfil/editar/editar_perfil.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil/meu_perfil.dart';
 import 'package:editora_izyncor_app/widgets/drawer/lista_widget_drawer.dart';
 import 'package:editora_izyncor_app/widgets/seguidores_widget.dart';
@@ -138,83 +139,86 @@ class _drawer_widgetState extends State<drawer_widget> {
                       ],
                     )),
                  Padding(
-                  padding: EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => perfil()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const perfil()));
                         },
-                        child: lista_widgets_drawer(
+                        child: const lista_widgets_drawer(
                             icone_drawer: 'assets/perfil4_icon.png',
                             titulo_drawer: 'Perfil'),
                       ),
-                      SizedBox(height: 10),
-                      lista_widgets_drawer(
+                      const SizedBox(height: 10),
+                      const lista_widgets_drawer(
                           icone_drawer: 'assets/seguindo3_icone.png',
                           titulo_drawer: 'Seguindo'),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => assuntos_selecao()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const assuntos_selecao()));
                         },
-                        child: lista_widgets_drawer(
+                        child: const lista_widgets_drawer(
                             icone_drawer: 'assets/assuntos05_icone.png',
                             titulo_drawer: 'Assuntos'),
                       ),
-                      SizedBox(height: 10),
-                      lista_widgets_drawer(
+                      const SizedBox(height: 10),
+                      const lista_widgets_drawer(
                           icone_drawer: 'assets/ranking01_icone.png',
                           titulo_drawer: 'Ranking'),
-                      SizedBox(height: 10),
-                      lista_widgets_drawer(
+                      const SizedBox(height: 10),
+                      const lista_widgets_drawer(
                           icone_drawer: 'assets/salvar01_icone.png',
                           titulo_drawer: 'Salvos'),
-                      SizedBox(height: 10),
-                      lista_widgets_drawer(
+                      const SizedBox(height: 10),
+                      const lista_widgets_drawer(
                           icone_drawer: 'assets/salvos2_icone.png',
                           titulo_drawer: 'Histórico'),
-                      SizedBox(height: 60),
+                      const SizedBox(height: 30),
+                      const Divider(),
                       GestureDetector(
                         onTap: () {
                           Navigator.push(context, MaterialPageRoute(builder: (context) => const editar_perfil()));
                         },
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('Configurações do perfil',
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w400,
-                                    color: Color.fromARGB(255, 58, 56, 56))),
-                            Icon(Icons.keyboard_arrow_right_rounded)
-                          ],
+                        child: Container(
+                          color: Colors.white,
+                          height: 30,
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Configurações do perfil',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400,
+                                      color: Color.fromARGB(255, 58, 56, 56))),
+                              Icon(Icons.keyboard_arrow_right_rounded)
+                            ],
+                          ),
                         ),
                       ),
-                      SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Minha conta',
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color.fromARGB(255, 58, 56, 56))),
-                          Icon(Icons.keyboard_arrow_right_rounded)
-                        ],
+                      const Divider(),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const configuracoes()));
+                        },
+                        child: Container(
+                          color: Colors.white,
+                          height: 30,
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Minha conta',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400,
+                                      color: Color.fromARGB(255, 58, 56, 56))),
+                              Icon(Icons.keyboard_arrow_right_rounded)
+                            ],
+                          ),
+                        ),
                       ),
-                      SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Pagamento',
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color.fromARGB(255, 58, 56, 56))),
-                          Icon(Icons.keyboard_arrow_right_rounded)
-                        ],
-                      ),
+                      const Divider(),
                     ],
                   ),
                 )
@@ -249,7 +253,7 @@ class _drawer_widgetState extends State<drawer_widget> {
                         width: 24,
                         child: Image.asset(
                           'assets/sair3_icone.png',
-                          color: Color.fromARGB(255, 194, 24, 80),
+                          color: const Color.fromARGB(255, 194, 24, 80),
                         ),
                       ),
                     ),

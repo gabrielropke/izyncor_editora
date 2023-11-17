@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:editora_izyncor_app/interior_usuario/tabbar.dart';
+import 'package:editora_izyncor_app/widgets/textfield_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -22,10 +22,16 @@ class editar_perfil extends StatefulWidget {
 // ignore: camel_case_types
 class _editar_perfilState extends State<editar_perfil> {
   final TextEditingController _controllerNOME = TextEditingController(text: "");
-  final TextEditingController _controllerUSERNAME = TextEditingController(text: "");
-  final TextEditingController _controllerSOBRENOME = TextEditingController(text: "");
-  final TextEditingController _controllerEMAIL = TextEditingController(text: "");
+  final TextEditingController _controllerUSERNAME =
+      TextEditingController(text: "");
+  final TextEditingController _controllerSOBRENOME =
+      TextEditingController(text: "");
+  final TextEditingController _controllerEMAIL =
+      TextEditingController(text: "");
   final TextEditingController _controllerBIO = TextEditingController(text: "");
+  final TextEditingController _controllerSITE = TextEditingController(text: "");
+  final TextEditingController _controllerTELEFONE = TextEditingController(text: "");
+  final TextEditingController _controllerRECUPERAR = TextEditingController(text: "");
 
   final StreamController<String> _streamNOME = StreamController<String>();
   final StreamController<String> _streamSOBRENOME = StreamController<String>();
@@ -51,27 +57,29 @@ class _editar_perfilState extends State<editar_perfil> {
           _atualizarSobrenomeFirestore();
           _atualizarEmailFirestore();
           _atualizarBioFirestore();
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: ((context) => const home_principal(indexPagina: 2,))));
+          _atualizarSiteFirestore();
+          _atualizarTelefoneFirestore();
+          _atualizarRecuperarFirestore();
+          
+          Navigator.pop(context);
+          Navigator.pop(context);
         });
   }
 
   Future _recuperarImagem() async {
-  final ImagePicker _picker = ImagePicker();
-  final XFile? imagemSelecionada = await _picker.pickImage(source: ImageSource.gallery);
+    final ImagePicker _picker = ImagePicker();
+    final XFile? imagemSelecionada =
+        await _picker.pickImage(source: ImageSource.gallery);
 
-  if (imagemSelecionada != null) {
-    File imagemCortada = await cortarImagem(File(imagemSelecionada.path));
-    setState(() {
-      _imagem = XFile(imagemCortada.path);
-      _uploadImagem();
-      subindoImagem = true;
-    });
+    if (imagemSelecionada != null) {
+      File imagemCortada = await cortarImagem(File(imagemSelecionada.path));
+      setState(() {
+        _imagem = XFile(imagemCortada.path);
+        _uploadImagem();
+        subindoImagem = true;
+      });
+    }
   }
-}
-
 
   Future _uploadImagem() async {
     File file = File(_imagem!.path);
@@ -124,15 +132,35 @@ class _editar_perfilState extends State<editar_perfil> {
     db.collection("usuarios").doc(_idUsuarioLogado).update(dadosAtualizar);
   }
 
-  // _atualizarUsernameFirestore() {
-  //   String username = _controllerUSERNAME.text;
+  _atualizarSiteFirestore() {
+    String site = _controllerSITE.text;
 
-  //   FirebaseFirestore db = FirebaseFirestore.instance;
+    FirebaseFirestore db = FirebaseFirestore.instance;
 
-  //   Map<String, dynamic> dadosAtualizar = {"username": username};
+    Map<String, dynamic> dadosAtualizar = {"site": site};
 
-  //   db.collection("usuarios").doc(_idUsuarioLogado).update(dadosAtualizar);
-  // }
+    db.collection("usuarios").doc(_idUsuarioLogado).update(dadosAtualizar);
+  }
+
+  _atualizarTelefoneFirestore() {
+    String telefone = _controllerTELEFONE.text;
+
+    FirebaseFirestore db = FirebaseFirestore.instance;
+
+    Map<String, dynamic> dadosAtualizar = {"telefone": telefone};
+
+    db.collection("usuarios").doc(_idUsuarioLogado).update(dadosAtualizar);
+  }
+
+  _atualizarRecuperarFirestore() {
+    String recuperar = _controllerRECUPERAR.text;
+
+    FirebaseFirestore db = FirebaseFirestore.instance;
+
+    Map<String, dynamic> dadosAtualizar = {"recuperar": recuperar};
+
+    db.collection("usuarios").doc(_idUsuarioLogado).update(dadosAtualizar);
+  }
 
   _atualizarSobrenomeFirestore() {
     String sobrenome = _controllerSOBRENOME.text;
@@ -175,6 +203,9 @@ class _editar_perfilState extends State<editar_perfil> {
 
     Map<String, dynamic> dados = snapshot.data() as Map<String, dynamic>;
     _controllerNOME.text = dados["nome"];
+    _controllerSITE.text = dados["site"];
+    _controllerTELEFONE.text = dados["telefone"];
+    _controllerRECUPERAR.text = dados["recuperar"];
     _controllerSOBRENOME.text = dados["sobrenome"];
     _controllerEMAIL.text = dados["email"];
     _controllerBIO.text = dados["biografia"];
@@ -232,7 +263,7 @@ class _editar_perfilState extends State<editar_perfil> {
     }
   }
 
-    void showAlertErroUsername() {
+  void showAlertErroUsername() {
     QuickAlert.show(
         context: context,
         title: 'Negado',
@@ -351,50 +382,32 @@ class _editar_perfilState extends State<editar_perfil> {
                     )
                   ],
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 30),
+                Container(
+                  color: Colors.white,
+                  height: 30,
+                  child: const Text('informações do perfil',
+                      style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w300,
+                          color: Color.fromARGB(255, 58, 56, 56))),
+                ),
+                const Divider(),
+                const SizedBox(height: 20),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
-                        'Nome',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 18,
-                            color: Colors.black54),
-                      ),
+                      padding: EdgeInsets.only(left: 5),
+                      child: textos_widget(texto: 'Primeiro nome'),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 5),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: TextField(
-                          controller: _controllerNOME,
-                          keyboardType: TextInputType.emailAddress,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 17,
-                          ),
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: const Color.fromARGB(255, 243, 243, 243),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(13)),
-                            enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(13),
-                                borderSide:
-                                    const BorderSide(color: Colors.white)),
-                            contentPadding:
-                                const EdgeInsets.fromLTRB(32, 15, 32, 16),
-                            hintText: "Nome",
-                            hintStyle: const TextStyle(
-                                color: Color.fromARGB(255, 189, 185, 185),
-                                fontWeight: FontWeight.w400),
-                          ),
-                        ),
-                      ),
-                    ),
+                    const SizedBox(height: 5),
+                    textfield_widget(
+                      controller: _controllerNOME,
+                      keyboardType: TextInputType.name,
+                      hintText: 'Digite seu nome',
+                      obscureText: false,
+                    )
                   ],
                 ),
                 const SizedBox(height: 20),
@@ -402,45 +415,16 @@ class _editar_perfilState extends State<editar_perfil> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
-                        'Sobrenome',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 18,
-                            color: Colors.black54),
-                      ),
+                      padding: EdgeInsets.only(left: 5),
+                      child: textos_widget(texto: 'Segundo nome'),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 5),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: TextField(
-                          controller: _controllerSOBRENOME,
-                          keyboardType: TextInputType.emailAddress,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 17,
-                          ),
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: const Color.fromARGB(255, 243, 243, 243),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(13)),
-                            enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(13),
-                                borderSide:
-                                    const BorderSide(color: Colors.white)),
-                            contentPadding:
-                                const EdgeInsets.fromLTRB(32, 15, 32, 16),
-                            hintText: "Sobrenome",
-                            hintStyle: const TextStyle(
-                                color: Color.fromARGB(255, 189, 185, 185),
-                                fontWeight: FontWeight.w400),
-                          ),
-                        ),
-                      ),
-                    ),
+                    const SizedBox(height: 5),
+                    textfield_widget(
+                      controller: _controllerSOBRENOME,
+                      keyboardType: TextInputType.name,
+                      hintText: 'Digite seu segundo nome',
+                      obscureText: false,
+                    )
                   ],
                 ),
                 const SizedBox(height: 20),
@@ -448,45 +432,16 @@ class _editar_perfilState extends State<editar_perfil> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
-                        'E-mail',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 18,
-                            color: Colors.black54),
-                      ),
+                      padding: EdgeInsets.only(left: 5),
+                      child: textos_widget(texto: 'Endereço de e-mail'),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 5),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: TextField(
-                          controller: _controllerEMAIL,
-                          keyboardType: TextInputType.emailAddress,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 17,
-                          ),
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: const Color.fromARGB(255, 243, 243, 243),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(13)),
-                            enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(13),
-                                borderSide:
-                                    const BorderSide(color: Colors.white)),
-                            contentPadding:
-                                const EdgeInsets.fromLTRB(32, 15, 32, 16),
-                            hintText: "E-mail",
-                            hintStyle: const TextStyle(
-                                color: Color.fromARGB(255, 189, 185, 185),
-                                fontWeight: FontWeight.w400),
-                          ),
-                        ),
-                      ),
-                    ),
+                    const SizedBox(height: 5),
+                    textfield_widget(
+                      controller: _controllerEMAIL,
+                      keyboardType: TextInputType.emailAddress,
+                      hintText: 'Digite seu e-mail',
+                      obscureText: false,
+                    )
                   ],
                 ),
                 const SizedBox(height: 20),
@@ -494,51 +449,85 @@ class _editar_perfilState extends State<editar_perfil> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
-                        'Bio',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 18,
-                            color: Colors.black54),
-                      ),
+                      padding: EdgeInsets.only(left: 5),
+                      child: textos_widget(texto: 'Site'),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 5),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: TextField(
-                          controller: _controllerBIO,
-                          maxLines: null,
-                          maxLength: 5000,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 17,
-                          ),
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: const Color.fromARGB(255, 243, 243, 243),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(13)),
-                            enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(13),
-                                borderSide:
-                                    const BorderSide(color: Colors.white)),
-                            contentPadding:
-                                const EdgeInsets.fromLTRB(32, 15, 32, 16),
-                            hintText:
-                                "Exemplo:\n🎉 Sua idade\n💻 Profissão\n🌍 Descendência",
-                            hintStyle: const TextStyle(
-                                color: Color.fromARGB(255, 189, 185, 185),
-                                fontWeight: FontWeight.w400),
-                          ),
-                        ),
-                      ),
+                    const SizedBox(height: 5),
+                    textfield_widget(
+                      controller: _controllerSITE,
+                      keyboardType: TextInputType.url,
+                      hintText: 'Digite a url do seu site',
+                      obscureText: false,
+                    )
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(left: 5),
+                      child: textos_widget(texto: 'Biografia'),
                     ),
+                    const SizedBox(height: 5),
+                    textfield_widget(
+                      controller: _controllerBIO,
+                      keyboardType: TextInputType.name,
+                      maxLines: null,
+                      maxLength: 5000,
+                      hintText:
+                          'Exemplo:\n🎉 Sua idade\n💻 Profissão\n🌍 Descendência',
+                      obscureText: false,
+                    )
+                  ],
+                ),
+                const SizedBox(height: 30),
+                Container(
+                  color: Colors.white,
+                  height: 30,
+                  child: const Text('informações de contato',
+                      style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w300,
+                          color: Color.fromARGB(255, 58, 56, 56))),
+                ),
+                const Divider(),
+                const SizedBox(height: 20),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(left: 5),
+                      child: textos_widget(texto: 'Telefone'),
+                    ),
+                    const SizedBox(height: 5),
+                    textfield_widget(
+                      controller: _controllerTELEFONE,
+                      keyboardType: TextInputType.phone,
+                      hintText: 'Digite seu Telefone',
+                      obscureText: false,
+                    )
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(left: 5),
+                      child: textos_widget(texto: 'E-mail de recuperação'),
+                    ),
+                    const SizedBox(height: 5),
+                    textfield_widget(
+                      controller: _controllerRECUPERAR,
+                      keyboardType: TextInputType.emailAddress,
+                      hintText: 'Digite seu e-mail de recuperação',
+                      obscureText: false,
+                    )
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 20),
+                  padding: const EdgeInsets.only(top: 30),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
@@ -564,12 +553,28 @@ class _editar_perfilState extends State<editar_perfil> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 50),
+                const SizedBox(height: 10),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+// ignore: camel_case_types
+class textos_widget extends StatelessWidget {
+  const textos_widget({super.key, required this.texto});
+
+  final String texto;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      texto,
+      style: const TextStyle(
+          fontWeight: FontWeight.w400, fontSize: 15, color: Colors.black87),
     );
   }
 }

@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:editora_izyncor_app/configuracao/tela_config.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil/adendos/seguidores_page.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil/adendos/seguindo_page.dart';
-import 'package:editora_izyncor_app/interior_usuario/perfil/editar_perfil.dart';
+import 'package:editora_izyncor_app/interior_usuario/perfil/editar/editar_perfil.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil/galeria/postagens_imagens.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil/galeria/postagens_textos.dart';
 import 'package:firebase_auth/firebase_auth.dart';
