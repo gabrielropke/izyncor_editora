@@ -1,5 +1,6 @@
 import 'package:editora_izyncor_app/configuracao/assuntos/assuntos_selecao.dart';
 import 'package:editora_izyncor_app/recepcao/paginas/pagina_dois.dart';
+import 'package:editora_izyncor_app/recepcao/paginas/pagina_quatro.dart';
 import 'package:editora_izyncor_app/recepcao/paginas/pagina_tres.dart';
 import 'package:editora_izyncor_app/recepcao/paginas/pagina_um.dart';
 import 'package:flutter/material.dart';
@@ -27,10 +28,11 @@ class _recepcaoState extends State<recepcao> {
               controller: _controller,
               onPageChanged: (index) {
                 setState(() {
-                  ultimaPagina = (index == 2);
+                  ultimaPagina = (index == 3);
                 });
               },
               children: const [
+                paginaquatro(),
                 paginaum(),
                 paginadois(),
                 paginatres(),
@@ -53,15 +55,16 @@ class _recepcaoState extends State<recepcao> {
                           width: 130,
                           height: 50,
                           decoration: BoxDecoration(
-                            color: Colors.black38,
+                              color: Colors.black38,
                               borderRadius: BorderRadius.circular(32),
-                              border: Border.all(
-                                width: 2,
-                                  color: Colors.white)),
+                              border:
+                                  Border.all(width: 2, color: Colors.white)),
                           child: const Center(
                               child: Text(
                             'Vamos lá',
-                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
                           )),
                         ),
                       ),
@@ -76,7 +79,7 @@ class _recepcaoState extends State<recepcao> {
                         children: [
                           SmoothPageIndicator(
                             controller: _controller,
-                            count: 3,
+                            count: 4,
                             effect: const WormEffect(
                               activeDotColor: Color.fromARGB(255, 179, 51, 89),
                               dotColor: Color.fromARGB(255, 221, 224, 224),
@@ -95,8 +98,9 @@ class _recepcaoState extends State<recepcao> {
                                   width: 80,
                                   height: 30,
                                   decoration: BoxDecoration(
-                                    color: Colors.black26,
-                                    border: Border.all(width: 2, color: Colors.white),
+                                      color: Colors.black26,
+                                      border: Border.all(
+                                          width: 2, color: Colors.white),
                                       borderRadius: BorderRadius.circular(16)),
                                   child: const Center(
                                       child: Text(

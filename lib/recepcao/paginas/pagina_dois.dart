@@ -21,7 +21,7 @@ class _paginadoisState extends State<paginadois> {
           ),
           const SafeArea(
             child: Padding(
-              padding: EdgeInsets.only(top: 35, left: 10),
+              padding: EdgeInsets.only(top: 35, left: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

@@ -36,14 +36,62 @@ class _perfil_visitaState extends State<perfil_visita> {
   late String cadastro;
   String biografia = '';
   String cadastroPerfil = '';
+  String nomePerfil = '';
   String sobrenomePerfil = '';
   String username = '';
-
-  recuperarDadosUsuario() async {
+  String? usernameLogado;
+  String perfilLogado = '';
+  
+  Future<void> recuperarDadosUsuario() async {
     User? usuarioLogado = auth.currentUser;
     if (usuarioLogado != null) {
       idUsuarioLogado = usuarioLogado.uid;
+      DocumentSnapshot<Map<String, dynamic>> userData = await FirebaseFirestore
+          .instance
+          .collection('usuarios')
+          .doc(idUsuarioLogado)
+          .get();
+      if (userData.exists) {
+        setState(() {
+          usernameLogado = userData['username'];
+          perfilLogado = userData['urlImagem'];
+        });
+      }
     }
+  }
+
+  void enviarNotificacao() {
+    CollectionReference usuariosCollection =
+        FirebaseFirestore.instance.collection('usuarios');
+
+    DocumentReference usuarioRef = usuariosCollection.doc(uidPerfil);
+
+    usuarioRef.collection('notificacoes').add({
+      'username': usernameLogado,
+      'idUsuario': idUsuarioLogado,
+      'mensagem': 'começou a seguir você.',
+      'hora': DateTime.now().toString(),
+      'postagem': 'vazio',
+      'idPostagem': '',
+      'perfil': perfilLogado,
+    });
+  }
+
+  void enviarNotificacao2() {
+    CollectionReference usuariosCollection =
+        FirebaseFirestore.instance.collection('usuarios');
+
+    DocumentReference usuarioRef = usuariosCollection.doc(uidPerfil);
+
+    usuarioRef.collection('notificacoes').add({
+      'username': usernameLogado,
+      'idUsuario': idUsuarioLogado,
+      'mensagem': 'deixou de seguir você.',
+      'hora': DateTime.now().toString(),
+      'postagem': 'vazio',
+      'idPostagem': '',
+      'perfil': perfilLogado,
+    });
   }
 
   void seguirUsuario() {
@@ -62,6 +110,7 @@ class _perfil_visitaState extends State<perfil_visita> {
             novidadesCollection.doc(idUsuarioLogado).update({
               'seguindo': FieldValue.increment(-1),
             });
+            enviarNotificacao2();
           });
         } else {
           Map<String, dynamic> seguindoData = {
@@ -78,6 +127,7 @@ class _perfil_visitaState extends State<perfil_visita> {
             novidadesCollection.doc(idUsuarioLogado).update({
               'seguindo': FieldValue.increment(1),
             });
+            enviarNotificacao();
           });
         }
       });
@@ -110,6 +160,7 @@ class _perfil_visitaState extends State<perfil_visita> {
             novidadesCollection.doc(uidPerfil).update({
               'seguidores': FieldValue.increment(1),
             });
+            
           });
         }
       });
@@ -193,6 +244,7 @@ class _perfil_visitaState extends State<perfil_visita> {
           cadastroPerfil = doc.data()?['Cadastro'] ?? '';
           sobrenomePerfil = doc.data()?['sobrenome'] ?? '';
           username = doc.data()?['username'] ?? '';
+          nomePerfil = doc.data()?['nome'] ?? '';
         });
       }
     }).catchError((error) {
@@ -313,7 +365,7 @@ class _perfil_visitaState extends State<perfil_visita> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '$nome $sobrenomePerfil',
+                                    '$nomePerfil $sobrenomePerfil',
                                     style: const TextStyle(
                                         fontWeight: FontWeight.w500,
                                         color: Colors.black,
@@ -653,8 +705,14 @@ class _perfil_visitaState extends State<perfil_visita> {
               ),
               Expanded(
                 child: TabBarView(children: [
-                  postagens_imagens_visitas(autoId: uidPerfil, nome: nome,),
-                  postagens_textos_visita(autoId: uidPerfil, nome: nome,),
+                  postagens_imagens_visitas(
+                    autoId: uidPerfil,
+                    nome: nome,
+                  ),
+                  postagens_textos_visita(
+                    autoId: uidPerfil,
+                    nome: nome,
+                  ),
                 ]),
               )
             ],

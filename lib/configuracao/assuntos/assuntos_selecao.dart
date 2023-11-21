@@ -19,30 +19,31 @@ class _assuntos_selecaoState extends State<assuntos_selecao> {
   String? idUsuarioLogado;
 
   Future<void> recuperarDadosUsuario() async {
-  User? usuarioLogado = auth.currentUser;
-  idUsuarioLogado = usuarioLogado?.uid;
+    User? usuarioLogado = auth.currentUser;
+    idUsuarioLogado = usuarioLogado?.uid;
 
-  if (idUsuarioLogado != null) {
-    DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
-        .collection('usuarios')
-        .doc(idUsuarioLogado)
-        .collection('assuntos')
-        .doc('assuntos')
-        .get();
+    if (idUsuarioLogado != null) {
+      DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+          .instance
+          .collection('usuarios')
+          .doc(idUsuarioLogado)
+          .collection('assuntos')
+          .doc('assuntos')
+          .get();
 
-    if (snapshot.exists) {
-      List<String> savedAssuntos = List<String>.from(snapshot.data()?['assunto'] ?? []);
-      for (int i = 0; i < selectedItems.length; i++) {
-        if (savedAssuntos.contains(_getContainerLabel(i + 1))) {
-          setState(() {
-            selectedItems[i] = true;
-          });
+      if (snapshot.exists) {
+        List<String> savedAssuntos =
+            List<String>.from(snapshot.data()?['assunto'] ?? []);
+        for (int i = 0; i < selectedItems.length; i++) {
+          if (savedAssuntos.contains(_getContainerLabel(i + 1))) {
+            setState(() {
+              selectedItems[i] = true;
+            });
+          }
         }
       }
     }
   }
-}
-
 
   String _getContainerLabel(int index) {
     switch (index) {
@@ -137,10 +138,31 @@ class _assuntos_selecaoState extends State<assuntos_selecao> {
         'assunto': selectedAssuntos,
       });
 
+      enviarNotificacao();
       // ignore: use_build_context_synchronously
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const home_principal(indexPagina: 2)));
-      
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const home_principal(indexPagina: 2)));
     }
+  }
+
+  void enviarNotificacao() {
+    CollectionReference usuariosCollection =
+        FirebaseFirestore.instance.collection('usuarios');
+
+    DocumentReference usuarioRef = usuariosCollection.doc(idUsuarioLogado);
+
+    usuarioRef.collection('notificacoes').add({
+      'username': 'izyncor',
+      'idUsuario': idUsuarioLogado,
+      'mensagem': 'Boas vindas a Izyncor 😁',
+      'hora': DateTime.now().toString(),
+      'postagem': 'boas_vindas',
+      'idPostagem': 'boas_vindas',
+      'perfil':
+          'https://firebasestorage.googleapis.com/v0/b/izyncor-app-949df.appspot.com/o/perfil%2F0L0ZqCOLSZfxCpWRfOUOhT36yy23.jpg?alt=media&token=358048dd-7301-4134-8a2c-798e07ec215c',
+    });
   }
 
   @override

@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:editora_izyncor_app/interior_usuario/homepage/feed/processo_postagem/assuntos_post.dart';
 import 'package:editora_izyncor_app/interior_usuario/tabbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -32,105 +32,6 @@ class _postagem_tela01State extends State<postagem_tela01> {
   bool legendaVazia = true;
 
   File? imagem;
-
-  Future<void> publicarPostagem() async {
-    String legenda = controllerLegenda.text;
-    String titulo = controllerTitulo.text;
-
-    // Gere um ID único para a postagem
-    final String postId =
-        FirebaseFirestore.instance.collection('feed').doc().id;
-
-    if (imagem == null) {
-      // Para postagens sem imagem
-      await FirebaseFirestore.instance.collection('feed').doc(postId).set({
-        'autorId': idUsuarioLogado,
-        'legenda': legenda,
-        'titulo': titulo,
-        'imagemUrl': 'vazio',
-        'hora': DateTime.now().toString(),
-        'curtidas': 0,
-        'comentarios': 0,
-        'salvos': 0,
-        'idPostagem': postId,
-        'editado': ''
-      });
-
-      await FirebaseFirestore.instance
-          .collection('backup_feed')
-          .doc(postId)
-          .set({
-        'autorId': idUsuarioLogado,
-        'legenda': legenda,
-        'titulo': titulo,
-        'imagemUrl': 'vazio',
-        'hora': DateTime.now().toString(),
-        'curtidas': 0,
-        'comentarios': 0,
-        'salvos': 0,
-        'idPostagem': postId,
-        'editado': ''
-      });
-    } else {
-      try {
-        final storageRef = FirebaseStorage.instance
-            .ref()
-            .child('imagens_postagens')
-            .child(postId); // Use o mesmo ID para o nome do arquivo
-
-        final uploadTask = storageRef.putFile(imagem!);
-        final TaskSnapshot downloadUrl = await uploadTask;
-
-        final String imageUrl = await downloadUrl.ref.getDownloadURL();
-
-        await FirebaseFirestore.instance.collection('feed').doc(postId).set({
-          'autorId': idUsuarioLogado,
-          'legenda': legenda,
-          'titulo': '',
-          'imagemUrl': imageUrl,
-          'hora': DateTime.now().toString(),
-          'curtidas': 0,
-          'comentarios': 0,
-          'salvos': 0,
-          'idPostagem': postId,
-          'editado': ''
-        });
-
-        await FirebaseFirestore.instance
-            .collection('backup_feed')
-            .doc(postId)
-            .set({
-          'autorId': idUsuarioLogado,
-          'legenda': legenda,
-          'titulo': '',
-          'imagemUrl': imageUrl,
-          'hora': DateTime.now().toString(),
-          'curtidas': 0,
-          'comentarios': 0,
-          'salvos': 0,
-          'idPostagem': postId,
-          'editado': ''
-        });
-      } catch (error) {
-        showAlertErro();
-      }
-    }
-
-    await FirebaseFirestore.instance
-        .collection('usuarios')
-        .doc(idUsuarioLogado)
-        .update({
-      'postagens': FieldValue.increment(1),
-    });
-
-    // ignore: use_build_context_synchronously
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: ((context) => const home_principal(indexPagina: 2,)),
-      ),
-    );
-  }
 
   void showAlertErro() {
     QuickAlert.show(
@@ -229,7 +130,9 @@ class _postagem_tela01State extends State<postagem_tela01> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: ((context) => const home_principal(indexPagina: 2,)),
+                    builder: ((context) => const home_principal(
+                          indexPagina: 2,
+                        )),
                   ),
                 );
               },
@@ -323,7 +226,7 @@ class _postagem_tela01State extends State<postagem_tela01> {
                       borderRadius: BorderRadius.circular(12)),
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Colors.white)),
+                      borderSide: const BorderSide(color: Colors.black12)),
                   contentPadding: const EdgeInsets.fromLTRB(32, 15, 32, 16),
                   hintText: "Compartilhe seus pensamentos... com moderação!",
                   hintStyle: const TextStyle(
@@ -409,10 +312,13 @@ class _postagem_tela01State extends State<postagem_tela01> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: ((context) => const home_principal(indexPagina: 2,)),
+                            builder: ((context) => assuntos_postagem(
+                                  titulo: controllerTitulo.text.isEmpty ? '' : controllerTitulo.text,
+                                  legenda: controllerLegenda.text.isEmpty ? '' : controllerLegenda.text,
+                                  imagem: imagem == null ? null : imagem!,
+                                )),
                           ),
                         );
-                        publicarPostagem();
                       },
                       child: Container(
                         width: 180,

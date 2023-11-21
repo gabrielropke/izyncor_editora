@@ -68,6 +68,7 @@ dependencies:
   flutter_native_splash: ^2.2.16
   flutter_launcher_icons: ^0.11.0
   google_fonts: ^4.0.4
+  epub_view: ^3.2.0
   
 flutter_native_splash:
   color: "#ffffff"
@@ -107,6 +108,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/ebook/quintal.epub
     - assets/background_cadastro.png
     - assets/background_options.jpg
     - assets/logo_apple.png
@@ -158,6 +160,7 @@ flutter:
     - assets/tela_01_1.jpg
     - assets/tela_02_1.jpg
     - assets/tela_03_1.jpg
+    - assets/tela_04.png
     - assets/foto_leandro.png
     - assets/foto_thais.png
     - assets/fundo_chat.png

@@ -46,6 +46,7 @@ class _MensagensState extends State<Mensagens> {
   late String imagemPerfil;
   late String sobrenome;
   late String biografia;
+  String? username;
   String? nomeLogado;
   String? sobrenomeLogado;
   String? imagemUrlLogado;
@@ -155,6 +156,7 @@ class _MensagensState extends State<Mensagens> {
           _idUsuarioDestinatario!, _idUsuarioLogado!, mensagem);
       //Salvar conversa
       _salvarConversa(mensagem);
+      enviarNotificacao();
     }
   }
 
@@ -210,6 +212,26 @@ class _MensagensState extends State<Mensagens> {
     cadastro = dados["Cadastro"];
     sobrenomeLogado = dados["sobrenome"];
     imagemUrlLogado = dados["urlImagem"];
+    username = dados['username'];
+  }
+
+  void enviarNotificacao() {
+    CollectionReference usuariosCollection =
+        FirebaseFirestore.instance.collection('usuarios');
+
+    DocumentReference usuarioRef =
+        usuariosCollection.doc(_idUsuarioDestinatario);
+
+    usuarioRef.collection('notificacoes').add({
+      'username': username,
+      'idUsuario': _idUsuarioLogado,
+      'mensagem': 'enviou uma mensagem para você.',
+      'hora': DateTime.now().toString(),
+      'postagem': 'vazio',
+      'idPostagem': '',
+      'perfil': imagemUrlLogado,
+    });
+    print('oi');
   }
 
   _salvarMensagem(
