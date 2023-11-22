@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:editora_izyncor_app/interior_usuario/chat/mensagens_chat.dart';
@@ -5,6 +7,8 @@ import 'package:editora_izyncor_app/interior_usuario/homepage/feed/widgets/posta
 import 'package:editora_izyncor_app/interior_usuario/perfil_visita/perfil_visita.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 class notificacao_page extends StatefulWidget {
   const notificacao_page({super.key});
@@ -21,6 +25,19 @@ class _notificacao_pageState extends State<notificacao_page> {
 
   String nome = '';
   String sobrenome = '';
+
+  void showAlertAtencao() {
+    QuickAlert.show(
+        context: context,
+        title: 'Atenção',
+        text: 'Deseja realmente excluir todas as notificações?',
+        confirmBtnText: 'Sim',
+        onConfirmBtnTap: () {
+          excluirPostGeral();
+          Navigator.pop(context);
+        },
+        type: QuickAlertType.error);
+  }
 
   Future<void> recuperarDadosUsuario() async {
     User? usuarioLogado = auth.currentUser;
@@ -88,6 +105,82 @@ class _notificacao_pageState extends State<notificacao_page> {
     }
   }
 
+  void selecionarItem(BuildContext context, String index) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(
+              20.0), // Defina o raio para bordas arredondadas superiores
+        ),
+      ),
+      builder: (BuildContext context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                      color: Colors.black38,
+                      borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+            ),
+            ListTile(
+              leading:
+                  SizedBox(width: 25, child: Image.asset('assets/lixeira.png')),
+              title: const Text('Excluir'),
+              onTap: () {
+                excluirPost(index);
+                Navigator.pop(context);
+              },
+            ),
+            if (Platform.isIOS)
+              const SizedBox(
+                width: double.infinity,
+                height: 40,
+              )
+          ],
+        );
+      },
+    );
+  }
+
+  void excluirPost(String index) {
+    if (idUsuarioLogado != null) {
+      CollectionReference novidadesCollection =
+          FirebaseFirestore.instance.collection('usuarios');
+
+      // Excluir o documento do Firestore
+      novidadesCollection
+          .doc(idUsuarioLogado)
+          .collection('notificacoes')
+          .doc(index)
+          .delete();
+    }
+  }
+
+  void excluirPostGeral() {
+    if (idUsuarioLogado != null) {
+      CollectionReference notificacoesCollection =
+          FirebaseFirestore.instance.collection('usuarios');
+
+      CollectionReference notificacoesRef = notificacoesCollection
+          .doc(idUsuarioLogado)
+          .collection('notificacoes');
+
+      notificacoesRef.get().then((querySnapshot) {
+        querySnapshot.docs.forEach((doc) {
+          doc.reference.delete();
+        });
+      });
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -104,6 +197,18 @@ class _notificacao_pageState extends State<notificacao_page> {
         leadingWidth: 26,
         backgroundColor: Colors.transparent,
         title: const Text('Notificações'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: GestureDetector(
+              onTap: () {
+                showAlertAtencao();
+              },
+              child:
+                  SizedBox(width: 22, child: Image.asset('assets/lixeira.png')),
+            ),
+          ),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -138,6 +243,9 @@ class _notificacao_pageState extends State<notificacao_page> {
                 return Column(
                   children: [
                     GestureDetector(
+                      onLongPress: () {
+                        selecionarItem(context, messages[index].id);
+                      },
                       onTap: () async {
                         if (mensagem == 'enviou uma mensagem para você.') {
                           Map<String, String>? perfilInfo =
@@ -197,16 +305,16 @@ class _notificacao_pageState extends State<notificacao_page> {
                               height: 45,
                               color: Colors.white,
                               child: CachedNetworkImage(
-                                imageUrl: perfil,
-                                fit: BoxFit
-                                    .cover, // ajuste de acordo com suas necessidades
-                                placeholder: (context, url) =>
-                                    const CircularProgressIndicator(
-                                  color: Colors.white,
-                                ), // um indicador de carregamento
-                                errorWidget: (context, url, error) =>
-                                    const SizedBox() // widget de erro
-                              ),
+                                  imageUrl: perfil,
+                                  fit: BoxFit
+                                      .cover, // ajuste de acordo com suas necessidades
+                                  placeholder: (context, url) =>
+                                      const CircularProgressIndicator(
+                                        color: Colors.white,
+                                      ), // um indicador de carregamento
+                                  errorWidget: (context, url, error) =>
+                                      const SizedBox() // widget de erro
+                                  ),
                             ),
                           ),
                         ),
@@ -235,13 +343,12 @@ class _notificacao_pageState extends State<notificacao_page> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
                                   child: CachedNetworkImage(
-                                    imageUrl: postagem,
-                                    fit: BoxFit.cover,
-                                    placeholder: (context, url) =>
-                                        const SizedBox(),
-                                    errorWidget: (context, url, error) =>
-                                        const SizedBox()
-                                  ),
+                                      imageUrl: postagem,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) =>
+                                          const SizedBox(),
+                                      errorWidget: (context, url, error) =>
+                                          const SizedBox()),
                                 ),
                               ),
                           ],

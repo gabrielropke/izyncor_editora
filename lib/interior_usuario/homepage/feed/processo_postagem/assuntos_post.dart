@@ -30,7 +30,7 @@ class _assuntos_postagemState extends State<assuntos_postagem> {
   String? idUsuarioLogado;
   late String titulo;
   late String legenda;
-  late File? imagem;
+  File? imagem;
 
   Future<void> recuperarDadosUsuario() async {
     User? usuarioLogado = auth.currentUser;
@@ -244,7 +244,7 @@ class _assuntos_postagemState extends State<assuntos_postagem> {
     );
   }
 
-  @override
+   @override
   void initState() {
     // TODO: implement initState
     super.initState();
