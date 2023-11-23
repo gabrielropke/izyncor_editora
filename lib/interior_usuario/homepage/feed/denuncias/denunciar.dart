@@ -49,7 +49,7 @@ class _denunciarState extends State<denunciar> {
               const Text('Agradecemos por nos avisar!',
                   style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18)),
               const SizedBox(height: 15),
-              const Text('Porque está denunciando essa publicação?',
+              const Text('Porque está realizando esta denúncia?',
                   style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
               const SizedBox(height: 20),
               const Text(

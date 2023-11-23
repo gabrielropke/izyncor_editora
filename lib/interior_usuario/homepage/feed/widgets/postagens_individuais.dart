@@ -67,9 +67,11 @@ class _postagens_individuaisState extends State<postagens_individuais> {
     } else if (difference < Duration(minutes: 2)) {
       return 'Há ${difference.inMinutes} minuto';
     } else if (difference < Duration(hours: 1)) {
-      return 'Há ${difference.inMinutes} minutos';
+      int minutes = difference.inMinutes;
+      return 'Há $minutes ${minutes == 1 ? 'minuto' : 'minutos'}';
     } else if (difference < Duration(days: 1)) {
-      return 'Há ${difference.inHours} horas';
+      int hours = difference.inHours;
+      return 'Há $hours ${hours == 1 ? 'hora' : 'horas'}';
     } else if (difference < Duration(days: 2)) {
       return 'Há ${difference.inDays} dia';
     } else if (difference < Duration(days: 30)) {

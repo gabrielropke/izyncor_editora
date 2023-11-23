@@ -48,8 +48,6 @@ class _icone_curtirState extends State<icone_curtir> {
   late String username;
   late String perfilLogado;
 
-
-
   Future<void> recuperarDadosUsuario() async {
     User? usuarioLogado = auth.currentUser;
     if (usuarioLogado != null) {
@@ -130,6 +128,7 @@ class _icone_curtirState extends State<icone_curtir> {
       'postagem': imagemUrl,
       'idPostagem': idPostagem,
       'perfil': perfilLogado,
+      'status': 'novo',
     });
   }
 

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class post_imagens extends StatefulWidget {
@@ -27,6 +28,7 @@ class post_imagens extends StatefulWidget {
 }
 
 class _post_imagensState extends State<post_imagens> {
+  FirebaseAuth auth = FirebaseAuth.instance;
   late List<Map<String, dynamic>> postagens;
   late String idUsuarioLogado;
   late String autorId;
@@ -36,6 +38,30 @@ class _post_imagensState extends State<post_imagens> {
   late String titulo;
   late String imagemUrl;
   late Color corBotao;
+  late String nome;
+  late String sobrenome;
+  late String username;
+  late String perfilLogado;
+
+  Future<void> recuperarDadosUsuario() async {
+    User? usuarioLogado = auth.currentUser;
+    if (usuarioLogado != null) {
+      idUsuarioLogado = usuarioLogado.uid;
+      DocumentSnapshot<Map<String, dynamic>> userData = await FirebaseFirestore
+          .instance
+          .collection('usuarios')
+          .doc(idUsuarioLogado)
+          .get();
+      if (userData.exists) {
+        setState(() {
+          nome = userData['nome'];
+          sobrenome = userData['sobrenome'];
+          username = userData['username'];
+          perfilLogado = userData['urlImagem'];
+        });
+      }
+    }
+  }
 
   fetchFeed() async {
     QuerySnapshot querySnapshot =
@@ -83,9 +109,28 @@ class _post_imagensState extends State<post_imagens> {
     });
   }
 
+  void enviarNotificacao() {
+    CollectionReference usuariosCollection =
+        FirebaseFirestore.instance.collection('usuarios');
+
+    DocumentReference usuarioRef = usuariosCollection.doc(autorId);
+
+    usuarioRef.collection('notificacoes').add({
+      'username': username,
+      'idUsuario': idUsuarioLogado,
+      'mensagem': 'curtiu sua publicação.',
+      'hora': DateTime.now().toString(),
+      'postagem': imagemUrl,
+      'idPostagem': idPostagem,
+      'perfil': perfilLogado,
+      'status': 'novo',
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    recuperarDadosUsuario();
     idUsuarioLogado = widget.idUsuarioLogado;
     autorId = widget.autorId;
     usernameAutor = widget.usernameAutor;
@@ -140,6 +185,7 @@ class _post_imagensState extends State<post_imagens> {
                       1), // Incrementa o contador de curtidas
                 });
               });
+              enviarNotificacao();
             }
           });
                 }

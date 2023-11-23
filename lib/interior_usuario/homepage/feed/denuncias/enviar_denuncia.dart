@@ -123,7 +123,7 @@ class _enviar_denunciaState extends State<enviar_denuncia> {
               const SizedBox(height: 30),
               Row(
                 children: [
-                  const Text('Autor do post: ',
+                  const Text('Denúncia sobre: ',
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   Text('@$nomeAutor',
@@ -134,7 +134,7 @@ class _enviar_denunciaState extends State<enviar_denuncia> {
               const SizedBox(height: 10),
               Row(
                 children: [
-                  const Text('Denúncia sobre: ',
+                  const Text('Motivo: ',
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   Text(motivo,

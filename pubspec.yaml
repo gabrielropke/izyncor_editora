@@ -230,6 +230,13 @@ flutter:
     - assets/info2_icone.png
     - assets/relatar2_icone.png
     - assets/sair3_icone.png
+    - assets/view.png
+    - assets/view_not.png
+    - assets/vento.png
+    - assets/enviar_3.png
+    - assets/anexo.png
+    - assets/anexo2.png
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

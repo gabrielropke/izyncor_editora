@@ -14,7 +14,6 @@ class principal extends StatefulWidget {
   State<principal> createState() => _principalState();
 }
 
-
 class _principalState extends State<principal> {
   FirebaseAuth auth = FirebaseAuth.instance;
   String? idUsuarioLogado;
@@ -54,12 +53,13 @@ class _principalState extends State<principal> {
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          centerTitle: false,
-          title: topo_appbar(scaffoldKey: _scaffoldKey,)
-        ),
+            automaticallyImplyLeading: false,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            centerTitle: false,
+            title: topo_appbar(
+              scaffoldKey: _scaffoldKey,
+            )),
         drawer: const drawer_widget(),
         body: Column(
           children: [

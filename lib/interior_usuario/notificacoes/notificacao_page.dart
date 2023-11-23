@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:editora_izyncor_app/interior_usuario/chat/mensagens_chat.dart';
+import 'package:editora_izyncor_app/interior_usuario/chat/chat_mensagem/mensagens.dart';
 import 'package:editora_izyncor_app/interior_usuario/homepage/feed/widgets/postagens_individuais.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil_visita/perfil_visita.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -66,9 +66,11 @@ class _notificacao_pageState extends State<notificacao_page> {
     } else if (difference < Duration(minutes: 2)) {
       return 'Há ${difference.inMinutes} minuto';
     } else if (difference < Duration(hours: 1)) {
-      return 'Há ${difference.inMinutes} minutos';
+      int minutes = difference.inMinutes;
+      return 'Há $minutes ${minutes == 1 ? 'minuto' : 'minutos'}';
     } else if (difference < Duration(days: 1)) {
-      return 'Há ${difference.inHours} horas';
+      int hours = difference.inHours;
+      return 'Há $hours ${hours == 1 ? 'hora' : 'horas'}';
     } else if (difference < Duration(days: 2)) {
       return 'Há ${difference.inDays} dia';
     } else if (difference < Duration(days: 30)) {
@@ -105,7 +107,72 @@ class _notificacao_pageState extends State<notificacao_page> {
     }
   }
 
-  void selecionarItem(BuildContext context, String index) {
+  void selecionarItem(BuildContext context, String index, String status) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(
+              20.0), // Defina o raio para bordas arredondadas superiores
+        ),
+      ),
+      builder: (BuildContext context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                      color: Colors.black38,
+                      borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+            ),
+            if (status == 'novo')
+              ListTile(
+                leading:
+                    SizedBox(width: 25, child: Image.asset('assets/view.png')),
+                title: const Text('Marcar como visto'),
+                onTap: () {
+                  Navigator.pop(context);
+                  setarVisualizada(index);
+                },
+              ),
+            if (status == 'visto')
+              ListTile(
+                leading: SizedBox(
+                    width: 25, child: Image.asset('assets/view_not.png')),
+                title: const Text('Marcar como não visto'),
+                onTap: () {
+                  Navigator.pop(context);
+                  setarNaoVisualizada(index);
+                },
+              ),
+            ListTile(
+              leading:
+                  SizedBox(width: 25, child: Image.asset('assets/lixeira.png')),
+              title: const Text('Excluir'),
+              onTap: () {
+                excluirPost(index);
+                Navigator.pop(context);
+              },
+            ),
+            if (Platform.isIOS)
+              const SizedBox(
+                width: double.infinity,
+                height: 40,
+              )
+          ],
+        );
+      },
+    );
+  }
+
+  void selecionarGeral(BuildContext context) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -132,11 +199,29 @@ class _notificacao_pageState extends State<notificacao_page> {
             ),
             ListTile(
               leading:
+                  SizedBox(width: 25, child: Image.asset('assets/view.png')),
+              title: const Text('Marcar todas como visto'),
+              onTap: () {
+                Navigator.pop(context);
+                setarTodasVisualizada();
+              },
+            ),
+            ListTile(
+              leading: SizedBox(
+                  width: 25, child: Image.asset('assets/view_not.png')),
+              title: const Text('Marcar todas como não visto'),
+              onTap: () {
+                Navigator.pop(context);
+                setarTodasNaoVisualizada();
+              },
+            ),
+            ListTile(
+              leading:
                   SizedBox(width: 25, child: Image.asset('assets/lixeira.png')),
               title: const Text('Excluir'),
               onTap: () {
-                excluirPost(index);
                 Navigator.pop(context);
+                showAlertAtencao();
               },
             ),
             if (Platform.isIOS)
@@ -181,6 +266,86 @@ class _notificacao_pageState extends State<notificacao_page> {
     }
   }
 
+  void setarVisualizada(String index) async {
+    try {
+      CollectionReference usuariosCollection =
+          FirebaseFirestore.instance.collection('usuarios');
+
+      DocumentReference usuarioRef = usuariosCollection.doc(idUsuarioLogado);
+
+      await usuarioRef.collection('notificacoes').doc(index).update({
+        'status': 'visto',
+      });
+
+      print('Status atualizado com sucesso para "visto"');
+    } catch (e) {
+      print('Erro ao atualizar o status: $e');
+    }
+  }
+
+  void setarTodasVisualizada() async {
+    try {
+      CollectionReference usuariosCollection =
+          FirebaseFirestore.instance.collection('usuarios');
+
+      DocumentReference usuarioRef = usuariosCollection.doc(idUsuarioLogado);
+
+      QuerySnapshot notificacoesSnapshot =
+          await usuarioRef.collection('notificacoes').get();
+
+      for (QueryDocumentSnapshot doc in notificacoesSnapshot.docs) {
+        await doc.reference.update({
+          'status': 'visto',
+        });
+      }
+
+      print(
+          'Status atualizado com sucesso para "visto" para todas as notificações');
+    } catch (e) {
+      print('Erro ao atualizar o status: $e');
+    }
+  }
+
+  void setarTodasNaoVisualizada() async {
+    try {
+      CollectionReference usuariosCollection =
+          FirebaseFirestore.instance.collection('usuarios');
+
+      DocumentReference usuarioRef = usuariosCollection.doc(idUsuarioLogado);
+
+      QuerySnapshot notificacoesSnapshot =
+          await usuarioRef.collection('notificacoes').get();
+
+      for (QueryDocumentSnapshot doc in notificacoesSnapshot.docs) {
+        await doc.reference.update({
+          'status': 'novo',
+        });
+      }
+
+      print(
+          'Status atualizado com sucesso para "visto" para todas as notificações');
+    } catch (e) {
+      print('Erro ao atualizar o status: $e');
+    }
+  }
+
+  void setarNaoVisualizada(String index) async {
+    try {
+      CollectionReference usuariosCollection =
+          FirebaseFirestore.instance.collection('usuarios');
+
+      DocumentReference usuarioRef = usuariosCollection.doc(idUsuarioLogado);
+
+      await usuarioRef.collection('notificacoes').doc(index).update({
+        'status': 'novo',
+      });
+
+      print('Status atualizado com sucesso para "visto"');
+    } catch (e) {
+      print('Erro ao atualizar o status: $e');
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -202,10 +367,9 @@ class _notificacao_pageState extends State<notificacao_page> {
             padding: const EdgeInsets.only(right: 12),
             child: GestureDetector(
               onTap: () {
-                showAlertAtencao();
+                selecionarGeral(context);
               },
-              child:
-                  SizedBox(width: 22, child: Image.asset('assets/lixeira.png')),
+              child: const Icon(Icons.more_horiz),
             ),
           ),
         ],
@@ -229,6 +393,28 @@ class _notificacao_pageState extends State<notificacao_page> {
 
             var messages = snapshot.data!.docs;
 
+            if (messages.isEmpty) {
+              return const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(
+                    child: Icon(
+                      Icons.notifications_off_outlined,
+                      size: 100,
+                      color: Colors.black12,
+                    ),
+                  ),
+                  Text(
+                    'Nada por enquanto...',
+                    style: TextStyle(
+                        fontSize: 26,
+                        color: Colors.black26,
+                        fontWeight: FontWeight.w300),
+                  )
+                ],
+              );
+            }
+
             return ListView.builder(
               itemCount: messages.length,
               itemBuilder: (context, index) {
@@ -239,12 +425,13 @@ class _notificacao_pageState extends State<notificacao_page> {
                 var hora = messages[index].get('hora');
                 var idPerfil = messages[index].get('idUsuario');
                 var idPostagem = messages[index].get('idPostagem');
+                var status = messages[index].get('status');
 
                 return Column(
                   children: [
                     GestureDetector(
                       onLongPress: () {
-                        selecionarItem(context, messages[index].id);
+                        selecionarItem(context, messages[index].id, status);
                       },
                       onTap: () async {
                         if (mensagem == 'enviou uma mensagem para você.') {
@@ -254,23 +441,24 @@ class _notificacao_pageState extends State<notificacao_page> {
                             String nomePerfil = perfilInfo['nome']!;
                             String sobrenomePerfil = perfilInfo['sobrenome']!;
 
+                            setarVisualizada(messages[index].id);
                             // ignore: use_build_context_synchronously
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => Mensagens(
-                                  uidPerfil: idPerfil,
-                                  nome: nomePerfil,
-                                  imagemPerfil: perfil,
-                                  sobrenome: sobrenomePerfil,
-                                ),
-                              ),
+                                  builder: (context) => mensagens(
+                                      idUsuarioDestino: idPerfil,
+                                      nomeDestino: nomePerfil,
+                                      imagemPerfilDestino: perfil,
+                                      sobrenomeDestino: sobrenomePerfil,
+                                      usernameDestino: username,)),
                             );
                           } else {
                             print('Não encontrado: $idPerfil');
                           }
                         } else {
                           if (mensagem == 'curtiu sua publicação.') {
+                            setarVisualizada(messages[index].id);
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -299,22 +487,31 @@ class _notificacao_pageState extends State<notificacao_page> {
                                           cadastro: '')));
                             }
                           },
-                          child: ClipOval(
-                            child: Container(
-                              width: 45,
-                              height: 45,
-                              color: Colors.white,
+                          child: Container(
+                            width: 45,
+                            height: 45,
+                            decoration: BoxDecoration(
+                              border: status == 'novo'
+                                  ? Border.all(
+                                      width: 2,
+                                      color: const Color.fromARGB(
+                                          255, 212, 18, 99))
+                                  : null,
+                              shape: BoxShape.circle,
+                            ),
+                            child: ClipOval(
                               child: CachedNetworkImage(
-                                  imageUrl: perfil,
-                                  fit: BoxFit
-                                      .cover, // ajuste de acordo com suas necessidades
-                                  placeholder: (context, url) =>
-                                      const CircularProgressIndicator(
-                                        color: Colors.white,
-                                      ), // um indicador de carregamento
-                                  errorWidget: (context, url, error) =>
-                                      const SizedBox() // widget de erro
-                                  ),
+                                imageUrl: perfil,
+                                fit: BoxFit.cover,
+                                width: 45,
+                                height: 45,
+                                placeholder: (context, url) =>
+                                    const CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    const SizedBox(),
+                              ),
                             ),
                           ),
                         ),
@@ -325,10 +522,21 @@ class _notificacao_pageState extends State<notificacao_page> {
                                     fontWeight: FontWeight.bold)),
                             const SizedBox(width: 5),
                             Text(formatDataHora(hora),
-                                style: const TextStyle(
+                                style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black38)),
+                                    color: status == 'visto'
+                                        ? Colors.black38
+                                        : const Color.fromARGB(
+                                            255, 212, 18, 99))),
+                            if (status == 'novo') const SizedBox(width: 15),
+                            if (status == 'novo')
+                              SizedBox(
+                                width: 15,
+                                child: Image.asset('assets/icone_sino_01.png',
+                                    color:
+                                        const Color.fromARGB(255, 212, 18, 99)),
+                              ),
                           ],
                         ),
                         subtitle: Text(mensagem,

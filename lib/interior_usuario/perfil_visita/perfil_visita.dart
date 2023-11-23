@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:editora_izyncor_app/interior_usuario/chat/mensagens_chat.dart';
+import 'package:editora_izyncor_app/interior_usuario/chat/chat_mensagem/mensagens.dart';
+import 'package:editora_izyncor_app/interior_usuario/chat/chat_mensagem/widget_chat/anexos_chat.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil_visita/galeria_visita/postagens_imagens_visita.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil_visita/galeria_visita/postagens_textos.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -41,7 +44,7 @@ class _perfil_visitaState extends State<perfil_visita> {
   String username = '';
   String? usernameLogado;
   String perfilLogado = '';
-  
+
   Future<void> recuperarDadosUsuario() async {
     User? usuarioLogado = auth.currentUser;
     if (usuarioLogado != null) {
@@ -160,7 +163,6 @@ class _perfil_visitaState extends State<perfil_visita> {
             novidadesCollection.doc(uidPerfil).update({
               'seguidores': FieldValue.increment(1),
             });
-            
           });
         }
       });
@@ -304,16 +306,10 @@ class _perfil_visitaState extends State<perfil_visita> {
             Padding(
               padding: EdgeInsets.only(right: 10),
               child: GestureDetector(
-                  onTap: () {
-                    verItem(context);
-                  },
-                  child: GestureDetector(
-                    onTap: () {
-                      verItem(context);
-                    },
-                    child: SizedBox(
-                        width: 23, child: Image.asset('assets/settings.png')),
-                  )),
+                onTap: () {},
+                child: SizedBox(
+                    width: 23, child: Image.asset('assets/settings.png')),
+              ),
             )
           ],
         ),
@@ -552,17 +548,17 @@ class _perfil_visitaState extends State<perfil_visita> {
                                         ),
                                       ),
                                       Padding(
-                                        padding: const EdgeInsets.only(top: 20),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(16.0),
-                                          child: Text(
-                                            biografia,
-                                            style:
-                                                const TextStyle(fontSize: 18),
-                                          ),
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Text(
+                                          biografia,
+                                          style: const TextStyle(fontSize: 18),
                                         ),
                                       ),
-                                      const SizedBox(height: 30)
+                                      if (Platform.isIOS)
+                                        const SizedBox(
+                                          width: double.infinity,
+                                          height: 40,
+                                        )
                                     ],
                                   );
                                 },
@@ -590,11 +586,13 @@ class _perfil_visitaState extends State<perfil_visita> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: ((context) => Mensagens(
-                                    uidPerfil: uidPerfil,
-                                    nome: nome,
-                                    imagemPerfil: imagemPerfil,
-                                    sobrenome: sobrenome)),
+                                builder: ((context) => mensagens(
+                                      idUsuarioDestino: uidPerfil,
+                                      nomeDestino: nomePerfil,
+                                      imagemPerfilDestino: imagemPerfil,
+                                      sobrenomeDestino: sobrenomePerfil,
+                                      usernameDestino: username,
+                                    )),
                               ),
                             );
                           },

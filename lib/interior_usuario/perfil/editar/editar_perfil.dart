@@ -30,8 +30,10 @@ class _editar_perfilState extends State<editar_perfil> {
       TextEditingController(text: "");
   final TextEditingController _controllerBIO = TextEditingController(text: "");
   final TextEditingController _controllerSITE = TextEditingController(text: "");
-  final TextEditingController _controllerTELEFONE = TextEditingController(text: "");
-  final TextEditingController _controllerRECUPERAR = TextEditingController(text: "");
+  final TextEditingController _controllerTELEFONE =
+      TextEditingController(text: "");
+  final TextEditingController _controllerRECUPERAR =
+      TextEditingController(text: "");
 
   final StreamController<String> _streamNOME = StreamController<String>();
   final StreamController<String> _streamSOBRENOME = StreamController<String>();
@@ -60,7 +62,7 @@ class _editar_perfilState extends State<editar_perfil> {
           _atualizarSiteFirestore();
           _atualizarTelefoneFirestore();
           _atualizarRecuperarFirestore();
-          
+
           Navigator.pop(context);
           Navigator.pop(context);
         });

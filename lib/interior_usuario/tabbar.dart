@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:editora_izyncor_app/interior_usuario/chat/conversas_chat.dart';
 import 'package:editora_izyncor_app/interior_usuario/chat/usuarios_chat.dart';
@@ -22,6 +24,9 @@ class _home_principalState extends State<home_principal> {
   int paginasIndex = 0;
   String urlImagem = '';
   String? idUsuarioLogado;
+  bool visto = false;
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>?
+      _notificacoesSubscription;
 
   Future<void> recuperarDadosUsuario() async {
     User? usuarioLogado = auth.currentUser;
@@ -54,11 +59,62 @@ class _home_principalState extends State<home_principal> {
     const conversas_chat(),
   ];
 
+  Future<void> verificarNotificacoes() async {
+    QuerySnapshot<Map<String, dynamic>> notificacoesSnapshot =
+        await FirebaseFirestore.instance
+            .collection('usuarios')
+            .doc(idUsuarioLogado)
+            .collection('notificacoes')
+            .where('status', isEqualTo: 'novo')
+            .get();
+
+    if (notificacoesSnapshot.docs.isNotEmpty) {
+      setState(() {
+        visto = true;
+      });
+      print(visto);
+    } else {
+      setState(() {
+        visto = false;
+      });
+      print(visto);
+    }
+  }
+
+  void iniciarVerificacaoNotificacoes() {
+    _notificacoesSubscription = FirebaseFirestore.instance
+        .collection('usuarios')
+        .doc(idUsuarioLogado)
+        .collection('notificacoes')
+        .where('status', isEqualTo: 'novo')
+        .snapshots()
+        .listen((querySnapshot) {
+      if (querySnapshot.docs.isNotEmpty) {
+        setState(() {
+          visto = true;
+        });
+        print(visto);
+      } else {
+        setState(() {
+          visto = false;
+        });
+        print(visto);
+      }
+    });
+  }
+
   @override
-  initState() {
+  void initState() {
     super.initState();
     recuperarDadosUsuario();
     paginasIndex = widget.indexPagina;
+    iniciarVerificacaoNotificacoes();
+  }
+
+  @override
+  void dispose() {
+    _notificacoesSubscription?.cancel();
+    super.dispose();
   }
 
   @override
@@ -107,21 +163,45 @@ class _home_principalState extends State<home_principal> {
           ),
           BottomNavigationBarItem(
             label: 'oi',
-            icon: SizedBox(
-              width: 22,
-              child: Image.asset(
-                paginasIndex == 3
-                    ? 'assets/icone_sino_02.png'
-                    : 'assets/icone_sino_01.png',
-              ),
+            icon: Stack(
+              children: [
+                SizedBox(
+                  width: 22,
+                  child: Image.asset(
+                    paginasIndex == 3
+                        ? 'assets/icone_sino_02.png'
+                        : 'assets/icone_sino_01.png',
+                  ),
+                ),
+                // ignore: unrelated_type_equality_checks
+                if (visto == true)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15),
+                    child: Container(
+                      // width: 13,
+                      // height: 13,
+                      decoration: const BoxDecoration(
+                          shape: BoxShape.circle, color: Colors.white),
+                      child: const Icon(Icons.circle,
+                          size: 12, color: Color.fromARGB(255, 212, 18, 99)),
+                    ),
+                  ),
+              ],
             ),
           ),
           BottomNavigationBarItem(
             label: 'oi',
-            icon: SizedBox(
-              width: 20,
-              child: Image.asset(
-                paginasIndex == 4 ? 'assets/user_02.png' : 'assets/user_01.png',
+            icon: GestureDetector(
+              onTap: () {
+                verificarNotificacoes();
+              },
+              child: SizedBox(
+                width: 20,
+                child: Image.asset(
+                  paginasIndex == 4
+                      ? 'assets/user_02.png'
+                      : 'assets/user_01.png',
+                ),
               ),
             ),
           ),
