@@ -41,7 +41,7 @@ dependencies:
   image_picker: ^1.0.4
   firebase_storage: ^11.0.10 #Armazenamento de arquivos
   firebase_auth: ^4.2.5 #Autenticação de usuário
-  cached_network_image: ^3.1.0
+  cached_network_image: ^3.3.1
   firebase_core: ^2.15.1 #Recursos básicos
   image: ^3.0.3
   image_cropper: ^1.4.1
@@ -236,6 +236,7 @@ flutter:
     - assets/enviar_3.png
     - assets/anexo.png
     - assets/anexo2.png
+    - assets/icone.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

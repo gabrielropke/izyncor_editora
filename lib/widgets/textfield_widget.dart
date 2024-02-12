@@ -24,7 +24,6 @@ class textfield_widget extends StatelessWidget {
     return TextField(
       controller: controller,
       maxLength: maxLength,
-      maxLines: maxLines,
       keyboardType: keyboardType,
       style: const TextStyle(
         color: Colors.black,
@@ -35,7 +34,7 @@ class textfield_widget extends StatelessWidget {
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
         filled: true,
-        fillColor: const Color.fromARGB(255, 243, 243, 243),
+        fillColor: Color.fromARGB(255, 246, 246, 246),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(13)),
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),

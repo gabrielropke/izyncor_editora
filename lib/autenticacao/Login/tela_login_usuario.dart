@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:editora_izyncor_app/autenticacao/dados_beta.dart';
 import 'package:editora_izyncor_app/autenticacao/resetar_senha.dart';
 import 'package:editora_izyncor_app/autenticacao/tela_opcoes.dart';
 import 'package:editora_izyncor_app/interior_usuario/tabbar.dart';
-import 'package:editora_izyncor_app/model/login/auth_service.dart';
+import 'package:editora_izyncor_app/widgets/textfield_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:quickalert/quickalert.dart';
@@ -56,6 +58,34 @@ class _MyWidgetState extends State<login> {
     }
   }
 
+  _validarCamposFirst() {
+    //Recupera dados dos campos
+    String email = _controllerEmail.text;
+    String senha = _controllerSenha.text;
+
+    if (email.isNotEmpty && email.contains("@")) {
+      if (senha.isNotEmpty) {
+        setState(() {
+          mensagemErro = "";
+        });
+
+        Usuario usuario = Usuario();
+        usuario.email = email;
+        usuario.senha = senha;
+
+        _logarUsuarioFirst(usuario);
+      } else {
+        setState(() {
+          showAlert();
+        });
+      }
+    } else {
+      setState(() {
+        showAlert();
+      });
+    }
+  }
+
   _logarUsuario(Usuario usuario) {
     FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -63,8 +93,12 @@ class _MyWidgetState extends State<login> {
         .signInWithEmailAndPassword(
             email: usuario.email, password: usuario.senha)
         .then((FirebaseUser) {
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: ((context) => const home_principal(indexPagina: 2,))));
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: ((context) => const home_principal(
+                    indexPagina: 2,
+                  ))));
     }).catchError((error) {
       setState(() {
         showAlert();
@@ -72,24 +106,138 @@ class _MyWidgetState extends State<login> {
     });
   }
 
-  Future _verificaUsuarioLogado() async {
-    // com //#coment o login não acontece
-    // sem //#coment o login acontece
-
+  _logarUsuarioFirst(Usuario usuario) {
     FirebaseAuth auth = FirebaseAuth.instance;
-    // auth.signOut();
 
-    User? usuarioLogado = await auth.currentUser;
-    if (usuarioLogado != null) {
-      // ignore: use_build_context_synchronously
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: ((context) => home_principal(indexPagina: 2,))));
+    auth
+        .signInWithEmailAndPassword(
+            email: usuario.email, password: usuario.senha)
+        .then((FirebaseUser) {
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: ((context) => const DadosBetaPage())));
+    }).catchError((error) {
+      setState(() {
+        showAlert();
+      });
+    });
+  }
+
+  Future<bool> verificarExistenciaDados() async {
+    String email = _controllerEmail.text;
+    FirebaseAuth auth = FirebaseAuth.instance;
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    try {
+      // Verificar no Firestore
+      QuerySnapshot querySnapshot = await firestore
+          .collection('usuarios')
+          .where('email', isEqualTo: email)
+          .get();
+
+      // Verificar na autenticação do Firebase
+      List<String> signInMethods = await auth.fetchSignInMethodsForEmail(email);
+      if (querySnapshot.docs.isEmpty && signInMethods.isNotEmpty) {
+        // ignore: use_build_context_synchronously
+        _validarCamposFirst();
+      } else if (querySnapshot.docs.isEmpty && signInMethods.isEmpty) {
+        showAlert();
+      } else if (querySnapshot.docs.isNotEmpty && signInMethods.isNotEmpty) {
+        _validarCampos();
+      }
+
+      return signInMethods.isNotEmpty;
+    } catch (e) {
+      print("Erro ao verificar email existente: $e");
+      return false;
     }
+  }
+
+  Future<bool> verificaUsuarioLogado() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User? usuerioLogado = auth.currentUser;
+
+    try {
+      if (usuerioLogado != null) {
+        // Aqui você pode acessar as informações do usuário diretamente de 'usuerioLogado'
+        String email = usuerioLogado
+            .email!; // Usuário logado, então o e-mail não deve ser nulo
+
+        FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+        // Verificar no Firestore se existem dados do usuário
+        DocumentSnapshot userDoc =
+            await firestore.collection('usuarios').doc(usuerioLogado.uid).get();
+
+        if (userDoc.exists) {
+          // Se existem dados do usuário, redirecione para a página principal
+          // ignore: use_build_context_synchronously
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const home_principal(indexPagina: 2)),
+          );
+          mensagemAlertaIzyncor(
+              'Estamos em fase de testes. Reporte qualquer erro ou inconsistência encontrada!');
+        } else {
+          // Se não há dados do usuário, redirecione para a página de dados beta
+          // ignore: use_build_context_synchronously
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const DadosBetaPage()),
+          );
+        }
+        return true; // Usuário logado
+      } else {
+        return false; // Nenhum usuário logado
+      }
+    } catch (e) {
+      print("Erro ao verificar usuário logado: $e");
+      return false;
+    }
+  }
+
+  mensagemAlertaIzyncor(String mensagem) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: SizedBox(
+              height: 150,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 60,
+                    width: 60,
+                    child: Image.asset(
+                      'assets/icone.png',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Center(
+                    child: Text(
+                      mensagem,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Ok')),
+            ],
+          );
+        });
   }
 
   @override
   void initState() {
-    _verificaUsuarioLogado();
+    verificaUsuarioLogado();
     super.initState();
   }
 
@@ -99,7 +247,7 @@ class _MyWidgetState extends State<login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 238, 234, 228),
+      backgroundColor: const Color.fromARGB(255, 238, 234, 228),
       body: SingleChildScrollView(
         child: Stack(
           children: [
@@ -141,125 +289,78 @@ class _MyWidgetState extends State<login> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 25),
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: SizedBox(
-                      width: 310,
-                      child: TextField(
-                        controller: _controllerEmail,
-                        keyboardType: TextInputType.emailAddress,
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                        ),
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(
-                            Icons.email_outlined,
-                            size: 20,
-                            color: Color.fromARGB(255, 203, 197, 190),
-                          ),
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(13)),
-                          enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(13),
-                              borderSide:
-                                  const BorderSide(color: Colors.white)),
-                          contentPadding:
-                              const EdgeInsets.fromLTRB(32, 15, 32, 16),
-                          hintText: "E-mail",
-                          hintStyle: const TextStyle(
-                              color: Color.fromARGB(255, 189, 185, 185),
-                              fontWeight: FontWeight.w400),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 15),
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: SizedBox(
-                      width: 310,
-                      child: TextField(
-                        controller: _controllerSenha,
-                        keyboardType: TextInputType.visiblePassword,
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                        ),
-                        obscureText: _obscureText,
-                        decoration: InputDecoration(
-                          suffixIcon: IconButton(
-                            iconSize: 20,
-                            color: Color.fromARGB(255, 166, 160, 155),
-                            onPressed: () {
-                              if (_obscureText == true) {
-                                setState(() {
-                                  _obscureText = false;
-                                  _iconPassword =
-                                      Icons.visibility_off_outlined;
-                                });
-                              } else {
-                                setState(() {
-                                  _obscureText = true;
-                                  _iconPassword = Icons.visibility_outlined;
-                                });
-                              }
-                            },
-                            icon: Icon(_iconPassword),
-                          ),
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(13)),
-                          enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(13),
-                              borderSide:
-                                  const BorderSide(color: Colors.white)),
-                          prefixIcon: const Icon(
-                            Icons.lock_outline_rounded,
-                            size: 20,
-                            color: Color.fromARGB(255, 203, 197, 190),
-                          ),
-                          contentPadding: EdgeInsets.fromLTRB(32, 15, 32, 16),
-                          hintText: "Senha",
-                          hintStyle: const TextStyle(
-                              color: Color.fromARGB(255, 189, 185, 185),
-                              fontWeight: FontWeight.w400),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 10, right: 40),
-                  child: Align(
-                      alignment: Alignment.centerRight,
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const resetar_senha()));
-                        },
-                        child: Container(
-                          width: 150,
-                          height: 40,
-                          child: const Align(
-                            alignment: Alignment.topRight,
-                            child: Text(
-                              'Esqueci a senha',
-                              style: TextStyle(
-                                  color: Color.fromARGB(255, 131, 99, 108)),
+                  child: Container(
+                    width: 310,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        textfield_widget(
+                            prefixIcon: const Icon(
+                              Icons.email_outlined,
+                              size: 20,
+                              color: Color.fromARGB(255, 203, 197, 190),
+                            ),
+                            controller: _controllerEmail,
+                            obscureText: false,
+                            keyboardType: TextInputType.emailAddress,
+                            hintText: 'E-mail'),
+                        const SizedBox(height: 10),
+                        textfield_widget(
+                            prefixIcon: const Icon(
+                              Icons.lock_outline_rounded,
+                              size: 20,
+                              color: Color.fromARGB(255, 203, 197, 190),
+                            ),
+                            controller: _controllerSenha,
+                            obscureText: _obscureText,
+                            suffixIcon: IconButton(
+                              iconSize: 20,
+                              color: Color.fromARGB(255, 166, 160, 155),
+                              onPressed: () {
+                                if (_obscureText == true) {
+                                  setState(() {
+                                    _obscureText = false;
+                                    _iconPassword =
+                                        Icons.visibility_off_outlined;
+                                  });
+                                } else {
+                                  setState(() {
+                                    _obscureText = true;
+                                    _iconPassword = Icons.visibility_outlined;
+                                  });
+                                }
+                              },
+                              icon: Icon(_iconPassword),
+                            ),
+                            keyboardType: TextInputType.visiblePassword,
+                            hintText: 'Senha'),
+                        const SizedBox(height: 10),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const resetar_senha()));
+                          },
+                          child: const SizedBox(
+                            width: 150,
+                            height: 40,
+                            child: Align(
+                              alignment: Alignment.topRight,
+                              child: Text(
+                                'Esqueci a senha',
+                                style: TextStyle(
+                                    color: Color.fromARGB(255, 131, 99, 108)),
+                              ),
                             ),
                           ),
-                        ),
-                      )),
+                        )
+                      ],
+                    ),
+                  ),
                 ),
+                const SizedBox(height: 40),
                 Align(
                   alignment: Alignment.topCenter,
                   child: SizedBox(
@@ -271,13 +372,13 @@ class _MyWidgetState extends State<login> {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(13))),
                         onPressed: () {
-                          _validarCampos();
+                          verificarExistenciaDados();
                         },
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Padding(
-                              padding: EdgeInsets.only(left: 115),
+                              padding: EdgeInsets.only(left: 108),
                               child: Text(
                                 "Entrar",
                                 style: TextStyle(
@@ -322,22 +423,14 @@ class _MyWidgetState extends State<login> {
                     ],
                   ),
                 ),
-                // const Padding(
-                //   padding: EdgeInsets.only(top: 10),
-                //   child: Center(
-                //     child: Text(
-                //       'Ou',
-                //       style: TextStyle(
-                //           fontSize: 16,
-                //           fontWeight: FontWeight.w500,
-                //           color: Color.fromARGB(255, 180, 158, 162)),
-                //     ),
-                //   ),
-                // ),
                 Padding(
                   padding: const EdgeInsets.only(top: 10),
                   child: GestureDetector(
-                    onTap: () => AuthService().signInWithGoogle(context),
+                    onTap: () {
+                      mensagemAlertaIzyncor(
+                          'Não disponível na versão de testes. Utilize o login e senha disponibilizados pela equipe!');
+                    },
+                    // onTap: () => AuthService().signInWithGoogle(context),
                     child: Container(
                       width: 310,
                       height: 50,
@@ -359,8 +452,8 @@ class _MyWidgetState extends State<login> {
                                 ),
                               ),
                               Positioned(
-                               bottom: 7,
-                               left: 6,
+                                bottom: 7,
+                                left: 6,
                                 child: Image.asset(
                                   "assets/logo_google.png",
                                   width:
@@ -427,7 +520,7 @@ class _MyWidgetState extends State<login> {
                         ),
                         TextButton(
                             onPressed: () {
-                              Navigator.pushReplacement(
+                              Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: ((context) => tela_opcoes())));
