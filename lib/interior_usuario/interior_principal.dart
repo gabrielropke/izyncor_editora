@@ -51,10 +51,11 @@ class _principalState extends State<principal> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+        backgroundColor: Colors.white,
         key: _scaffoldKey,
         appBar: AppBar(
             automaticallyImplyLeading: false,
-            backgroundColor: Colors.transparent,
+            backgroundColor: Colors.white,
             elevation: 0,
             centerTitle: false,
             title: topo_appbar(
@@ -68,7 +69,7 @@ class _principalState extends State<principal> {
               child: Container(
                 height: 35,
                 decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 244, 244, 243),
+                  color: const Color.fromARGB(255, 244, 244, 243),
                   borderRadius: BorderRadius.circular(2),
                 ),
                 child: TabBar(
@@ -77,7 +78,7 @@ class _principalState extends State<principal> {
                       color: const Color.fromARGB(255, 244, 244, 243),
                       width: 3,
                     ),
-                    color: Color.fromARGB(255, 255, 255, 255),
+                    color: Color.fromARGB(255, 244, 244, 243),
                     borderRadius: BorderRadius.circular(2),
                   ),
                   labelColor: Color.fromARGB(255, 0, 0, 0),

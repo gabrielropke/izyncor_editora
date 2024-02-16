@@ -12,7 +12,6 @@ class lista_widgets_drawer extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: 35,
-      color: Colors.white,
       child: Row(
         children: [
           SizedBox(

@@ -206,11 +206,11 @@ class _storeState extends State<store> {
         leadingWidth: 26,
         backgroundColor: Colors.transparent,
         centerTitle: false,
-            title: Image.asset(
-              'assets/izyncor.png',
-              width: 100, // ajuste a largura conforme necessário
-              height: 40, // ajuste a altura conforme necessário
-            ),
+        title: Image.asset(
+          'assets/izyncor.png',
+          width: 100, // ajuste a largura conforme necessário
+          height: 40, // ajuste a altura conforme necessário
+        ),
       ),
       body: SafeArea(
         child: Padding(

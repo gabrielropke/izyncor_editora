@@ -305,7 +305,7 @@ class _cadastroState extends State<cadastro> {
                               Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => login()));
+                                      builder: (context) => login(statusInicial: 0,)));
                             },
                             child: const Text(
                               'Clique aqui!',

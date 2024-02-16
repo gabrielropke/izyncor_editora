@@ -143,7 +143,7 @@ class _assuntos_selecaoState extends State<assuntos_selecao> {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => const home_principal(indexPagina: 2)));
+              builder: (context) => const home_principal(indexPagina: 1)));
     }
   }
 
@@ -155,6 +155,7 @@ class _assuntos_selecaoState extends State<assuntos_selecao> {
 
     usuarioRef.collection('notificacoes').add({
       'username': 'izyncor',
+      'status': 'novo',
       'idUsuario': idUsuarioLogado,
       'mensagem': 'Boas vindas a Izyncor 😁',
       'hora': DateTime.now().toString(),

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:editora_izyncor_app/recepcao/recepcao.dart';
 import 'package:editora_izyncor_app/widgets/textfield_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -34,7 +35,7 @@ class _DadosBetaPageState extends State<DadosBetaPage> {
   String? idUsuarioLogado;
   late String emailLogado;
   String? emailRecuperado;
-  
+
   FirebaseStorage storage = FirebaseStorage.instance;
   XFile? imagem;
   bool subindoImagem = false;
@@ -152,6 +153,15 @@ class _DadosBetaPageState extends State<DadosBetaPage> {
         type: QuickAlertType.success);
   }
 
+  void showAlertNascimento() {
+    QuickAlert.show(
+        context: context,
+        title: 'AVISO',
+        text: 'Você precisa ter pelo menos 13 anos de idade.',
+        confirmBtnText: 'Ok',
+        type: QuickAlertType.error);
+  }
+
   Future<bool> checkUserPermission(String username) async {
     final usersCollection = FirebaseFirestore.instance.collection('usuarios');
     final querySnapshot =
@@ -175,6 +185,58 @@ class _DadosBetaPageState extends State<DadosBetaPage> {
         controllerData.text = formattedDate; // Exibir a data no TextField
       });
     }
+  }
+
+  validarCampos() async {
+    // Recupera dados dos campos
+    DateTime? nascimento = _selectedDate;
+    String username = controllerUsername.text;
+    String nome = controllerNome.text;
+    String sobrenome = controllerSobrenome.text;
+
+    if (nome.isEmpty) {
+      setState(() {
+        showAlert();
+      });
+      return; // Impede que o cadastro prossiga
+    }
+
+    if (sobrenome.isEmpty) {
+      setState(() {
+        showAlert();
+      });
+      return; // Impede que o cadastro prossiga
+    }
+
+    // Verifica se o campo username está vazio
+    if (username.isEmpty) {
+      setState(() {
+        showAlertErroUsername();
+      });
+      return; // Impede que o cadastro prossiga
+    }
+
+    // Verifica se o usuário já existe no banco de dados
+    bool userExists = await checkUserPermission(username);
+
+    if (userExists) {
+      setState(() {
+        showAlertErroUsername();
+      });
+      return; // Impede que o cadastro prossiga
+    }
+
+    if (nascimento == null || nascimento.year > 2010) {
+      setState(() {
+        showAlertNascimento();
+      });
+      return;
+    }
+
+    adicionarDadosFirestore();
+    // ignore: use_build_context_synchronously
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => const recepcao()));
   }
 
   Future<void> adicionarDadosFirestore() async {
@@ -425,7 +487,7 @@ class _DadosBetaPageState extends State<DadosBetaPage> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(13))),
                           onPressed: () {
-                            adicionarDadosFirestore();
+                            validarCampos();
                           },
                           child: const Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,

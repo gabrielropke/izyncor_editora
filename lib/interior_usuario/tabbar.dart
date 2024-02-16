@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:editora_izyncor_app/interior_usuario/chat/conversas_chat.dart';
 import 'package:editora_izyncor_app/interior_usuario/chat/usuarios_chat.dart';
-import 'package:editora_izyncor_app/interior_usuario/estante/estante_page.dart';
 import 'package:editora_izyncor_app/interior_usuario/homepage/feed/processo_postagem/postagem_tela01.dart';
 import 'package:editora_izyncor_app/interior_usuario/interior_principal.dart';
 import 'package:editora_izyncor_app/interior_usuario/notificacoes/notificacao_page.dart';
@@ -52,7 +51,6 @@ class _home_principalState extends State<home_principal> {
   }
 
   final List _paginas = [
-    const estante_page(),
     const usuarios_chat(),
     const principal(),
     const notificacao_page(),
@@ -133,11 +131,9 @@ class _home_principalState extends State<home_principal> {
           BottomNavigationBarItem(
             label: 'oi',
             icon: SizedBox(
-              width: 30,
+              width: 22,
               child: Image.asset(
-                paginasIndex == 0
-                    ? 'assets/estante_02.png'
-                    : 'assets/estante_01.png',
+                'assets/pesquisa.png',
               ),
             ),
           ),
@@ -146,18 +142,7 @@ class _home_principalState extends State<home_principal> {
             icon: SizedBox(
               width: 22,
               child: Image.asset(
-                paginasIndex == 1
-                    ? 'assets/pesquisar_icone.png'
-                    : 'assets/pesquisar_icone.png',
-              ),
-            ),
-          ),
-          BottomNavigationBarItem(
-            label: 'oi',
-            icon: SizedBox(
-              width: 22,
-              child: Image.asset(
-                paginasIndex == 2 ? 'assets/home_02.png' : 'assets/home_01.png',
+                paginasIndex == 1 ? 'assets/home_02.png' : 'assets/home_01.png',
               ),
             ),
           ),
@@ -168,7 +153,7 @@ class _home_principalState extends State<home_principal> {
                 SizedBox(
                   width: 22,
                   child: Image.asset(
-                    paginasIndex == 3
+                    paginasIndex == 2
                         ? 'assets/icone_sino_02.png'
                         : 'assets/icone_sino_01.png',
                   ),
@@ -191,17 +176,10 @@ class _home_principalState extends State<home_principal> {
           ),
           BottomNavigationBarItem(
             label: 'oi',
-            icon: GestureDetector(
-              onTap: () {
-                verificarNotificacoes();
-              },
-              child: SizedBox(
-                width: 20,
-                child: Image.asset(
-                  paginasIndex == 4
-                      ? 'assets/user_02.png'
-                      : 'assets/user_01.png',
-                ),
+            icon: SizedBox(
+              width: 20,
+              child: Image.asset(
+                paginasIndex == 3 ? 'assets/user_02.png' : 'assets/user_01.png',
               ),
             ),
           ),
@@ -214,7 +192,11 @@ class _home_principalState extends State<home_principal> {
         },
         backgroundColor: const Color.fromARGB(255, 42, 56, 66),
         mini: false,
-        child: const Icon(Icons.add, size: 18),
+        child: const Icon(
+          Icons.add,
+          size: 18,
+          color: Colors.white,
+        ),
       ),
     );
   }

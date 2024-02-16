@@ -39,14 +39,14 @@ dependencies:
   intl: ^0.18.1
   smooth_page_indicator: ^1.1.0
   image_picker: ^1.0.4
-  firebase_storage: ^11.0.10 #Armazenamento de arquivos
-  firebase_auth: ^4.2.5 #Autenticação de usuário
-  cached_network_image: ^3.3.1
-  firebase_core: ^2.15.1 #Recursos básicos
+  firebase_storage: ^11.5.3
+  firebase_auth: ^4.15.0
+  cached_network_image: ^3.1.0
+  firebase_core: ^2.15.1
   image: ^3.0.3
   image_cropper: ^1.4.1
-  path_provider: ^2.0.5
-  cloud_firestore: ^4.7.1
+  path_provider: ^2.0.15
+  cloud_firestore: ^4.13.3
   emoji_keyboard_flutter: ^1.3.1
   flutter_emoji: ^2.4.0
   readmore: ^2.2.0
@@ -69,6 +69,9 @@ dependencies:
   flutter_launcher_icons: ^0.11.0
   google_fonts: ^4.0.4
   epub_view: ^3.2.0
+  photo_view: ^0.14.0
+  file_picker: ^4.5.1
+  
   
 flutter_native_splash:
   color: "#ffffff"
@@ -219,7 +222,6 @@ flutter:
     - assets/estante_02.png
     - assets/icone_sino_01.png
     - assets/icone_sino_02.png
-    - assets/pesquisar_icone.png
     - assets/salvos2_icone.png
     - assets/perfil4_icon.png
     - assets/seguindo3_icone.png
@@ -236,7 +238,21 @@ flutter:
     - assets/enviar_3.png
     - assets/anexo.png
     - assets/anexo2.png
+    - assets/check.png
+    - assets/check2.png
+    - assets/icone_pdf.png
+    - assets/icone_rar.png
+    - assets/icone_zip.png
+    - assets/icone_zip2.png 
+    - assets/icone_word.png
+    - assets/icone_powerpoint.png
+    - assets/icone_excel.png
+    - assets/icone_imagem.png
+    - assets/icone_video.png
+    - assets/icone_doc2.png
     - assets/icone.png
+    - assets/pesquisa.png
+    - assets/pesquisar_icone_02.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

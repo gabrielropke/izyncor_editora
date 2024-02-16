@@ -146,11 +146,11 @@ class _icone_moreState extends State<icone_more> {
                           }
 
                           Navigator.pop(context);
-                          Navigator.push(
+                          Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      const home_principal(indexPagina: 2)));
+                                      const home_principal(indexPagina: 1)));
                           excluirPost(idPostagem);
                         },
                       ),

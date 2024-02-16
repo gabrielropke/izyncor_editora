@@ -125,6 +125,7 @@ class _assuntos_postagemState extends State<assuntos_postagem> {
       'hora': DateTime.now().toString(),
       'postagem': 'postagem',
       'idPostagem': 'postagem',
+      'status': 'novo',
       'perfil':
           'https://firebasestorage.googleapis.com/v0/b/izyncor-app-949df.appspot.com/o/perfil%2F0L0ZqCOLSZfxCpWRfOUOhT36yy23.jpg?alt=media&token=358048dd-7301-4134-8a2c-798e07ec215c',
     });
@@ -238,7 +239,7 @@ class _assuntos_postagemState extends State<assuntos_postagem> {
       context,
       MaterialPageRoute(
         builder: ((context) => const home_principal(
-              indexPagina: 2,
+              indexPagina: 1,
             )),
       ),
     );

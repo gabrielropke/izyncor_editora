@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:editora_izyncor_app/interior_usuario/chat/chat_mensagem/mensagens.dart';
-import 'package:editora_izyncor_app/interior_usuario/chat/chat_mensagem/widget_chat/anexos_chat.dart';
+import 'package:editora_izyncor_app/interior_usuario/perfil_visita/adendos/seguidores.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil_visita/galeria_visita/postagens_imagens_visita.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil_visita/galeria_visita/postagens_textos.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -367,24 +367,10 @@ class _perfil_visitaState extends State<perfil_visita> {
                                         color: Colors.black,
                                         fontSize: 20),
                                   ),
-                                  const SizedBox(height: 3),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        '@$username',
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.black,
-                                            fontSize: 16),
-                                      ),
-                                      const SizedBox(width: 6),
-                                      Text(
-                                        cadastroPerfil,
-                                        style: const TextStyle(
-                                            color: Colors.black38,
-                                            fontSize: 12),
-                                      ),
-                                    ],
+                                  Text(
+                                    cadastroPerfil,
+                                    style:
+                                        const TextStyle(color: Colors.black54),
                                   ),
                                 ],
                               ),
@@ -412,10 +398,10 @@ class _perfil_visitaState extends State<perfil_visita> {
                                           );
                                         }
 
-                                        final seguidores =
+                                        final postagens =
                                             snapshot.data!.get('postagens');
                                         return Text(
-                                          '$seguidores',
+                                          '$postagens',
                                           style: const TextStyle(
                                               color: Colors.black,
                                               fontWeight: FontWeight.bold,
@@ -433,36 +419,49 @@ class _perfil_visitaState extends State<perfil_visita> {
                                   color: Colors.black12,
                                 ),
                                 const SizedBox(width: 15),
-                                Column(
-                                  children: [
-                                    StreamBuilder<DocumentSnapshot>(
-                                      stream: FirebaseFirestore.instance
-                                          .collection('usuarios')
-                                          .doc(
-                                              uidPerfil) // Use o título como ID do documento
-                                          .snapshots(),
-                                      builder: (context, snapshot) {
-                                        if (!snapshot.hasData) {
-                                          return const Text(
-                                            '0', // Ou qualquer outro valor padrão
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.white,
-                                            ),
-                                          );
-                                        }
-
-                                        final seguidores =
-                                            snapshot.data!.get('seguidores');
-                                        return Text('$seguidores',
-                                            style: const TextStyle(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16));
-                                      },
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                SeguidoresVisita(
+                                                    idPerfil: uidPerfil)));
+                                  },
+                                  child: Container(
+                                    width: 90,
+                                    child: Column(
+                                      children: [
+                                        StreamBuilder<DocumentSnapshot>(
+                                          stream: FirebaseFirestore.instance
+                                              .collection('usuarios')
+                                              .doc(
+                                                  uidPerfil) // Use o título como ID do documento
+                                              .snapshots(),
+                                          builder: (context, snapshot) {
+                                            if (!snapshot.hasData) {
+                                              return const Text(
+                                                '0', // Ou qualquer outro valor padrão
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.white,
+                                                ),
+                                              );
+                                            }
+                                    
+                                            final seguidores =
+                                                snapshot.data!.get('seguidores');
+                                            return Text('$seguidores',
+                                                style: const TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16));
+                                          },
+                                        ),
+                                        const Text('Seguidores'),
+                                      ],
                                     ),
-                                    const Text('Seguidores'),
-                                  ],
+                                  ),
                                 ),
                                 const SizedBox(width: 15),
                                 Container(
@@ -586,12 +585,8 @@ class _perfil_visitaState extends State<perfil_visita> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: ((context) => mensagens(
+                                builder: ((context) => MensagemPage(
                                       idUsuarioDestino: uidPerfil,
-                                      nomeDestino: nomePerfil,
-                                      imagemPerfilDestino: imagemPerfil,
-                                      sobrenomeDestino: sobrenomePerfil,
-                                      usernameDestino: username,
                                     )),
                               ),
                             );

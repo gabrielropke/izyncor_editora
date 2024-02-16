@@ -17,14 +17,16 @@ class home_config extends StatefulWidget {
 }
 
 class _home_configState extends State<home_config> {
-
   _deslogarUsuario() {
     FirebaseAuth auth = FirebaseAuth.instance;
     auth.signOut();
 
     Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: ((context) => login())),
+        MaterialPageRoute(
+            builder: ((context) => login(
+                  statusInicial: 1,
+                ))),
         (Route<dynamic> route) => false);
   }
 

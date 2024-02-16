@@ -120,167 +120,165 @@ class _minha_contaState extends State<minha_conta> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          foregroundColor: Colors.black,
-          elevation: 0,
-          leadingWidth: 26,
-          backgroundColor: Colors.transparent,
-          title: const Text('Minha conta'),
-        ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                Container(
-                  color: Colors.white,
-                  height: 30,
-                  child: const Text('informações pessoais',
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        foregroundColor: Colors.black,
+        elevation: 0,
+        leadingWidth: 26,
+        backgroundColor: Colors.transparent,
+        title: const Text('Minha conta'),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Container(
+                color: Colors.white,
+                height: 30,
+                child: const Text('informações pessoais',
+                    style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w300,
+                        color: Color.fromARGB(255, 58, 56, 56))),
+              ),
+              const Divider(),
+              const SizedBox(height: 20),
+              container_widget(
+                  titulo: 'Nome completo',
+                  controller: controllerNome,
+                  keyboardType: TextInputType.name,
+                  hintText: 'Digite seu nome completo'),
+              const SizedBox(height: 20),
+              container_widget(
+                  titulo: 'RG',
+                  controller: controllerRG,
+                  keyboardType: TextInputType.number,
+                  hintText: 'Digite seu RG'),
+              const SizedBox(height: 20),
+              container_widget(
+                  titulo: 'CPF',
+                  controller: controllerCPF,
+                  keyboardType: TextInputType.number,
+                  hintText: 'Digite seu CPF'),
+              const SizedBox(height: 20),
+              container_widget(
+                  titulo: 'Profissão principal',
+                  controller: controllerProfissao,
+                  keyboardType: TextInputType.name,
+                  hintText: 'Digite sua principal profissão'),
+              const SizedBox(height: 20),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(left: 5),
+                    child: Text(
+                      'Estado civil',
                       style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w300,
-                          color: Color.fromARGB(255, 58, 56, 56))),
-                ),
-                const Divider(),
-                const SizedBox(height: 20),
-                container_widget(
-                    titulo: 'Nome completo',
-                    controller: controllerNome,
-                    keyboardType: TextInputType.name,
-                    hintText: 'Digite seu nome completo'),
-                const SizedBox(height: 20),
-                container_widget(
-                    titulo: 'RG',
-                    controller: controllerRG,
-                    keyboardType: TextInputType.number,
-                    hintText: 'Digite seu RG'),
-                const SizedBox(height: 20),
-                container_widget(
-                    titulo: 'CPF',
-                    controller: controllerCPF,
-                    keyboardType: TextInputType.number,
-                    hintText: 'Digite seu CPF'),
-                const SizedBox(height: 20),
-                container_widget(
-                    titulo: 'Profissão principal',
-                    controller: controllerProfissao,
-                    keyboardType: TextInputType.name,
-                    hintText: 'Digite sua principal profissão'),
-                const SizedBox(height: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 5),
-                      child: Text(
-                        'Estado civil',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 15,
-                            color: Colors.black87),
-                      ),
+                          fontWeight: FontWeight.w400,
+                          fontSize: 15,
+                          color: Colors.black87),
                     ),
-                    const SizedBox(height: 5),
-                    Container(
-                      padding: const EdgeInsets.only(left: 15, right: 15),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 243, 243, 243),
-                          borderRadius: BorderRadius.circular(13)),
-                      child: DropdownButton(
-                        hint: const Text('Selecione uma das opções'),
-                        icon: const Icon(Icons.arrow_drop_down_outlined),
-                        isExpanded: true,
-                        value: valueChoose,
-                        onChanged: (newValue) {
-                          setState(() {
-                            valueChoose = newValue as String?;
-                          });
-                        },
-                        items: listItem.map((valueItem) {
-                          return DropdownMenuItem(
-                            value: valueItem,
-                            child: Text(valueItem),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 5),
-                      child: Text(
-                        'Escolaridade',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 15,
-                            color: Colors.black87),
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Container(
-                      padding: const EdgeInsets.only(left: 15, right: 15),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 243, 243, 243),
-                          borderRadius: BorderRadius.circular(13)),
-                      child: DropdownButton(
-                        hint: const Text('Selecione uma das opções'),
-                        icon: const Icon(Icons.arrow_drop_down_outlined),
-                        isExpanded: true,
-                        value: valueEscolaridade,
-                        onChanged: (newValue) {
-                          setState(() {
-                            valueEscolaridade = newValue as String?;
-                          });
-                        },
-                        items: listEscolaridade.map((valueItem) {
-                          return DropdownMenuItem(
-                            value: valueItem,
-                            child: Text(valueItem),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.only(top: 30),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          showAlert();
-                        },
-                        child: Container(
-                          width: 110,
-                          height: 40,
-                          decoration: BoxDecoration(
-                              color: Colors.blue,
-                              borderRadius: BorderRadius.circular(8)),
-                          child: const Center(
-                              child: Text(
-                            'Salvar',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          )),
-                        ),
-                      ),
-                    ],
                   ),
+                  const SizedBox(height: 5),
+                  Container(
+                    padding: const EdgeInsets.only(left: 15, right: 15),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 243, 243, 243),
+                        borderRadius: BorderRadius.circular(13)),
+                    child: DropdownButton(
+                      hint: const Text('Selecione uma das opções'),
+                      icon: const Icon(Icons.arrow_drop_down_outlined),
+                      isExpanded: true,
+                      value: valueChoose,
+                      onChanged: (newValue) {
+                        setState(() {
+                          valueChoose = newValue as String?;
+                        });
+                      },
+                      items: listItem.map((valueItem) {
+                        return DropdownMenuItem(
+                          value: valueItem,
+                          child: Text(valueItem),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(left: 5),
+                    child: Text(
+                      'Escolaridade',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 15,
+                          color: Colors.black87),
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Container(
+                    padding: const EdgeInsets.only(left: 15, right: 15),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 243, 243, 243),
+                        borderRadius: BorderRadius.circular(13)),
+                    child: DropdownButton(
+                      hint: const Text('Selecione uma das opções'),
+                      icon: const Icon(Icons.arrow_drop_down_outlined),
+                      isExpanded: true,
+                      value: valueEscolaridade,
+                      onChanged: (newValue) {
+                        setState(() {
+                          valueEscolaridade = newValue as String?;
+                        });
+                      },
+                      items: listEscolaridade.map((valueItem) {
+                        return DropdownMenuItem(
+                          value: valueItem,
+                          child: Text(valueItem),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.only(top: 30),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        showAlert();
+                      },
+                      child: Container(
+                        width: 110,
+                        height: 40,
+                        decoration: BoxDecoration(
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(8)),
+                        child: const Center(
+                            child: Text(
+                          'Salvar',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                        )),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

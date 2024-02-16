@@ -131,7 +131,7 @@ class _postagem_tela01State extends State<postagem_tela01> {
                   context,
                   MaterialPageRoute(
                     builder: ((context) => const home_principal(
-                          indexPagina: 2,
+                          indexPagina: 1,
                         )),
                   ),
                 );
@@ -154,6 +154,7 @@ class _postagem_tela01State extends State<postagem_tela01> {
                     ),
                     child: ClipOval(
                       child: CachedNetworkImage(
+                        fit: BoxFit.cover,
                         imageUrl: urlImagem,
                         placeholder: (context, url) =>
                             const CircularProgressIndicator(
@@ -175,7 +176,7 @@ class _postagem_tela01State extends State<postagem_tela01> {
                         style: const TextStyle(
                             fontWeight: FontWeight.w500, fontSize: 20),
                       ),
-                      const SizedBox(height: 3),
+                      // const SizedBox(height: 0),
                       const Text('Publicar em Izyncor')
                     ],
                   )

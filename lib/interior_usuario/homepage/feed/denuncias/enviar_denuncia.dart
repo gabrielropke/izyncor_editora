@@ -47,7 +47,7 @@ class _enviar_denunciaState extends State<enviar_denuncia> {
         onConfirmBtnTap: () {
           enviarDenuncia();
           Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => const home_principal(indexPagina: 2,)));
+              MaterialPageRoute(builder: (context) => const home_principal(indexPagina: 1,)));
         },
         type: QuickAlertType.success);
   }

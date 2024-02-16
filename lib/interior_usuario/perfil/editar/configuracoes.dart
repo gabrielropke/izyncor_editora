@@ -43,15 +43,15 @@ class configuracoes extends StatelessWidget {
                 icone: Icon(Icons.add_location_alt_outlined, size: 26),
               ),
             ),
-            const SizedBox(height: 12),
-            GestureDetector(
-              onTap: () {},
-              child: const container_widget(
-                titulo: 'Dados de faturamento',
-                subtitulo: 'Cadastre seus dados de cartão',
-                icone: Icon(Icons.payment_rounded, size: 26),
-              ),
-            ),
+            // const SizedBox(height: 12),
+            // GestureDetector(
+            //   onTap: () {},
+            //   child: const container_widget(
+            //     titulo: 'Dados de faturamento',
+            //     subtitulo: 'Cadastre seus dados de cartão',
+            //     icone: Icon(Icons.payment_rounded, size: 26),
+            //   ),
+            // ),
           ],
         ),
       ),

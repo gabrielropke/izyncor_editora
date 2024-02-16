@@ -21,20 +21,6 @@ class editar_perfil extends StatefulWidget {
 
 // ignore: camel_case_types
 class _editar_perfilState extends State<editar_perfil> {
-  final TextEditingController _controllerNOME = TextEditingController(text: "");
-  final TextEditingController _controllerUSERNAME =
-      TextEditingController(text: "");
-  final TextEditingController _controllerSOBRENOME =
-      TextEditingController(text: "");
-  final TextEditingController _controllerEMAIL =
-      TextEditingController(text: "");
-  final TextEditingController _controllerBIO = TextEditingController(text: "");
-  final TextEditingController _controllerSITE = TextEditingController(text: "");
-  final TextEditingController _controllerTELEFONE =
-      TextEditingController(text: "");
-  final TextEditingController _controllerRECUPERAR =
-      TextEditingController(text: "");
-
   final StreamController<String> _streamNOME = StreamController<String>();
   final StreamController<String> _streamSOBRENOME = StreamController<String>();
 
@@ -46,26 +32,36 @@ class _editar_perfilState extends State<editar_perfil> {
   String nome = '';
   String sobrenome = '';
 
+  TextEditingController controllerUsername = TextEditingController();
+  TextEditingController controllerNome = TextEditingController();
+  TextEditingController controllerSobrenome = TextEditingController();
+  TextEditingController controllerBio = TextEditingController();
+  TextEditingController controllerEmail = TextEditingController();
+  TextEditingController controllerTelefone = TextEditingController();
+
   void showAlert() {
     QuickAlert.show(
         context: context,
         title: 'ATENÇÃO',
         text: 'Deseja prosseguir com a alteração?',
-        confirmBtnText: 'Confirmar',
-        cancelBtnText: 'Cancelar',
+        confirmBtnText: 'Sim',
+        cancelBtnText: 'Não',
         type: QuickAlertType.confirm,
         onConfirmBtnTap: () async {
-          _atualizarNomeFirestore();
-          _atualizarSobrenomeFirestore();
-          _atualizarEmailFirestore();
-          _atualizarBioFirestore();
-          _atualizarSiteFirestore();
-          _atualizarTelefoneFirestore();
-          _atualizarRecuperarFirestore();
-
+          atualizarDadosFirestore();
           Navigator.pop(context);
           Navigator.pop(context);
         });
+  }
+
+  void showAlertCampoVazio() {
+    QuickAlert.show(
+      context: context,
+      title: 'Hmm...',
+      text: 'Alguns campos estão vazios...',
+      cancelBtnText: 'Voltar',
+      type: QuickAlertType.error,
+    );
   }
 
   Future _recuperarImagem() async {
@@ -124,101 +120,6 @@ class _editar_perfilState extends State<editar_perfil> {
     db.collection("usuarios").doc(_idUsuarioLogado).update(dadosAtualizar);
   }
 
-  _atualizarNomeFirestore() {
-    String nome = _controllerNOME.text;
-
-    FirebaseFirestore db = FirebaseFirestore.instance;
-
-    Map<String, dynamic> dadosAtualizar = {"nome": nome};
-
-    db.collection("usuarios").doc(_idUsuarioLogado).update(dadosAtualizar);
-  }
-
-  _atualizarSiteFirestore() {
-    String site = _controllerSITE.text;
-
-    FirebaseFirestore db = FirebaseFirestore.instance;
-
-    Map<String, dynamic> dadosAtualizar = {"site": site};
-
-    db.collection("usuarios").doc(_idUsuarioLogado).update(dadosAtualizar);
-  }
-
-  _atualizarTelefoneFirestore() {
-    String telefone = _controllerTELEFONE.text;
-
-    FirebaseFirestore db = FirebaseFirestore.instance;
-
-    Map<String, dynamic> dadosAtualizar = {"telefone": telefone};
-
-    db.collection("usuarios").doc(_idUsuarioLogado).update(dadosAtualizar);
-  }
-
-  _atualizarRecuperarFirestore() {
-    String recuperar = _controllerRECUPERAR.text;
-
-    FirebaseFirestore db = FirebaseFirestore.instance;
-
-    Map<String, dynamic> dadosAtualizar = {"recuperar": recuperar};
-
-    db.collection("usuarios").doc(_idUsuarioLogado).update(dadosAtualizar);
-  }
-
-  _atualizarSobrenomeFirestore() {
-    String sobrenome = _controllerSOBRENOME.text;
-
-    FirebaseFirestore db = FirebaseFirestore.instance;
-
-    Map<String, dynamic> dadosAtualizar = {"sobrenome": sobrenome};
-
-    db.collection("usuarios").doc(_idUsuarioLogado).update(dadosAtualizar);
-  }
-
-  _atualizarEmailFirestore() {
-    String email = _controllerEMAIL.text;
-
-    FirebaseFirestore db = FirebaseFirestore.instance;
-
-    Map<String, dynamic> dadosAtualizar = {"email": email};
-
-    db.collection("usuarios").doc(_idUsuarioLogado).update(dadosAtualizar);
-  }
-
-  _atualizarBioFirestore() {
-    String bio = _controllerBIO.text;
-
-    FirebaseFirestore db = FirebaseFirestore.instance;
-
-    Map<String, dynamic> dadosAtualizar = {"biografia": bio};
-
-    db.collection("usuarios").doc(_idUsuarioLogado).update(dadosAtualizar);
-  }
-
-  _recuperarDadosUsuario() async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    User usuarioLogado = auth.currentUser!;
-    _idUsuarioLogado = usuarioLogado.uid;
-
-    FirebaseFirestore db = FirebaseFirestore.instance;
-    DocumentSnapshot snapshot =
-        await db.collection("usuarios").doc(_idUsuarioLogado).get();
-
-    Map<String, dynamic> dados = snapshot.data() as Map<String, dynamic>;
-    _controllerNOME.text = dados["nome"];
-    _controllerSITE.text = dados["site"];
-    _controllerTELEFONE.text = dados["telefone"];
-    _controllerRECUPERAR.text = dados["recuperar"];
-    _controllerSOBRENOME.text = dados["sobrenome"];
-    _controllerEMAIL.text = dados["email"];
-    _controllerBIO.text = dados["biografia"];
-    _controllerUSERNAME.text = dados['username'];
-    if (dados["urlImagem"] != null) {
-      setState(() {
-        urlImagemRecuperada = dados["urlImagem"];
-      });
-    }
-  }
-
   _recuperarDadosUsuarioString() async {
     FirebaseAuth auth = FirebaseAuth.instance;
     User? usuarioLogado = auth.currentUser;
@@ -260,6 +161,12 @@ class _editar_perfilState extends State<editar_perfil> {
         setState(() {
           nome = userData['nome'];
           sobrenome = userData['sobrenome'];
+          controllerUsername.text = userData['username'];
+          controllerNome.text = userData['nome'];
+          controllerSobrenome.text = userData['sobrenome'];
+          controllerBio.text = userData['biografia'];
+          controllerEmail.text = userData['email'];
+          controllerTelefone.text = userData['telefone'];
         });
       }
     }
@@ -268,7 +175,7 @@ class _editar_perfilState extends State<editar_perfil> {
   void showAlertErroUsername() {
     QuickAlert.show(
         context: context,
-        title: 'Negado',
+        title: 'Hmmm...',
         text: 'Usuário já está em uso!',
         confirmBtnText: 'Ok',
         type: QuickAlertType.error);
@@ -291,9 +198,57 @@ class _editar_perfilState extends State<editar_perfil> {
     return querySnapshot.docs.isNotEmpty;
   }
 
+  atualizarDadosFirestore() {
+    FirebaseFirestore db = FirebaseFirestore.instance;
+
+    Map<String, dynamic> dadosAtualizar = {
+      'username': controllerUsername.text,
+      'nome': controllerNome.text,
+      'sobrenome': controllerSobrenome.text,
+      'email': controllerEmail.text,
+      'biografia': controllerBio.text,
+      'telefone': controllerTelefone.text,
+    };
+    db.collection('usuarios').doc(_idUsuarioLogado).update(dadosAtualizar);
+  }
+
+  validarCampos() async {
+    if (controllerNome.text.isEmpty) {
+      setState(() {
+        showAlertCampoVazio();
+      });
+      return; // Impede que o cadastro prossiga
+    }
+
+    if (controllerSobrenome.text.isEmpty) {
+      setState(() {
+        showAlertCampoVazio();
+      });
+      return; // Impede que o cadastro prossiga
+    }
+
+    // Verifica se o campo username está vazio
+    if (controllerUsername.text.isEmpty) {
+      setState(() {
+        showAlertCampoVazio();
+      });
+      return; // Impede que o cadastro prossiga
+    }
+
+    // Verifica se o usuário já existe no banco de dados
+    bool userExists = await checkUserPermission(controllerUsername.text);
+
+    if (userExists) {
+      setState(() {
+        showAlertErroUsername();
+      });
+      return; // Impede que o cadastro prossiga
+    }
+    showAlert();
+    }
+
   @override
   void initState() {
-    _recuperarDadosUsuario();
     _recuperarDadosUsuarioString();
     recuperarDadosUsuario();
     super.initState();
@@ -301,263 +256,288 @@ class _editar_perfilState extends State<editar_perfil> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          foregroundColor: Colors.black,
-          elevation: 0,
-          leadingWidth: 26,
-          backgroundColor: Colors.transparent,
-          title: const Text('Editar perfil'),
-        ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Stack(
-                      children: [
-                        Align(
-                          alignment: Alignment.topRight,
-                          child: SizedBox(
-                            width: 60,
-                            height: 60,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(64),
-                              child: GestureDetector(
-                                onTap: () async => await _recuperarImagem(),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey,
-                                    // ignore: unnecessary_null_comparison
-                                    image: urlImagemRecuperada != null
-                                        ? DecorationImage(
-                                            image: NetworkImage(
-                                                urlImagemRecuperada),
-                                            fit: BoxFit.cover,
-                                          )
-                                        : null,
-                                  ),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        foregroundColor: Colors.black,
+        elevation: 0,
+        leadingWidth: 26,
+        backgroundColor: Colors.transparent,
+        title: const Text('Editar perfil'),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Stack(
+                    children: [
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: SizedBox(
+                          width: 60,
+                          height: 60,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(64),
+                            child: GestureDetector(
+                              onTap: () async => await _recuperarImagem(),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey,
                                   // ignore: unnecessary_null_comparison
-                                  child: urlImagemRecuperada == null
-                                      ? const Icon(Icons.person,
-                                          size: 60, color: Colors.white)
+                                  image: urlImagemRecuperada != null
+                                      ? DecorationImage(
+                                          image:
+                                              NetworkImage(urlImagemRecuperada),
+                                          fit: BoxFit.cover,
+                                        )
                                       : null,
                                 ),
+                                // ignore: unnecessary_null_comparison
+                                child: urlImagemRecuperada == null
+                                    ? const Icon(Icons.person,
+                                        size: 60, color: Colors.white)
+                                    : null,
                               ),
                             ),
                           ),
                         ),
-                        subindoImagem ? Container() : Container(),
-                      ],
-                    ),
-                    const SizedBox(width: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        GestureDetector(
-                          onTap: () async => await _recuperarImagem(),
-                          child: Text(
-                            '$nome $sobrenome',
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black,
-                                fontSize: 20),
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () async => await _recuperarImagem(),
-                          child: const Text(
-                            'Alterar imagem',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: Colors.blue,
-                                fontSize: 16),
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-                const SizedBox(height: 30),
-                Container(
-                  color: Colors.white,
-                  height: 30,
-                  child: const Text('informações do perfil',
-                      style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w300,
-                          color: Color.fromARGB(255, 58, 56, 56))),
-                ),
-                const Divider(),
-                const SizedBox(height: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 5),
-                      child: textos_widget(texto: 'Primeiro nome'),
-                    ),
-                    const SizedBox(height: 5),
-                    textfield_widget(
-                      controller: _controllerNOME,
-                      keyboardType: TextInputType.name,
-                      hintText: 'Digite seu nome',
-                      obscureText: false,
-                    )
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 5),
-                      child: textos_widget(texto: 'Segundo nome'),
-                    ),
-                    const SizedBox(height: 5),
-                    textfield_widget(
-                      controller: _controllerSOBRENOME,
-                      keyboardType: TextInputType.name,
-                      hintText: 'Digite seu segundo nome',
-                      obscureText: false,
-                    )
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 5),
-                      child: textos_widget(texto: 'Endereço de e-mail'),
-                    ),
-                    const SizedBox(height: 5),
-                    textfield_widget(
-                      controller: _controllerEMAIL,
-                      keyboardType: TextInputType.emailAddress,
-                      hintText: 'Digite seu e-mail',
-                      obscureText: false,
-                    )
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 5),
-                      child: textos_widget(texto: 'Site'),
-                    ),
-                    const SizedBox(height: 5),
-                    textfield_widget(
-                      controller: _controllerSITE,
-                      keyboardType: TextInputType.url,
-                      hintText: 'Digite a url do seu site',
-                      obscureText: false,
-                    )
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 5),
-                      child: textos_widget(texto: 'Biografia'),
-                    ),
-                    const SizedBox(height: 5),
-                    textfield_widget(
-                      controller: _controllerBIO,
-                      keyboardType: TextInputType.name,
-                      maxLines: null,
-                      maxLength: 5000,
-                      hintText:
-                          'Exemplo:\n🎉 Sua idade\n💻 Profissão\n🌍 Descendência',
-                      obscureText: false,
-                    )
-                  ],
-                ),
-                const SizedBox(height: 30),
-                Container(
-                  color: Colors.white,
-                  height: 30,
-                  child: const Text('informações de contato',
-                      style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w300,
-                          color: Color.fromARGB(255, 58, 56, 56))),
-                ),
-                const Divider(),
-                const SizedBox(height: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 5),
-                      child: textos_widget(texto: 'Telefone'),
-                    ),
-                    const SizedBox(height: 5),
-                    textfield_widget(
-                      controller: _controllerTELEFONE,
-                      keyboardType: TextInputType.phone,
-                      hintText: 'Digite seu Telefone',
-                      obscureText: false,
-                    )
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 5),
-                      child: textos_widget(texto: 'E-mail de recuperação'),
-                    ),
-                    const SizedBox(height: 5),
-                    textfield_widget(
-                      controller: _controllerRECUPERAR,
-                      keyboardType: TextInputType.emailAddress,
-                      hintText: 'Digite seu e-mail de recuperação',
-                      obscureText: false,
-                    )
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 30),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                      ),
+                      subindoImagem ? Container() : Container(),
+                    ],
+                  ),
+                  const SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       GestureDetector(
-                        onTap: () {
-                          showAlert();
-                        },
-                        child: Container(
-                          width: 110,
-                          height: 40,
-                          decoration: BoxDecoration(
+                        onTap: () async => await _recuperarImagem(),
+                        child: Text(
+                          '$nome $sobrenome',
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black,
+                              fontSize: 20),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () async => await _recuperarImagem(),
+                        child: const Text(
+                          'Alterar imagem',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
                               color: Colors.blue,
-                              borderRadius: BorderRadius.circular(8)),
-                          child: const Center(
-                              child: Text(
-                            'Salvar',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          )),
+                              fontSize: 16),
                         ),
                       ),
                     ],
+                  )
+                ],
+              ),
+              const SizedBox(height: 30),
+              Container(
+                color: Colors.white,
+                height: 30,
+                child: const Text('informações do perfil',
+                    style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w300,
+                        color: Color.fromARGB(255, 58, 56, 56))),
+              ),
+              const Divider(),
+              const SizedBox(height: 20),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(left: 5),
+                    child: textos_widget(texto: 'Usuário'),
                   ),
+                  const SizedBox(height: 5),
+                  textfield_widget(
+                    prefixIcon: const Icon(
+                      Icons.alternate_email_rounded,
+                      size: 20,
+                      color: Color.fromARGB(255, 203, 197, 190),
+                    ),
+                    suffixIcon: IconButton(
+                      icon: const Icon(
+                        Icons.search_rounded,
+                        color: Color.fromARGB(255, 190, 23, 79),
+                      ), // Ícone do botão
+                      onPressed: () async {
+                        String username = controllerUsername.text;
+
+                        // Verifique se o campo está vazio
+                        if (username.isEmpty) {
+                          setState(() {
+                            showAlertErroUsername(); // Exiba uma mensagem de campo vazio
+                          });
+                          return; // Impede que a função prossiga
+                        }
+
+                        // Verifique se o username contém caracteres especiais usando uma expressão regular
+                        RegExp regex = RegExp(r'^[a-zA-Z0-9_]+$');
+                        if (!regex.hasMatch(username)) {
+                          setState(() {
+                            showAlertErroUsername(); // Exiba uma mensagem de caracteres especiais
+                          });
+                          return; // Impede que a função prossiga
+                        }
+
+                        // Agora, você pode continuar com a verificação de existência do usuário
+                        bool userExists = await checkUserPermission(username);
+                        if (userExists) {
+                          // O usuário já existe, você pode exibir uma mensagem ou fazer algo aqui
+                          setState(() {
+                            showAlertErroUsername(); // Ou exibir uma mensagem de erro
+                          });
+                        } else {
+                          // O usuário não existe, você pode exibir uma mensagem ou fazer algo aqui
+                          setState(() {
+                            showAlertSucessoUsername(); // Ou exibir uma mensagem de sucesso
+                          });
+                        }
+                      },
+                    ),
+                    controller: controllerUsername,
+                    keyboardType: TextInputType.name,
+                    hintText: 'Digite seu segundo nome',
+                    obscureText: false,
+                  )
+                ],
+              ),
+              const SizedBox(height: 20),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(left: 5),
+                    child: textos_widget(texto: 'Primeiro nome'),
+                  ),
+                  const SizedBox(height: 5),
+                  textfield_widget(
+                    controller: controllerNome,
+                    keyboardType: TextInputType.name,
+                    hintText: 'Digite seu nome',
+                    obscureText: false,
+                  )
+                ],
+              ),
+              const SizedBox(height: 20),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(left: 5),
+                    child: textos_widget(texto: 'Segundo nome'),
+                  ),
+                  const SizedBox(height: 5),
+                  textfield_widget(
+                    controller: controllerSobrenome,
+                    keyboardType: TextInputType.name,
+                    hintText: 'Digite seu segundo nome',
+                    obscureText: false,
+                  )
+                ],
+              ),
+              const SizedBox(height: 20),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(left: 5),
+                    child: textos_widget(texto: 'Endereço de e-mail'),
+                  ),
+                  const SizedBox(height: 5),
+                  textfield_widget(
+                    controller: controllerEmail,
+                    keyboardType: TextInputType.emailAddress,
+                    hintText: 'Digite seu e-mail',
+                    obscureText: false,
+                  )
+                ],
+              ),
+              const SizedBox(height: 20),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(left: 5),
+                    child: textos_widget(texto: 'Biografia'),
+                  ),
+                  const SizedBox(height: 5),
+                  textfield_widget(
+                    controller: controllerBio,
+                    keyboardType: TextInputType.name,
+                    maxLines: null,
+                    maxLength: 5000,
+                    hintText:
+                        'Exemplo:\n🎉 Sua idade\n💻 Profissão\n🌍 Descendência',
+                    obscureText: false,
+                  )
+                ],
+              ),
+              const SizedBox(height: 30),
+              Container(
+                color: Colors.white,
+                height: 30,
+                child: const Text('informações de contato',
+                    style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w300,
+                        color: Color.fromARGB(255, 58, 56, 56))),
+              ),
+              const Divider(),
+              const SizedBox(height: 20),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(left: 5),
+                    child: textos_widget(texto: 'Telefone'),
+                  ),
+                  const SizedBox(height: 5),
+                  textfield_widget(
+                    controller: controllerTelefone,
+                    keyboardType: TextInputType.phone,
+                    hintText: 'Digite seu Telefone',
+                    obscureText: false,
+                  )
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 30),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        validarCampos();
+                      },
+                      child: Container(
+                        width: 110,
+                        height: 40,
+                        decoration: BoxDecoration(
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(8)),
+                        child: const Center(
+                            child: Text(
+                          'Salvar',
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
+                        )),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 10),
-              ],
-            ),
+              ),
+              const SizedBox(height: 10),
+            ],
           ),
         ),
       ),

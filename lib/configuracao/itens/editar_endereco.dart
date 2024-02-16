@@ -124,7 +124,7 @@ class _editar_enderecoState extends State<editar_endereco> {
       // ignore: use_build_context_synchronously
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const home_principal(indexPagina: 2,)),
+        MaterialPageRoute(builder: (context) => const home_principal(indexPagina: 1,)),
       );
     }
 
@@ -180,387 +180,385 @@ class _editar_enderecoState extends State<editar_endereco> {
 }
 
 
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          foregroundColor: Colors.black,
-          elevation: 0,
-          leadingWidth: 26,
-          backgroundColor: Colors.transparent,
-          title: Text(titulo),
-        ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Stack(
-              children: [
-                Column(
-                  children: [
-                    const SizedBox(height: 15),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(left: 10),
-                              child: Text(
-                                'CEP',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 18,
-                                    color: Colors.black54),
-                              ),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        foregroundColor: Colors.black,
+        elevation: 0,
+        leadingWidth: 26,
+        backgroundColor: Colors.transparent,
+        title: Text(titulo),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  const SizedBox(height: 15),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: Text(
+                              'CEP',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 18,
+                                  color: Colors.black54),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 5),
-                              child: SizedBox(
-                                width: 240,
-                                child: SizedBox(
-                                  width: double.infinity,
-                                  child: TextField(
-                                    controller: cepController,
-                                    keyboardType: TextInputType.emailAddress,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 17,
-                                    ),
-                                    decoration: InputDecoration(
-                                      filled: true,
-                                      fillColor: const Color.fromARGB(
-                                          255, 243, 243, 243),
-                                      border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(13)),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(13),
-                                          borderSide: const BorderSide(
-                                              color: Colors.white)),
-                                      contentPadding: const EdgeInsets.fromLTRB(
-                                          32, 15, 32, 16),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(left: 10),
-                              child: Text(
-                                'UF',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 18,
-                                    color: Colors.black54),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 5),
-                              child: SizedBox(
-                                width: 100,
-                                child: SizedBox(
-                                  width: double.infinity,
-                                  child: TextField(
-                                    controller: ufController,
-                                    keyboardType: TextInputType.emailAddress,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 17,
-                                    ),
-                                    decoration: InputDecoration(
-                                      filled: true,
-                                      fillColor: const Color.fromARGB(
-                                          255, 243, 243, 243),
-                                      border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(13)),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(13),
-                                          borderSide: const BorderSide(
-                                              color: Colors.white)),
-                                      contentPadding: const EdgeInsets.fromLTRB(
-                                          32, 15, 32, 16),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text(
-                            'Cidade',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 18,
-                                color: Colors.black54),
                           ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: SizedBox(
+                              width: 240,
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: TextField(
+                                  controller: cepController,
+                                  keyboardType: TextInputType.emailAddress,
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 17,
+                                  ),
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: const Color.fromARGB(
+                                        255, 243, 243, 243),
+                                    border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(13)),
+                                    enabledBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(13),
+                                        borderSide: const BorderSide(
+                                            color: Colors.white)),
+                                    contentPadding: const EdgeInsets.fromLTRB(
+                                        32, 15, 32, 16),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: Text(
+                              'UF',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 18,
+                                  color: Colors.black54),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: SizedBox(
+                              width: 100,
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: TextField(
+                                  controller: ufController,
+                                  keyboardType: TextInputType.emailAddress,
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 17,
+                                  ),
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: const Color.fromARGB(
+                                        255, 243, 243, 243),
+                                    border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(13)),
+                                    enabledBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(13),
+                                        borderSide: const BorderSide(
+                                            color: Colors.white)),
+                                    contentPadding: const EdgeInsets.fromLTRB(
+                                        32, 15, 32, 16),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 15),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Text(
+                          'Cidade',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18,
+                              color: Colors.black54),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 5),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: SizedBox(
+                          width: double.infinity,
                           child: SizedBox(
                             width: double.infinity,
-                            child: SizedBox(
-                              width: double.infinity,
-                              child: TextField(
-                                controller: cidadeController,
-                                keyboardType: TextInputType.emailAddress,
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 17,
-                                ),
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor:
-                                      const Color.fromARGB(255, 243, 243, 243),
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(13)),
-                                  enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(13),
-                                      borderSide: const BorderSide(
-                                          color: Colors.white)),
-                                  contentPadding:
-                                      const EdgeInsets.fromLTRB(32, 15, 32, 16),
-                                ),
+                            child: TextField(
+                              controller: cidadeController,
+                              keyboardType: TextInputType.emailAddress,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 17,
+                              ),
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor:
+                                    const Color.fromARGB(255, 243, 243, 243),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(13)),
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(13),
+                                    borderSide: const BorderSide(
+                                        color: Colors.white)),
+                                contentPadding:
+                                    const EdgeInsets.fromLTRB(32, 15, 32, 16),
                               ),
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text(
-                            'Bairro',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 18,
-                                color: Colors.black54),
-                          ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 15),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Text(
+                          'Bairro',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18,
+                              color: Colors.black54),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 5),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: SizedBox(
+                          width: double.infinity,
                           child: SizedBox(
                             width: double.infinity,
-                            child: SizedBox(
-                              width: double.infinity,
-                              child: TextField(
-                                controller: bairroController,
-                                keyboardType: TextInputType.emailAddress,
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 17,
-                                ),
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor:
-                                      const Color.fromARGB(255, 243, 243, 243),
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(13)),
-                                  enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(13),
-                                      borderSide: const BorderSide(
-                                          color: Colors.white)),
-                                  contentPadding:
-                                      const EdgeInsets.fromLTRB(32, 15, 32, 16),
-                                ),
+                            child: TextField(
+                              controller: bairroController,
+                              keyboardType: TextInputType.emailAddress,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 17,
+                              ),
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor:
+                                    const Color.fromARGB(255, 243, 243, 243),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(13)),
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(13),
+                                    borderSide: const BorderSide(
+                                        color: Colors.white)),
+                                contentPadding:
+                                    const EdgeInsets.fromLTRB(32, 15, 32, 16),
                               ),
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(left: 10),
-                              child: Text(
-                                'Logradouro',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 18,
-                                    color: Colors.black54),
-                              ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 15),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: Text(
+                              'Logradouro',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 18,
+                                  color: Colors.black54),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 5),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: SizedBox(
+                              width: 240,
                               child: SizedBox(
-                                width: 240,
-                                child: SizedBox(
-                                  width: double.infinity,
-                                  child: TextField(
-                                    controller: ruaController,
-                                    keyboardType: TextInputType.emailAddress,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 17,
-                                    ),
-                                    decoration: InputDecoration(
-                                      filled: true,
-                                      fillColor: const Color.fromARGB(
-                                          255, 243, 243, 243),
-                                      border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(13)),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(13),
-                                          borderSide: const BorderSide(
-                                              color: Colors.white)),
-                                      contentPadding: const EdgeInsets.fromLTRB(
-                                          32, 15, 32, 16),
-                                    ),
+                                width: double.infinity,
+                                child: TextField(
+                                  controller: ruaController,
+                                  keyboardType: TextInputType.emailAddress,
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 17,
+                                  ),
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: const Color.fromARGB(
+                                        255, 243, 243, 243),
+                                    border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(13)),
+                                    enabledBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(13),
+                                        borderSide: const BorderSide(
+                                            color: Colors.white)),
+                                    contentPadding: const EdgeInsets.fromLTRB(
+                                        32, 15, 32, 16),
                                   ),
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(left: 10),
-                              child: Text(
-                                'N°',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 18,
-                                    color: Colors.black54),
-                              ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: Text(
+                              'N°',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 18,
+                                  color: Colors.black54),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 5),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: SizedBox(
+                              width: 100,
                               child: SizedBox(
-                                width: 100,
-                                child: SizedBox(
-                                  width: double.infinity,
-                                  child: TextField(
-                                    controller: numeroController,
-                                    keyboardType: TextInputType.emailAddress,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 17,
-                                    ),
-                                    decoration: InputDecoration(
-                                      filled: true,
-                                      fillColor: const Color.fromARGB(
-                                          255, 243, 243, 243),
-                                      border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(13)),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(13),
-                                          borderSide: const BorderSide(
-                                              color: Colors.white)),
-                                      contentPadding: const EdgeInsets.fromLTRB(
-                                          32, 15, 32, 16),
-                                    ),
+                                width: double.infinity,
+                                child: TextField(
+                                  controller: numeroController,
+                                  keyboardType: TextInputType.emailAddress,
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 17,
+                                  ),
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: const Color.fromARGB(
+                                        255, 243, 243, 243),
+                                    border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(13)),
+                                    enabledBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(13),
+                                        borderSide: const BorderSide(
+                                            color: Colors.white)),
+                                    contentPadding: const EdgeInsets.fromLTRB(
+                                        32, 15, 32, 16),
                                   ),
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text(
-                            'Complemento | Referência',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 18,
-                                color: Colors.black54),
                           ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 15),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Text(
+                          'Complemento | Referência',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18,
+                              color: Colors.black54),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 5),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: SizedBox(
+                          width: double.infinity,
                           child: SizedBox(
                             width: double.infinity,
-                            child: SizedBox(
-                              width: double.infinity,
-                              child: TextField(
-                                controller: complementoController,
-                                keyboardType: TextInputType.emailAddress,
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 17,
-                                ),
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor:
-                                      const Color.fromARGB(255, 243, 243, 243),
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(13)),
-                                  enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(13),
-                                      borderSide: const BorderSide(
-                                          color: Colors.white)),
-                                  contentPadding:
-                                      const EdgeInsets.fromLTRB(32, 15, 32, 16),
-                                ),
+                            child: TextField(
+                              controller: complementoController,
+                              keyboardType: TextInputType.emailAddress,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 17,
+                              ),
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor:
+                                    const Color.fromARGB(255, 243, 243, 243),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(13)),
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(13),
+                                    borderSide: const BorderSide(
+                                        color: Colors.white)),
+                                contentPadding:
+                                    const EdgeInsets.fromLTRB(32, 15, 32, 16),
                               ),
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 40),
-                          child: GestureDetector(
-                            onTap: () {
-                              atualizarEndereco();
-                            },
-                            child: Container(
-                              width: 110,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                  color: Colors.blue,
-                                  borderRadius: BorderRadius.circular(8)),
-                              child: const Center(
-                                  child: Text(
-                                'Salvar',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              )),
-                            ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 40),
+                        child: GestureDetector(
+                          onTap: () {
+                            atualizarEndereco();
+                          },
+                          child: Container(
+                            width: 110,
+                            height: 40,
+                            decoration: BoxDecoration(
+                                color: Colors.blue,
+                                borderRadius: BorderRadius.circular(8)),
+                            child: const Center(
+                                child: Text(
+                              'Salvar',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            )),
                           ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),

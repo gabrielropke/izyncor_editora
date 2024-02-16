@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:editora_izyncor_app/interior_usuario/chat/mensagens_chat.dart';
+import 'package:editora_izyncor_app/interior_usuario/chat/chat_mensagem/mensagens.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil_visita/perfil_visita.dart';
 import 'package:editora_izyncor_app/widgets/drawer/drawer_widget.dart';
 import 'package:editora_izyncor_app/widgets/topo_appbar.dart';
@@ -72,7 +72,6 @@ class _usuarios_chatState extends State<usuarios_chat> {
   }
 
   _recuperarDadosUsuario() async {
-    
     var usuarioLogado = auth.currentUser;
     _emailUsuarioLogado = usuarioLogado?.email;
   }
@@ -208,7 +207,7 @@ class _usuarios_chatState extends State<usuarios_chat> {
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                          const SizedBox(height: 5),
+                                          // const SizedBox(height: 0),
                                           Text(
                                             usuario.cadastro,
                                             style: const TextStyle(
@@ -225,14 +224,10 @@ class _usuarios_chatState extends State<usuarios_chat> {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      Mensagens(
-                                                          uidPerfil:
-                                                              usuario.idUsuario,
-                                                          nome: usuario.nome,
-                                                          imagemPerfil:
-                                                              usuario.urlImagem,
-                                                          sobrenome: usuario
-                                                              .sobrenome)));
+                                                      MensagemPage(
+                                                        idUsuarioDestino:
+                                                            usuario.idUsuario,
+                                                      )));
                                         },
                                         child: ClipRRect(
                                           child: SizedBox(

@@ -59,6 +59,19 @@ class _seguidores_pageState extends State<seguidores_page> {
 
           var seguidores = snapshot.data?.docs;
 
+          if (seguidores!.isEmpty) {
+            return const Center(
+              child: Text(
+                'Nada por aqui...',
+                style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black26,
+                    fontSize: 20),
+                textAlign: TextAlign.center,
+              ),
+            );
+          }
+
           return ListView.builder(
             itemCount: seguidores?.length,
             itemBuilder: (context, index) {

@@ -37,6 +37,11 @@ class _textfield_chatState extends State<textfield_chat> {
   late String idUsuarioDestino;
   String username = '';
   String urlPerfil = '';
+  String nomeDestino = '';
+  String sobrenomeDestino = '';
+  String imagemUrlDestino = '';
+  String nomeLogado = '';
+  String sobrenomeLogado = '';
 
   Future<void> recuperarDadosUsuario() async {
     User? usuarioLogado = auth.currentUser;
@@ -51,6 +56,8 @@ class _textfield_chatState extends State<textfield_chat> {
         setState(() {
           urlPerfil = userData['urlImagem'];
           username = userData['username'];
+          nomeLogado = userData['nome'];
+          sobrenomeLogado = userData['sobrenome'];
         });
       }
     }
@@ -62,8 +69,11 @@ class _textfield_chatState extends State<textfield_chat> {
     // Cria um ID de mensagem único
     String idMensagem = FirebaseFirestore.instance.collection('chat').doc().id;
 
-    // ignore: unnecessary_null_comparison
-    if (idUsuarioLogado != null) {
+    if (mensagem.isEmpty) {
+      return;
+    }
+
+    if (mensagem.isNotEmpty) {
       await FirebaseFirestore.instance
           .collection('chat')
           .doc(idUsuarioLogado)
@@ -78,6 +88,7 @@ class _textfield_chatState extends State<textfield_chat> {
         'mensagem': mensagem,
         'tipo': 'texto',
         'urlImagem': 'vazia',
+        'tamanho': 'vazia',
       });
 
       print('Mensagem enviada');
@@ -85,24 +96,88 @@ class _textfield_chatState extends State<textfield_chat> {
       controller.clear();
     }
 
-    await FirebaseFirestore.instance
-        .collection('chat')
-        .doc(idUsuarioDestino)
-        .collection(idUsuarioLogado)
-        .doc(idMensagem)
-        .set({
-      'hora': DateTime.now().toString(),
-      'idMensagem': idMensagem,
-      'idRemetente': idUsuarioLogado,
-      'idDestinatario': idUsuarioDestino,
-      'lida': 'novo',
-      'mensagem': mensagem,
-      'tipo': 'texto',
-      'urlImagem': 'vazia',
-    });
+    if (mensagem.isNotEmpty) {
+      await FirebaseFirestore.instance
+          .collection('chat')
+          .doc(idUsuarioDestino)
+          .collection(idUsuarioLogado)
+          .doc(idMensagem)
+          .set({
+        'hora': DateTime.now().toString(),
+        'idMensagem': idMensagem,
+        'idRemetente': idUsuarioLogado,
+        'idDestinatario': idUsuarioDestino,
+        'lida': 'novo',
+        'mensagem': mensagem,
+        'tipo': 'texto',
+        'urlImagem': 'vazia',
+        'tamanho': 'vazia',
+      });
 
-    print('Mensagem recebida pelo destinatário');
-    controller.clear();
+      print('Mensagem recebida pelo destinatário');
+      controller.clear();
+    }
+  }
+
+  Future<void> recuperarDadosDestino() async {
+    DocumentSnapshot<Map<String, dynamic>> userData = await FirebaseFirestore
+        .instance
+        .collection('usuarios')
+        .doc(idUsuarioDestino)
+        .get();
+    if (userData.exists) {
+      setState(() {
+        nomeDestino = userData['nome'];
+        sobrenomeDestino = userData['sobrenome'];
+        imagemUrlDestino = userData['urlImagem'];
+      });
+    }
+  }
+
+  Future<void> salvarConversa() async {
+    String mensagem = controller.text;
+
+    if (mensagem.isNotEmpty) {
+      await FirebaseFirestore.instance
+          .collection('conversas')
+          .doc(idUsuarioLogado)
+          .collection('ultima_conversa')
+          .doc(idUsuarioDestino)
+          .set({
+        "idRemetente": idUsuarioLogado,
+        'nomeConversa': nomeDestino,
+        'sobrenomeConversa': sobrenomeDestino,
+        'imagemUrlDestino': imagemUrlDestino,
+        "idDestinatario": idUsuarioDestino,
+        "autorMensagem": idUsuarioLogado,
+        "mensagem": mensagem,
+        "tipo": 'texto',
+        "hora": DateTime.now().toString(),
+      }, SetOptions(merge: true));
+
+      print('Conversa salva 01');
+    }
+
+    if (mensagem.isNotEmpty) {
+      await FirebaseFirestore.instance
+          .collection('conversas')
+          .doc(idUsuarioDestino)
+          .collection('ultima_conversa')
+          .doc(idUsuarioLogado)
+          .set({
+        "idRemetente": idUsuarioLogado,
+        'nomeConversa': nomeLogado,
+        'sobrenomeConversa': sobrenomeLogado,
+        'imagemUrlDestino': urlPerfil,
+        "idDestinatario": idUsuarioDestino,
+        "autorMensagem": idUsuarioLogado,
+        "mensagem": mensagem,
+        "tipo": 'texto',
+        "hora": DateTime.now().toString(),
+      }, SetOptions(merge: true));
+
+      print('Conversa salva 02');
+    }
   }
 
   void enviarNotificacao() {
@@ -136,6 +211,7 @@ class _textfield_chatState extends State<textfield_chat> {
     maxLines = widget.maxLines;
     idUsuarioLogado = widget.idUsuarioLogado;
     idUsuarioDestino = widget.idUsuarioDestino;
+    recuperarDadosDestino();
   }
 
   @override
@@ -154,18 +230,23 @@ class _textfield_chatState extends State<textfield_chat> {
                 color: Color.fromARGB(255, 0, 0, 0),
               ),
               decoration: InputDecoration(
-                prefixIcon: anexos_chat(),
+                prefixIcon: anexos_chat(
+                  idUsuarioLogado: idUsuarioLogado,
+                  idUsuarioDestino: idUsuarioDestino,
+                  username: username,
+                  urlPerfil: urlPerfil,
+                ),
                 suffixIcon: Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: IconButton(
                     color: const Color.fromARGB(255, 46, 43, 43),
                     onPressed: () {
                       enviarMensagem();
+                      salvarConversa();
                     },
                     icon: Opacity(
                       opacity: 0.6,
                       child: SizedBox(
-                        width: 80,
                         child: Image.asset('assets/enviar_3.png',
                             color: const Color.fromARGB(255, 212, 18, 99)),
                       ),

@@ -63,7 +63,6 @@ class _seguidores_widgetState extends State<seguidores_widget> {
                     builder: (context) => const seguidores_page()));
           },
           child: Container(
-            color: Colors.white,
             child: Row(
               children: [
                 GestureDetector(
@@ -74,7 +73,6 @@ class _seguidores_widgetState extends State<seguidores_widget> {
                             builder: (context) => const seguindo_page()));
                   },
                   child: Container(
-                    color: Colors.white,
                     child: Row(
                       children: [
                         StreamBuilder<DocumentSnapshot>(

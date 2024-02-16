@@ -5,34 +5,23 @@ import 'package:editora_izyncor_app/interior_usuario/chat/chat_mensagem/widget_c
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class mensagens extends StatefulWidget {
+class MensagemPage extends StatefulWidget {
   final String idUsuarioDestino;
-  final String nomeDestino;
-  final String imagemPerfilDestino;
-  final String sobrenomeDestino;
-  final String usernameDestino;
-  const mensagens(
-      {super.key,
-      required this.idUsuarioDestino,
-      required this.nomeDestino,
-      required this.imagemPerfilDestino,
-      required this.sobrenomeDestino,
-      required this.usernameDestino});
+  const MensagemPage({
+    super.key,
+    required this.idUsuarioDestino,
+  });
 
   @override
-  State<mensagens> createState() => _mensagensState();
+  State<MensagemPage> createState() => _MensagemPageState();
 }
 
-class _mensagensState extends State<mensagens> {
+class _MensagemPageState extends State<MensagemPage> {
   FirebaseAuth auth = FirebaseAuth.instance;
 
   TextEditingController controllerMensagem = TextEditingController();
 
   late String idUsuarioDestino;
-  late String nomeDestino;
-  late String imagemPerfilDestino;
-  late String sobrenomeDestino;
-  late String usernameDestino;
   String nome = '';
   String sobrenome = '';
   String cadastro = '';
@@ -40,6 +29,10 @@ class _mensagensState extends State<mensagens> {
   String username = '';
   String urlPerfil = '';
   String? idUsuarioLogado;
+  String nomeDestino = '';
+  String sobrenomeDestino = '';
+  String usernameDestino = '';
+  String urlImagemDestino = '';
 
   Future<void> recuperarDadosUsuario() async {
     User? usuarioLogado = auth.currentUser;
@@ -63,6 +56,22 @@ class _mensagensState extends State<mensagens> {
     }
   }
 
+  Future<void> recuperarDadosDestino() async {
+    DocumentSnapshot<Map<String, dynamic>> userData = await FirebaseFirestore
+        .instance
+        .collection('usuarios')
+        .doc(idUsuarioDestino)
+        .get();
+    if (userData.exists) {
+      setState(() {
+        nomeDestino = userData['nome'];
+        sobrenomeDestino = userData['sobrenome'];
+        usernameDestino = userData['username'];
+        urlImagemDestino = userData['urlImagem'];
+      });
+    }
+  }
+
   Future<void> enviarMensagem() async {
     String mensagem = controllerMensagem.text;
 
@@ -83,53 +92,53 @@ class _mensagensState extends State<mensagens> {
   }
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    recuperarDadosUsuario();
-    idUsuarioDestino = widget.idUsuarioDestino;
-    nomeDestino = widget.nomeDestino;
-    sobrenomeDestino = widget.sobrenomeDestino;
-    imagemPerfilDestino = widget.imagemPerfilDestino;
-    usernameDestino = widget.usernameDestino;
-  }
+void initState() {
+  super.initState();
+  idUsuarioDestino = widget.idUsuarioDestino;
+  recuperarDadosUsuario();
+  recuperarDadosDestino();
+}
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 255, 251, 244),
+      backgroundColor: const Color.fromARGB(255, 236, 236, 236),
       appBar: appbar_chat(
         idUsuarioDestino: idUsuarioDestino,
         nomeDestino: nomeDestino,
-        imagemPerfilDestino: imagemPerfilDestino,
+        imagemPerfilDestino: urlImagemDestino,
         sobrenomeDestino: sobrenomeDestino,
         idUsuarioLogado: idUsuarioLogado!,
         usernameDestino: usernameDestino,
       ),
-      body: Stack(
+      body: Column(
         children: [
-          mensagens_widget(
-            idUsuarioLogado: idUsuarioLogado!,
-            idUsuarioDestino: idUsuarioDestino,
-            imagemPerfilDestino: imagemPerfilDestino,
-            nomeDestino: nomeDestino,
+          Expanded(
+            child: mensagens_widget(
+              idUsuarioLogado: idUsuarioLogado!,
+              idUsuarioDestino: idUsuarioDestino,
+              nomeDestino: nomeDestino,
+            ),
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              width: double.infinity,
-              height: 70,
-              color: Color.fromARGB(31, 209, 209, 209),
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: textfield_chat(
-                  controller: controllerMensagem,
-                  idUsuarioLogado: idUsuarioLogado!,
-                  idUsuarioDestino: idUsuarioDestino,
+          SafeArea(
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                width: double.infinity,
+                height: 70,
+                color: const Color.fromARGB(255, 236, 236, 236),
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: textfield_chat(
+                    controller: controllerMensagem,
+                    idUsuarioLogado: idUsuarioLogado!,
+                    idUsuarioDestino: idUsuarioDestino,
+                  ),
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );

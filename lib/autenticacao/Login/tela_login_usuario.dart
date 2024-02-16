@@ -3,6 +3,7 @@ import 'package:editora_izyncor_app/autenticacao/dados_beta.dart';
 import 'package:editora_izyncor_app/autenticacao/resetar_senha.dart';
 import 'package:editora_izyncor_app/autenticacao/tela_opcoes.dart';
 import 'package:editora_izyncor_app/interior_usuario/tabbar.dart';
+import 'package:editora_izyncor_app/widgets/alerta_izyncor.dart';
 import 'package:editora_izyncor_app/widgets/textfield_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,13 +11,16 @@ import 'package:quickalert/quickalert.dart';
 import '../../../model/usuario.dart';
 
 class login extends StatefulWidget {
-  const login({super.key});
+  final int statusInicial;
+  const login({super.key, required this.statusInicial});
 
   @override
   State<login> createState() => _MyWidgetState();
 }
 
 class _MyWidgetState extends State<login> {
+  late int statusInicial;
+
   void showAlert() {
     QuickAlert.show(
         context: context,
@@ -97,8 +101,10 @@ class _MyWidgetState extends State<login> {
           context,
           MaterialPageRoute(
               builder: ((context) => const home_principal(
-                    indexPagina: 2,
+                    indexPagina: 1,
                   ))));
+      AlertasIzyncor.mostrarAlerta(context,
+          'Estamos em fase de testes. Reporte qualquer erro ou inconsistência encontrada!');
     }).catchError((error) {
       setState(() {
         showAlert();
@@ -159,6 +165,7 @@ class _MyWidgetState extends State<login> {
     try {
       if (usuerioLogado != null) {
         // Aqui você pode acessar as informações do usuário diretamente de 'usuerioLogado'
+        // ignore: unused_local_variable
         String email = usuerioLogado
             .email!; // Usuário logado, então o e-mail não deve ser nulo
 
@@ -174,9 +181,10 @@ class _MyWidgetState extends State<login> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => const home_principal(indexPagina: 2)),
+                builder: (context) => const home_principal(indexPagina: 1)),
           );
-          mensagemAlertaIzyncor(
+          // ignore: use_build_context_synchronously
+          AlertasIzyncor.mostrarAlerta(context,
               'Estamos em fase de testes. Reporte qualquer erro ou inconsistência encontrada!');
         } else {
           // Se não há dados do usuário, redirecione para a página de dados beta
@@ -196,48 +204,15 @@ class _MyWidgetState extends State<login> {
     }
   }
 
-  mensagemAlertaIzyncor(String mensagem) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: SizedBox(
-              height: 150,
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 60,
-                    width: 60,
-                    child: Image.asset(
-                      'assets/icone.png',
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Center(
-                    child: Text(
-                      mensagem,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Ok')),
-            ],
-          );
-        });
-  }
-
   @override
   void initState() {
-    verificaUsuarioLogado();
+    statusInicial = widget.statusInicial;
+    if (statusInicial == 0) {
+      verificaUsuarioLogado();
+    } else if (statusInicial == 1) {
+      // ignore: avoid_print
+      print('Logout efetuado com sucesso');
+    }
     super.initState();
   }
 
@@ -427,7 +402,7 @@ class _MyWidgetState extends State<login> {
                   padding: const EdgeInsets.only(top: 10),
                   child: GestureDetector(
                     onTap: () {
-                      mensagemAlertaIzyncor(
+                      AlertasIzyncor.mostrarAlerta(context,
                           'Não disponível na versão de testes. Utilize o login e senha disponibilizados pela equipe!');
                     },
                     // onTap: () => AuthService().signInWithGoogle(context),

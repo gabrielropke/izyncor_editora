@@ -430,6 +430,9 @@ class _notificacao_pageState extends State<notificacao_page> {
                 return Column(
                   children: [
                     GestureDetector(
+                      onDoubleTap: () {
+                        setarVisualizada(messages[index].id);
+                      },
                       onLongPress: () {
                         selecionarItem(context, messages[index].id, status);
                       },
@@ -446,12 +449,8 @@ class _notificacao_pageState extends State<notificacao_page> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => mensagens(
-                                      idUsuarioDestino: idPerfil,
-                                      nomeDestino: nomePerfil,
-                                      imagemPerfilDestino: perfil,
-                                      sobrenomeDestino: sobrenomePerfil,
-                                      usernameDestino: username,)),
+                                  builder: (context) => MensagemPage(
+                                      idUsuarioDestino: idPerfil)),
                             );
                           } else {
                             print('Não encontrado: $idPerfil');

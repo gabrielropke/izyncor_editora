@@ -2,11 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:editora_izyncor_app/autenticacao/Login/tela_login_usuario.dart';
 import 'package:editora_izyncor_app/configuracao/assuntos/assuntos_selecao.dart';
+import 'package:editora_izyncor_app/configuracao/itens/relatar_problema.dart';
+import 'package:editora_izyncor_app/configuracao/itens/sobre.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil/editar/configuracoes.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil/editar/editar_perfil.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil/meu_perfil.dart';
 import 'package:editora_izyncor_app/widgets/drawer/lista_widget_drawer.dart';
-import 'package:editora_izyncor_app/widgets/seguidores_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:quickalert/models/quickalert_type.dart';
@@ -53,7 +54,7 @@ class _drawer_widgetState extends State<drawer_widget> {
 
     Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: ((context) => const login())),
+        MaterialPageRoute(builder: ((context) => const login(statusInicial: 1,))),
         (Route<dynamic> route) => false);
   }
 
@@ -64,7 +65,7 @@ class _drawer_widgetState extends State<drawer_widget> {
         text: 'Deseja realmente sair da conta?',
         confirmBtnText: 'Sair',
         type: QuickAlertType.warning,
-        onConfirmBtnTap: () async {
+        onConfirmBtnTap: () {
           _deslogarUsuario();
         });
   }
@@ -78,7 +79,6 @@ class _drawer_widgetState extends State<drawer_widget> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: Colors.white,
       child: Column(
         children: [
           Expanded(
@@ -86,9 +86,7 @@ class _drawer_widgetState extends State<drawer_widget> {
               padding: EdgeInsets.zero,
               children: <Widget>[
                 DrawerHeader(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                    ),
+                    decoration: const BoxDecoration(),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -121,7 +119,7 @@ class _drawer_widgetState extends State<drawer_widget> {
                             )
                           ],
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 15),
                         Text(
                           '$nome $sobrenome',
                           style: const TextStyle(fontSize: 18),
@@ -134,17 +132,18 @@ class _drawer_widgetState extends State<drawer_widget> {
                               fontWeight: FontWeight.w400,
                               color: Colors.black38),
                         ),
-                        const SizedBox(height: 16),
-                        const seguidores_widget()
                       ],
                     )),
-                 Padding(
+                Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const perfil()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const perfil()));
                         },
                         child: const lista_widgets_drawer(
                             icone_drawer: 'assets/perfil4_icon.png',
@@ -157,16 +156,20 @@ class _drawer_widgetState extends State<drawer_widget> {
                       const SizedBox(height: 10),
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const assuntos_selecao()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const assuntos_selecao()));
                         },
                         child: const lista_widgets_drawer(
                             icone_drawer: 'assets/assuntos05_icone.png',
                             titulo_drawer: 'Assuntos'),
                       ),
-                      const SizedBox(height: 10),
-                      const lista_widgets_drawer(
-                          icone_drawer: 'assets/ranking01_icone.png',
-                          titulo_drawer: 'Ranking'),
+                      // const SizedBox(height: 10),
+                      // const lista_widgets_drawer(
+                      //     icone_drawer: 'assets/ranking01_icone.png',
+                      //     titulo_drawer: 'Ranking'),
                       const SizedBox(height: 10),
                       const lista_widgets_drawer(
                           icone_drawer: 'assets/salvar01_icone.png',
@@ -179,12 +182,14 @@ class _drawer_widgetState extends State<drawer_widget> {
                       const Divider(),
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const editar_perfil()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const editar_perfil()));
                         },
-                        child: Container(
-                          color: Colors.white,
+                        child: const SizedBox(
                           height: 30,
-                          child: const Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text('Configurações do perfil',
@@ -200,12 +205,14 @@ class _drawer_widgetState extends State<drawer_widget> {
                       const Divider(),
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const configuracoes()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const configuracoes()));
                         },
-                        child: Container(
-                          color: Colors.white,
+                        child: const SizedBox(
                           height: 30,
-                          child: const Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text('Minha conta',
@@ -234,22 +241,37 @@ class _drawer_widgetState extends State<drawer_widget> {
                   children: [
                     Row(
                       children: [
-                        SizedBox(
-                          width: 23,
-                          child: Image.asset('assets/info2_icone.png'),
-                        ),
-                        const SizedBox(width: 28),
-                        SizedBox(
-                          width: 20,
-                          child: Image.asset('assets/relatar2_icone.png'),
+                        IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const sobre()));
+                            },
+                            icon: SizedBox(
+                              width: 23,
+                              child: Image.asset('assets/info2_icone.png'),
+                            )),
+                        const SizedBox(width: 10),
+                        IconButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const relatar_problema()));
+                          },
+                          icon: SizedBox(
+                            width: 20,
+                            child: Image.asset('assets/relatar2_icone.png'),
+                          ),
                         ),
                       ],
                     ),
-                    GestureDetector(
-                      onTap: () {
+                    IconButton(
+                      onPressed: () {
                         showAlert();
                       },
-                      child: SizedBox(
+                      icon: SizedBox(
                         width: 24,
                         child: Image.asset(
                           'assets/sair3_icone.png',

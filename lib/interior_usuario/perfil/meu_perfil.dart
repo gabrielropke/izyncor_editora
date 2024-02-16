@@ -121,10 +121,10 @@ class _perfilState extends State<perfil> {
               },
             ),
             if (Platform.isIOS)
-            const SizedBox(
-              width: double.infinity,
-              height: 40,
-            )
+              const SizedBox(
+                width: double.infinity,
+                height: 40,
+              )
           ],
         );
       },
@@ -213,68 +213,76 @@ class _perfilState extends State<perfil> {
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Column(
+            child: Stack(
               children: [
-                const SizedBox(height: 10),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Stack(
+                    IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: const Icon(Icons.arrow_back_ios)),
+                    GestureDetector(
+                      onTap: () {
+                        verItem(context);
+                      },
+                      child: SizedBox(
+                          width: 23, child: Image.asset('assets/settings.png')),
+                    )
+                  ],
+                ),
+                Column(
+                  children: [
+                    const SizedBox(height: 30),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Column(
+                        Stack(
                           children: [
-                            GestureDetector(
-                              onTap: () {
-                                _exibirImagemFullScreen(urlImagem);
-                              },
-                                child: ClipOval(
-                                  child: Container(
-                                    width: 75,
-                                    height: 75,
-                                    color: Colors.white,
-                                    child: CachedNetworkImage(
-                                      imageUrl: urlImagem,
-                                      fit: BoxFit
-                                          .cover, // ajuste de acordo com suas necessidades
-                                      placeholder: (context, url) =>
-                                          const CircularProgressIndicator(
-                                        color: Colors.white,
-                                      ), // um indicador de carregamento
-                                      errorWidget: (context, url, error) =>
-                                          const Icon(
-                                        Icons.error,
-                                        color: Colors.white,
-                                      ), // widget de erro
+                            Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    _exibirImagemFullScreen(urlImagem);
+                                  },
+                                  child: ClipOval(
+                                    child: Container(
+                                      width: 75,
+                                      height: 75,
+                                      color: Colors.white,
+                                      child: CachedNetworkImage(
+                                        imageUrl: urlImagem,
+                                        fit: BoxFit
+                                            .cover, // ajuste de acordo com suas necessidades
+                                        placeholder: (context, url) =>
+                                            const CircularProgressIndicator(
+                                          color: Colors.white,
+                                        ), // um indicador de carregamento
+                                        errorWidget: (context, url, error) =>
+                                            const Icon(
+                                          Icons.error,
+                                          color: Colors.white,
+                                        ), // widget de erro
+                                      ),
                                     ),
                                   ),
                                 ),
+                              ],
                             ),
-                            // const SizedBox(height: 7),
-                            // Text(
-                            //   '@$username',
-                            //   style: const TextStyle(
-                            //       fontWeight: FontWeight.w500,
-                            //       color: Colors.black,
-                            //       fontSize: 16),
-                            // ),
                           ],
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      width: 280,
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                        SizedBox(
+                          width: 280,
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         '$nome $sobrenome',
@@ -283,280 +291,279 @@ class _perfilState extends State<perfil> {
                                             color: Colors.black,
                                             fontSize: 20),
                                       ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          verItem(context);
-                                        },
-                                        child: SizedBox(
-                                            width: 23,
-                                            child: Image.asset(
-                                                'assets/settings.png')),
-                                      )
+                                      Text(
+                                        cadastro,
+                                        style: const TextStyle(
+                                            color: Colors.black54),
+                                      ),
                                     ],
                                   ),
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    cadastro,
-                                    style:
-                                        const TextStyle(color: Colors.black54),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: 90,
-                                  color: Colors.white,
+                                ),
+                                const SizedBox(height: 6),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 90,
+                                      color: Colors.white,
+                                      child: Column(
+                                        children: [
+                                          StreamBuilder<DocumentSnapshot>(
+                                            stream: FirebaseFirestore.instance
+                                                .collection('usuarios')
+                                                .doc(
+                                                    idUsuarioLogado) // Use o título como ID do documento
+                                                .snapshots(),
+                                            builder: (context, snapshot) {
+                                              if (!snapshot.hasData) {
+                                                return const Text(
+                                                  '0', // Ou qualquer outro valor padrão
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.white,
+                                                  ),
+                                                );
+                                              }
+
+                                              final seguidores = snapshot.data!
+                                                  .get('postagens');
+                                              return Text(
+                                                '$seguidores',
+                                                style: const TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16),
+                                              );
+                                            },
+                                          ),
+                                          const Text('Postagens'),
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 1,
+                                      height: 25,
+                                      color: Colors.black12,
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const seguidores_page()));
+                                      },
+                                      child: Container(
+                                        width: 90,
+                                        color: Colors.white,
+                                        child: Column(
+                                          children: [
+                                            StreamBuilder<DocumentSnapshot>(
+                                              stream: FirebaseFirestore.instance
+                                                  .collection('usuarios')
+                                                  .doc(
+                                                      idUsuarioLogado) // Use o título como ID do documento
+                                                  .snapshots(),
+                                              builder: (context, snapshot) {
+                                                if (!snapshot.hasData) {
+                                                  return const Text(
+                                                    '0', // Ou qualquer outro valor padrão
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.white,
+                                                    ),
+                                                  );
+                                                }
+
+                                                final seguidores = snapshot
+                                                    .data!
+                                                    .get('seguidores');
+                                                return Text('$seguidores',
+                                                    style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 16));
+                                              },
+                                            ),
+                                            const Text('Seguidores'),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 1,
+                                      height: 25,
+                                      color: Colors.black12,
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    seguindo_page()));
+                                      },
+                                      child: Container(
+                                        width: 90,
+                                        color: Colors.white,
+                                        child: Column(
+                                          children: [
+                                            StreamBuilder<DocumentSnapshot>(
+                                              stream: FirebaseFirestore.instance
+                                                  .collection('usuarios')
+                                                  .doc(
+                                                      idUsuarioLogado) // Use o título como ID do documento
+                                                  .snapshots(),
+                                              builder: (context, snapshot) {
+                                                if (!snapshot.hasData) {
+                                                  return const Text(
+                                                    '0', // Ou qualquer outro valor padrão
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.white,
+                                                    ),
+                                                  );
+                                                }
+
+                                                final seguidores = snapshot
+                                                    .data!
+                                                    .get('seguindo');
+                                                return Text('$seguidores',
+                                                    style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 16));
+                                              },
+                                            ),
+                                            const Text('Seguindo'),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
                                   child: Column(
                                     children: [
-                                      StreamBuilder<DocumentSnapshot>(
-                                        stream: FirebaseFirestore.instance
-                                            .collection('usuarios')
-                                            .doc(
-                                                idUsuarioLogado) // Use o título como ID do documento
-                                            .snapshots(),
-                                        builder: (context, snapshot) {
-                                          if (!snapshot.hasData) {
-                                            return const Text(
-                                              '0', // Ou qualquer outro valor padrão
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.white,
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const editar_perfil()));
+                                            },
+                                            child: Container(
+                                              width: 200,
+                                              height: 30,
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      width: 1,
+                                                      color: Colors.black26),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8)),
+                                              child: const Center(
+                                                child: Text('Editar perfil',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w500)),
                                               ),
-                                            );
-                                          }
-
-                                          final seguidores =
-                                              snapshot.data!.get('postagens');
-                                          return Text(
-                                            '$seguidores',
-                                            style: const TextStyle(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
-                                          );
-                                        },
+                                            ),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              verBio(context);
+                                            },
+                                            child: Container(
+                                              width: 60,
+                                              height: 30,
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      width: 1,
+                                                      color: Colors.black26),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8)),
+                                              child: const Center(
+                                                child: Text('Bio',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w500)),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      const Text('Postagens'),
                                     ],
                                   ),
-                                ),
-                                Container(
-                                  width: 1,
-                                  height: 25,
-                                  color: Colors.black12,
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const seguidores_page()));
-                                  },
-                                  child: Container(
-                                    width: 90,
-                                    color: Colors.white,
-                                    child: Column(
-                                      children: [
-                                        StreamBuilder<DocumentSnapshot>(
-                                          stream: FirebaseFirestore.instance
-                                              .collection('usuarios')
-                                              .doc(
-                                                  idUsuarioLogado) // Use o título como ID do documento
-                                              .snapshots(),
-                                          builder: (context, snapshot) {
-                                            if (!snapshot.hasData) {
-                                              return const Text(
-                                                '0', // Ou qualquer outro valor padrão
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.white,
-                                                ),
-                                              );
-                                            }
-
-                                            final seguidores = snapshot.data!
-                                                .get('seguidores');
-                                            return Text('$seguidores',
-                                                style: const TextStyle(
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 16));
-                                          },
-                                        ),
-                                        const Text('Seguidores'),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  width: 1,
-                                  height: 25,
-                                  color: Colors.black12,
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => seguindo_page()));
-                                  },
-                                  child: Container(
-                                    width: 90,
-                                    color: Colors.white,
-                                    child: Column(
-                                      children: [
-                                        StreamBuilder<DocumentSnapshot>(
-                                          stream: FirebaseFirestore.instance
-                                              .collection('usuarios')
-                                              .doc(
-                                                  idUsuarioLogado) // Use o título como ID do documento
-                                              .snapshots(),
-                                          builder: (context, snapshot) {
-                                            if (!snapshot.hasData) {
-                                              return const Text(
-                                                '0', // Ou qualquer outro valor padrão
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.white,
-                                                ),
-                                              );
-                                            }
-
-                                            final seguidores =
-                                                snapshot.data!.get('seguindo');
-                                            return Text('$seguidores',
-                                                style: const TextStyle(
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 16));
-                                          },
-                                        ),
-                                        const Text('Seguindo'),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
+                                )
+                              ]),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    Container(
+                      width: double.infinity,
+                      height: 1,
+                      color: Colors.black12,
+                    ),
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 5, left: 0, right: 0),
+                      child: Container(
+                        width: 200,
+                        height: 50,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12)),
+                        child: TabBar(
+                            indicator: const BoxDecoration(
+                              color: Colors.white,
+                              border: Border(
+                                  bottom: BorderSide(
+                                      width: 3,
+                                      color:
+                                          Color.fromARGB(255, 196, 218, 255))),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const editar_perfil()));
-                                        },
-                                        child: Container(
-                                          width: 200,
-                                          height: 30,
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  width: 1,
-                                                  color: Colors.black26),
-                                              borderRadius:
-                                                  BorderRadius.circular(8)),
-                                          child: const Center(
-                                            child: Text('Editar perfil',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.w500)),
-                                          ),
-                                        ),
-                                      ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          verBio(context);
-                                        },
-                                        child: Container(
-                                          width: 60,
-                                          height: 30,
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  width: 1,
-                                                  color: Colors.black26),
-                                              borderRadius:
-                                                  BorderRadius.circular(8)),
-                                          child: const Center(
-                                            child: Text('Bio',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.w500)),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                            labelColor: Colors.white,
+                            unselectedLabelColor: Colors.black,
+                            tabs: [
+                              Tab(
+                                child: SizedBox(
+                                  width: 24,
+                                  child: Image.asset(
+                                    'assets/galeria.png',
                                   ),
-                                ],
+                                ),
                               ),
-                            )
-                          ]),
+                              Tab(
+                                child: SizedBox(
+                                  width: 23,
+                                  child: Image.asset(
+                                    'assets/textos_02.png',
+                                  ),
+                                ),
+                              ),
+                            ]),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Expanded(
+                      child: TabBarView(children: [
+                        postagem_imagens(),
+                        postagem_textos(nome: nome),
+                      ]),
                     )
                   ],
                 ),
-                const SizedBox(height: 5),
-                Container(
-                  width: double.infinity,
-                  height: 1,
-                  color: Colors.black12,
-                ),
-                const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.only(top: 5, left: 0, right: 0),
-                  child: Container(
-                    width: 200,
-                    height: 50,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12)),
-                    child: TabBar(
-                        indicator: const BoxDecoration(
-                          color: Colors.white,
-                          border: Border(
-                              bottom: BorderSide(
-                                  width: 3,
-                                  color: Color.fromARGB(255, 196, 218, 255))),
-                        ),
-                        labelColor: Colors.white,
-                        unselectedLabelColor: Colors.black,
-                        tabs: [
-                          Tab(
-                            child: SizedBox(
-                              width: 24,
-                              child: Image.asset(
-                                'assets/galeria.png',
-                              ),
-                            ),
-                          ),
-                          Tab(
-                            child: SizedBox(
-                              width: 23,
-                              child: Image.asset(
-                                'assets/textos_02.png',
-                              ),
-                            ),
-                          ),
-                        ]),
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                 Expanded(
-                  child: TabBarView(children: [
-                    postagem_imagens(),
-                    postagem_textos(nome: nome),
-                  ]),
-                )
               ],
             ),
           ),

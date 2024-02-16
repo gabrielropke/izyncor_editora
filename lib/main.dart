@@ -20,6 +20,6 @@ class MyApp extends StatelessWidget {
         title: 'Izyncor',
         theme: ThemeData(primarySwatch: Colors.blueGrey),
         debugShowCheckedModeBanner: false,
-        home: const login());
+        home: const login(statusInicial: 0,));
   }
 }

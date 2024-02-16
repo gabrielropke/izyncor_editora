@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:editora_izyncor_app/interior_usuario/chat/mensagens_chat.dart';
+import 'package:editora_izyncor_app/interior_usuario/chat/chat_mensagem/mensagens.dart';
 import 'package:editora_izyncor_app/widgets/drawer/drawer_widget.dart';
 import 'package:editora_izyncor_app/widgets/topo_appbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -24,7 +24,10 @@ class _conversas_chatState extends State<conversas_chat> {
   String? _idUsuarioLogado;
   String? idUsuarioLogado;
   String urlImagem = '';
-  
+  String nomeDestino = '';
+  String sobrenomeDestino = '';
+  String urlImagemDestino = '';
+
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final _controller = StreamController<QuerySnapshot>.broadcast();
@@ -32,7 +35,7 @@ class _conversas_chatState extends State<conversas_chat> {
 
   // RECUPERAR DADOS UM USUARIO
   _carregaarDadosIniciais() async {
-    var usuario = await _firebaseAuth.currentUser;
+    var usuario = _firebaseAuth.currentUser;
     _idUsuarioLogado = usuario!.uid;
     _adicionarListenerConversa();
   }
@@ -181,8 +184,7 @@ class _conversas_chatState extends State<conversas_chat> {
                     // Filtrar as conversas com base no nome pesquisado
                     List<DocumentSnapshot> conversas =
                         querySnapshot.docs.where((conversa) {
-                      String nomeCompleto =
-                          conversa["nome"] + " " + conversa['sobrenome'];
+                      String nomeCompleto = conversa["autorMensagem"];
                       return nomeCompleto
                           .toLowerCase()
                           .contains(pesquisa.toLowerCase());
@@ -212,24 +214,28 @@ class _conversas_chatState extends State<conversas_chat> {
                       itemCount: conversas.length,
                       itemBuilder: (context, indice) {
                         DocumentSnapshot item = conversas[indice];
-                        String urlImagem = item["caminhoFoto"];
-                        String tipo = item["tipoMensagem"];
+                        String tipo = item["tipo"];
                         String mensagem = item["mensagem"];
-                        String nome = item["nome"];
-                        String sobrenome = item['sobrenome'];
                         String idUsuarioConversa = item['idDestinatario'];
                         String autorMensagem = item['autorMensagem'];
+                        String nomeLogado = item["nomeConversa"];
+                        String sobrenomeLogado = item["sobrenomeConversa"];
+                        String imagemUrlLogado = item["imagemUrlDestino"];
+                        String nomeDestino = item["nomeConversa"];
+                        String sobrenomeDestino = item["sobrenomeConversa"];
+                        String imagemUrlDestino =
+                            item["imagemUrlDestino"];
 
                         return GestureDetector(
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => Mensagens(
-                                  uidPerfil: idUsuarioConversa,
-                                  nome: nome,
-                                  imagemPerfil: urlImagem,
-                                  sobrenome: sobrenome,
+                                builder: (context) => MensagemPage(
+                                  idUsuarioDestino:
+                                      autorMensagem == idUsuarioLogado
+                                          ? idUsuarioConversa
+                                          : autorMensagem,
                                 ),
                               ),
                             );
@@ -326,7 +332,9 @@ class _conversas_chatState extends State<conversas_chat> {
                                   ),
                                   child: ClipOval(
                                     child: CachedNetworkImage(
-                                      imageUrl: urlImagem,
+                                      imageUrl: autorMensagem == idUsuarioLogado
+                                          ? imagemUrlLogado
+                                          : imagemUrlDestino,
                                       fit: BoxFit.cover,
                                       placeholder: (context, url) =>
                                           const CircularProgressIndicator(
@@ -338,7 +346,9 @@ class _conversas_chatState extends State<conversas_chat> {
                                   ),
                                 ),
                                 title: Text(
-                                  '$nome $sobrenome',
+                                  autorMensagem == idUsuarioLogado 
+                                  ? '$nomeLogado $sobrenomeLogado'
+                                  : '$nomeDestino $sobrenomeDestino',
                                   style: const TextStyle(
                                     color: Color.fromARGB(255, 0, 0, 0),
                                     fontWeight: FontWeight.bold,
@@ -359,14 +369,20 @@ class _conversas_chatState extends State<conversas_chat> {
                                               color: Colors.grey[600],
                                               fontSize: 14),
                                         ),
-                                        Text(
-                                          tipo == "texto"
-                                              ? mensagem
-                                              : "Imagem...",
-                                          style: TextStyle(
-                                              color: Colors.grey[600],
-                                              fontSize: 14),
-                                        ),
+                                        tipo == 'texto'
+                                            ? Text(mensagem,
+                                                style: TextStyle(
+                                                    color: Colors.grey[600],
+                                                    fontSize: 14))
+                                            : tipo == 'imagem'
+                                                ? const Icon(Icons.image,
+                                                    color: Colors.black26)
+                                                : tipo == 'anexo'
+                                                    ? const Icon(
+                                                        Icons
+                                                            .attach_file_outlined,
+                                                        color: Colors.black38)
+                                                    : const Text('...')
                                       ],
                                     ),
                                     Text(
