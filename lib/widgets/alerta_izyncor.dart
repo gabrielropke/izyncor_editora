@@ -6,6 +6,10 @@ class AlertasIzyncor {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(32.0), // Define aqui o raio desejado
+          ),
           content: SizedBox(
             height: 150,
             child: Column(
