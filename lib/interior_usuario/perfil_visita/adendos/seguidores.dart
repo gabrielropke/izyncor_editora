@@ -78,7 +78,7 @@ class _SeguidoresVisitaState extends State<SeguidoresVisita> {
           return ListView.builder(
             itemCount: seguidores.length,
             itemBuilder: (context, index) {
-              var seguidor = seguidores![index];
+              var seguidor = seguidores[index];
               var idSeguidor = seguidor['uidusuario'];
 
               return FutureBuilder(

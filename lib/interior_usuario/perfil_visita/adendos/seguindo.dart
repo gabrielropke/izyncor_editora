@@ -4,24 +4,27 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 // ignore: camel_case_types
-class seguidores_page extends StatefulWidget {
-  const seguidores_page({Key? key}) : super(key: key);
+class SeguindoVisita extends StatefulWidget {
+  final String idPerfil;
+  const SeguindoVisita({Key? key, required this.idPerfil}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
-  _seguidores_pageState createState() => _seguidores_pageState();
+  _SeguindoVisitaState createState() => _SeguindoVisitaState();
 }
 
 // ignore: camel_case_types
-class _seguidores_pageState extends State<seguidores_page> {
+class _SeguindoVisitaState extends State<SeguindoVisita> {
   FirebaseAuth auth = FirebaseAuth.instance;
 
   String? idUsuarioLogado;
+  late String idPerfil;
 
   @override
   void initState() {
     super.initState();
     recuperarDadosUsuario();
+    idPerfil = widget.idPerfil;
   }
 
   Future<void> recuperarDadosUsuario() async {
@@ -42,13 +45,13 @@ class _seguidores_pageState extends State<seguidores_page> {
         leadingWidth: 26,
         backgroundColor: Colors.transparent,
         centerTitle: false,
-        title: const Text('Seguidores'),
+        title: const Text('Seguindo'),
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('usuarios')
-            .doc(idUsuarioLogado)
-            .collection('seguidores')
+            .doc(idPerfil)
+            .collection('seguindo')
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {

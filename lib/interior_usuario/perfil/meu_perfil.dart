@@ -558,7 +558,7 @@ class _perfilState extends State<perfil> {
                     ),
                     Expanded(
                       child: TabBarView(children: [
-                        postagem_imagens(),
+                        const postagem_imagens(),
                         postagem_textos(nome: nome),
                       ]),
                     )

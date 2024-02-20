@@ -35,6 +35,7 @@ class _mensagens_widgetState extends State<mensagens_widget> {
   late double larguraContainer;
   late String imagemPerfilDestino;
   late String nomeDestino;
+  String nomeDestinoRecuperado = '';
 
   void atualizarMensagem(String idMensagem) async {
     await FirebaseFirestore.instance
@@ -164,6 +165,7 @@ class _mensagens_widgetState extends State<mensagens_widget> {
     if (userData.exists) {
       setState(() {
         imagemPerfilDestino = userData['urlImagem'];
+        nomeDestinoRecuperado = userData['nome'];
       });
     }
   }
@@ -214,7 +216,7 @@ class _mensagens_widgetState extends State<mensagens_widget> {
               padding: const EdgeInsets.all(18.0),
               child: Center(
                 child: Text(
-                  'Inicie uma conversa com $nomeDestino...',
+                  'Inicie uma conversa com $nomeDestinoRecuperado...',
                   style: const TextStyle(
                       fontSize: 26,
                       color: Colors.black26,

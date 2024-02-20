@@ -73,9 +73,9 @@ class _seguindo_pageState extends State<seguindo_page> {
           }
 
           return ListView.builder(
-            itemCount: seguidores?.length,
+            itemCount: seguidores.length,
             itemBuilder: (context, index) {
-              var seguidor = seguidores![index];
+              var seguidor = seguidores[index];
               var idSeguidor = seguidor['uidusuario'];
 
               return FutureBuilder(
