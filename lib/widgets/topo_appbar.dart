@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:editora_izyncor_app/interior_usuario/store/base_store.dart';
+import 'package:editora_izyncor_app/widgets/alerta_izyncor.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -79,7 +80,7 @@ class _topo_appbarState extends State<topo_appbar> {
         ),
         GestureDetector(
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => store()));
+            AlertasIzyncor.mostrarAlerta(context, 'Esta função estará disponível apenas no lançamento oficial do app.');
           },
           child: Image.asset(
             'assets/shop_01.png',

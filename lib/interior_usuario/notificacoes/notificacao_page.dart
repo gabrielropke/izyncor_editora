@@ -441,8 +441,8 @@ class _notificacao_pageState extends State<notificacao_page> {
                           Map<String, String>? perfilInfo =
                               await recuperarDadosPerfilDestino(idPerfil);
                           if (perfilInfo != null) {
-                            String nomePerfil = perfilInfo['nome']!;
-                            String sobrenomePerfil = perfilInfo['sobrenome']!;
+                            // String nomePerfil = perfilInfo['nome']!;
+                            // String sobrenomePerfil = perfilInfo['sobrenome']!;
 
                             setarVisualizada(messages[index].id);
                             // ignore: use_build_context_synchronously
@@ -540,26 +540,26 @@ class _notificacao_pageState extends State<notificacao_page> {
                         ),
                         subtitle: Text(mensagem,
                             style: const TextStyle(fontSize: 16)),
-                        trailing: Column(
-                          children: [
-                            if (postagem == 'vazio') const Text(''),
-                            if (postagem != 'vazio')
-                              SizedBox(
-                                width: 45,
-                                height: 55,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: CachedNetworkImage(
-                                      imageUrl: postagem,
-                                      fit: BoxFit.cover,
-                                      placeholder: (context, url) =>
-                                          const SizedBox(),
-                                      errorWidget: (context, url, error) =>
-                                          const SizedBox()),
-                                ),
-                              ),
-                          ],
-                        ),
+                        // trailing: Column(
+                        //   children: [
+                        //     if (postagem == 'vazio') const Text(''),
+                        //     if (postagem != 'vazio')
+                        //       SizedBox(
+                        //         width: 45,
+                        //         height: 40,
+                        //         child: ClipRRect(
+                        //           borderRadius: BorderRadius.circular(10),
+                        //           child: CachedNetworkImage(
+                        //               imageUrl: postagem,
+                        //               fit: BoxFit.cover,
+                        //               placeholder: (context, url) =>
+                        //                   const SizedBox(),
+                        //               errorWidget: (context, url, error) =>
+                        //                   const SizedBox()),
+                        //         ),
+                        //       ),
+                        //   ],
+                        // ),
                       ),
                     ),
                     const Divider(),

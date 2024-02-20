@@ -176,6 +176,18 @@ class _mensagens_widgetState extends State<mensagens_widget> {
     nomeDestino = widget.nomeDestino;
     _scrollController.addListener(_scrollListener);
     recuperarDadosDestino();
+
+    FirebaseFirestore.instance
+        .collection('chat')
+        .doc(idUsuarioDestino)
+        .collection(idUsuarioLogado)
+        .where('lida', isEqualTo: 'novo')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        doc.reference.update({'lida': 'visto'});
+      });
+    });
   }
 
   @override

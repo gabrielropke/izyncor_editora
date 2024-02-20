@@ -71,6 +71,7 @@ dependencies:
   epub_view: ^3.2.0
   photo_view: ^0.14.0
   file_picker: ^4.5.1
+  flutter_local_notifications: ^8.2.0
   
   
 flutter_native_splash:

@@ -19,7 +19,8 @@ class _minha_contaState extends State<minha_conta> {
   final TextEditingController controllerNome = TextEditingController(text: "");
   final TextEditingController controllerRG = TextEditingController(text: "");
   final TextEditingController controllerCPF = TextEditingController(text: "");
-  final TextEditingController controllerProfissao = TextEditingController(text: "");
+  final TextEditingController controllerProfissao =
+      TextEditingController(text: "");
   String? _idUsuarioLogado;
 
   String? valueChoose;
@@ -39,70 +40,51 @@ class _minha_contaState extends State<minha_conta> {
         context: context,
         title: 'ATENÇÃO',
         text: 'Deseja prosseguir com a alteração?',
-        confirmBtnText: 'Confirmar',
-        cancelBtnText: 'Cancelar',
+        confirmBtnText: 'Sim',
+        cancelBtnText: 'Não',
         type: QuickAlertType.confirm,
         onConfirmBtnTap: () async {
-          _atualizarDadosPessoaisFirestore();
+          atualizarDadosFirestore();
           Navigator.pop(context);
           Navigator.pop(context);
         });
   }
 
-  _atualizarDadosPessoaisFirestore() async {
-    String nome = controllerNome.text;
-    String rg = controllerRG.text;
-    String cpf = controllerCPF.text;
-    String profissao = controllerProfissao.text;
-    String? estadocivil = valueChoose;
-    String? escolaridade = valueEscolaridade;
-
+  atualizarDadosFirestore() {
     FirebaseFirestore db = FirebaseFirestore.instance;
 
-    // Referência para a coleção 'dados_pessoais'
-    var collectionRef = db
-        .collection("usuarios")
-        .doc(_idUsuarioLogado)
-        .collection('dados_pessoais');
-
-    // Verifica se a coleção existe, senão a cria
-    var docRef = await collectionRef.doc('dados_pessoais').get();
-    if (!docRef.exists) {
-      await collectionRef.doc('dados_pessoais').set({});
-    }
-
-    // Atualiza os dados na coleção 'dados_pessoais'
     Map<String, dynamic> dadosAtualizar = {
-      "nome": nome,
-      "rg": rg,
-      'cpf': cpf,
-      'estadocivil': estadocivil,
-      'escolaridade': escolaridade,
-      'profissao': profissao,
+      'nomeCompleto': controllerNome.text,
+      'rg': controllerRG.text,
+      'cpf': controllerCPF.text,
+      'profissao': controllerProfissao.text,
+      'estadoCivil': valueChoose,
+      'escolaridade': valueEscolaridade
     };
-    await collectionRef.doc('dados_pessoais').update(dadosAtualizar);
+    db.collection('usuarios').doc(_idUsuarioLogado).update(dadosAtualizar);
   }
 
-  _recuperarDadosUsuario() async {
+  Future<void> recuperarDadosUsuario() async {
     FirebaseAuth auth = FirebaseAuth.instance;
-    User usuarioLogado = auth.currentUser!;
-    _idUsuarioLogado = usuarioLogado.uid;
-
-    FirebaseFirestore db = FirebaseFirestore.instance;
-    DocumentSnapshot snapshot = await db
-        .collection("usuarios")
-        .doc(_idUsuarioLogado)
-        .collection('dados_pessoais')
-        .doc('dados_pessoais')
-        .get();
-
-    Map<String, dynamic> dados = snapshot.data() as Map<String, dynamic>;
-    controllerNome.text = dados["nome"] ?? "";
-    controllerRG.text = dados["rg"] ?? "";
-    controllerCPF.text = dados["cpf"] ?? "";
-    controllerProfissao.text = dados["profissao"] ?? "";
-    valueChoose = dados["estadocivil"] ?? "";
-    valueEscolaridade = dados["escolaridade"] ?? '';
+    User? usuarioLogado = auth.currentUser;
+    if (usuarioLogado != null) {
+      _idUsuarioLogado = usuarioLogado.uid;
+      DocumentSnapshot<Map<String, dynamic>> userData = await FirebaseFirestore
+          .instance
+          .collection('usuarios')
+          .doc(_idUsuarioLogado)
+          .get();
+      if (userData.exists) {
+        setState(() {
+          controllerNome.text = userData['nomeCompleto'];
+          controllerRG.text = userData['rg'];
+          controllerCPF.text = userData['cpf'];
+          controllerProfissao.text = userData['profissao'];
+          valueChoose = userData["estadoCivil"] ?? "";
+          valueEscolaridade = userData["escolaridade"] ?? '';
+        });
+      }
+    }
   }
 
   @override
@@ -114,7 +96,7 @@ class _minha_contaState extends State<minha_conta> {
 
   @override
   void initState() {
-    _recuperarDadosUsuario();
+    recuperarDadosUsuario();
     super.initState();
   }
 
@@ -270,8 +252,7 @@ class _minha_contaState extends State<minha_conta> {
                             child: Text(
                           'Salvar',
                           style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold),
+                              color: Colors.white, fontWeight: FontWeight.bold),
                         )),
                       ),
                     ),

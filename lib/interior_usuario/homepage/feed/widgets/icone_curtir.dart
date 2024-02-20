@@ -68,6 +68,29 @@ class _icone_curtirState extends State<icone_curtir> {
     }
   }
 
+  void addClasseCurtida() async {
+    CollectionReference usuariosCollection =
+        FirebaseFirestore.instance.collection('usuarios');
+
+    DocumentReference usuarioRef = usuariosCollection.doc(idUsuarioLogado);
+
+    DocumentSnapshot snapshot =
+        await usuarioRef.collection('curtidas').doc(idPostagem).get();
+
+    if (snapshot.exists) {
+      await usuarioRef.collection('curtidas').doc(idPostagem).delete();
+    } else {
+      await usuarioRef.collection('curtidas').doc(idPostagem).set({
+        'idPostagem': idPostagem,
+        'imagemUrl': imagemUrl,
+        'idAutor': autorId,
+        'titulo': titulo,
+        'perfilAutor': perfilAutor,
+        'hora': DateTime.now().toString(),
+      });
+    }
+  }
+
   fetchFeed() async {
     QuerySnapshot querySnapshot =
         await FirebaseFirestore.instance.collection('feed').get();
@@ -198,6 +221,7 @@ class _icone_curtirState extends State<icone_curtir> {
         }
 
         enviarCurtida(idPostagem);
+        addClasseCurtida();
       },
       child: SizedBox(
         width: 40,

@@ -139,10 +139,18 @@ class _editar_postagemState extends State<editar_postagem> {
   }
 
   cortarImagem(File file) async {
-    return await ImageCropper()
+    if (Platform.isAndroid) {
+      return await ImageCropper()
         .cropImage(sourcePath: file.path, aspectRatioPresets: [
       CropAspectRatioPreset.square,
     ]);
+    }
+    if (Platform.isIOS) {
+      return await ImageCropper().cropImage(
+        sourcePath: file.path,
+        aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1));
+    }
+    
   }
 
   // Método para recuperar os dados do Firestore com base no UID do usuário logado

@@ -117,10 +117,18 @@ class _mais_dados_googleState extends State<mais_dados_google> {
   }
 
   cortarImagem(File file) async {
-    return await ImageCropper()
+    if (Platform.isAndroid) {
+      return await ImageCropper()
         .cropImage(sourcePath: file.path, aspectRatioPresets: [
       CropAspectRatioPreset.square,
     ]);
+    }
+    if (Platform.isIOS) {
+      return await ImageCropper().cropImage(
+        sourcePath: file.path,
+        aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1));
+    }
+    
   }
 
   void showAlertNascimento() {

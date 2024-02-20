@@ -85,6 +85,28 @@ class _icone_salvarState extends State<icone_salvar> {
     });
   }
 
+  void addClasseSalvos() async {
+    CollectionReference usuariosCollection =
+        FirebaseFirestore.instance.collection('usuarios');
+
+    DocumentReference usuarioRef = usuariosCollection.doc(idUsuarioLogado);
+
+    DocumentSnapshot snapshot =
+        await usuarioRef.collection('salvos').doc(idPostagem).get();
+
+    if (snapshot.exists) {
+      await usuarioRef.collection('salvos').doc(idPostagem).delete();
+    } else {
+      await usuarioRef.collection('salvos').doc(idPostagem).set({
+        'idPostagem': idPostagem,
+        'imagemUrl': imagemUrl,
+        'idAutor': autorId,
+        'titulo': titulo,
+        'hora': DateTime.now().toString(),
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -172,6 +194,7 @@ class _icone_salvarState extends State<icone_salvar> {
                 }
 
         salvarPost(idPostagem);
+        addClasseSalvos();
       },
       child: SizedBox(
         width: 40,

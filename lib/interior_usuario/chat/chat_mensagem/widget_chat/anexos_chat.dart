@@ -355,10 +355,18 @@ class _anexos_chatState extends State<anexos_chat> {
   }
 
   cortarImagem(File file) async {
-    return await ImageCropper()
+    if (Platform.isAndroid) {
+      return await ImageCropper()
         .cropImage(sourcePath: file.path, aspectRatioPresets: [
-      CropAspectRatioPreset.original,
+      CropAspectRatioPreset.square,
     ]);
+    }
+    if (Platform.isIOS) {
+      return await ImageCropper().cropImage(
+        sourcePath: file.path,
+        aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1));
+    }
+    
   }
 
   Future<void> salvarConversa() async {

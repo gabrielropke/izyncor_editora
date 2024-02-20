@@ -188,11 +188,12 @@ class _post_imagensState extends State<post_imagens> {
               enviarNotificacao();
             }
           });
-                }
+        }
 
         enviarCurtida(idPostagem);
       },
-      child: CachedNetworkImage(imageUrl: imagemUrl),
+      child: SizedBox(
+        child: CachedNetworkImage(imageUrl: imagemUrl)),
     );
   }
 }

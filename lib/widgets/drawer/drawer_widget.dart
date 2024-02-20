@@ -4,9 +4,11 @@ import 'package:editora_izyncor_app/autenticacao/Login/tela_login_usuario.dart';
 import 'package:editora_izyncor_app/configuracao/assuntos/assuntos_selecao.dart';
 import 'package:editora_izyncor_app/configuracao/itens/relatar_problema.dart';
 import 'package:editora_izyncor_app/configuracao/itens/sobre.dart';
+import 'package:editora_izyncor_app/interior_usuario/perfil/curtidas/scroll_curtidas.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil/editar/configuracoes.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil/editar/editar_perfil.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil/meu_perfil.dart';
+import 'package:editora_izyncor_app/interior_usuario/perfil/salvos/scroll_salvos.dart';
 import 'package:editora_izyncor_app/widgets/drawer/lista_widget_drawer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -54,7 +56,10 @@ class _drawer_widgetState extends State<drawer_widget> {
 
     Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: ((context) => const login(statusInicial: 1,))),
+        MaterialPageRoute(
+            builder: ((context) => const login(
+                  statusInicial: 1,
+                ))),
         (Route<dynamic> route) => false);
   }
 
@@ -149,10 +154,19 @@ class _drawer_widgetState extends State<drawer_widget> {
                             icone_drawer: 'assets/perfil4_icon.png',
                             titulo_drawer: 'Perfil'),
                       ),
-                      const SizedBox(height: 10),
-                      const lista_widgets_drawer(
-                          icone_drawer: 'assets/seguindo3_icone.png',
-                          titulo_drawer: 'Seguindo'),
+                      // const SizedBox(height: 10),
+                      // GestureDetector(
+                      //   onTap: () {
+                      //     Navigator.push(
+                      //         context,
+                      //         MaterialPageRoute(
+                      //             builder: (context) =>
+                      //                 const HomePage_seguindo()));
+                      //   },
+                      //   child: const lista_widgets_drawer(
+                      //       icone_drawer: 'assets/seguindo3_icone.png',
+                      //       titulo_drawer: 'Seguindo'),
+                      // ),
                       const SizedBox(height: 10),
                       GestureDetector(
                         onTap: () {
@@ -171,13 +185,30 @@ class _drawer_widgetState extends State<drawer_widget> {
                       //     icone_drawer: 'assets/ranking01_icone.png',
                       //     titulo_drawer: 'Ranking'),
                       const SizedBox(height: 10),
-                      const lista_widgets_drawer(
-                          icone_drawer: 'assets/salvar01_icone.png',
-                          titulo_drawer: 'Salvos'),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const ScrollSalvos()));
+                        },
+                        child: const lista_widgets_drawer(
+                            icone_drawer: 'assets/salvar01_icone.png',
+                            titulo_drawer: 'Salvos'),
+                      ),
                       const SizedBox(height: 10),
-                      const lista_widgets_drawer(
-                          icone_drawer: 'assets/salvos2_icone.png',
-                          titulo_drawer: 'Histórico'),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ScrollCurtidas()));
+                        },
+                        child: const lista_widgets_drawer(
+                            icone_drawer: 'assets/salvos2_icone.png',
+                            titulo_drawer: 'Curtidas'),
+                      ),
                       const SizedBox(height: 30),
                       const Divider(),
                       GestureDetector(
@@ -258,7 +289,8 @@ class _drawer_widgetState extends State<drawer_widget> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const relatar_problema()));
+                                    builder: (context) =>
+                                        const relatar_problema()));
                           },
                           icon: SizedBox(
                             width: 20,

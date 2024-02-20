@@ -1,5 +1,6 @@
 import 'package:editora_izyncor_app/configuracao/itens/base%20endere%C3%A7o.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil/editar/minha_conta.dart';
+import 'package:editora_izyncor_app/widgets/alerta_izyncor.dart';
 import 'package:flutter/material.dart';
 
 class configuracoes extends StatelessWidget {
@@ -24,7 +25,12 @@ class configuracoes extends StatelessWidget {
           children: [
             GestureDetector(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const minha_conta()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const minha_conta()));
+                AlertasIzyncor.mostrarAlerta(context,
+                    'Estes dados são sigilosos.\nUtilizaremos eles apenas para futuras compras.');
               },
               child: const container_widget(
                 titulo: 'Informações pessoais',
@@ -35,7 +41,10 @@ class configuracoes extends StatelessWidget {
             const SizedBox(height: 12),
             GestureDetector(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const base_endereco()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const base_endereco()));
               },
               child: const container_widget(
                 titulo: 'Cadastro de endereços',

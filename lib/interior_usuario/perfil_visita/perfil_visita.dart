@@ -77,6 +77,7 @@ class _perfil_visitaState extends State<perfil_visita> {
       'postagem': 'vazio',
       'idPostagem': '',
       'perfil': perfilLogado,
+      'status': 'novo',
     });
   }
 
@@ -94,6 +95,7 @@ class _perfil_visitaState extends State<perfil_visita> {
       'postagem': 'vazio',
       'idPostagem': '',
       'perfil': perfilLogado,
+      'status': 'novo',
     });
   }
 
@@ -448,9 +450,9 @@ class _perfil_visitaState extends State<perfil_visita> {
                                                 ),
                                               );
                                             }
-                                    
-                                            final seguidores =
-                                                snapshot.data!.get('seguidores');
+
+                                            final seguidores = snapshot.data!
+                                                .get('seguidores');
                                             return Text('$seguidores',
                                                 style: const TextStyle(
                                                     color: Colors.black,

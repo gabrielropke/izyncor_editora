@@ -141,10 +141,18 @@ class _editar_perfilState extends State<editar_perfil> {
   }
 
   cortarImagem(File file) async {
-    return await ImageCropper()
+    if (Platform.isAndroid) {
+      return await ImageCropper()
         .cropImage(sourcePath: file.path, aspectRatioPresets: [
       CropAspectRatioPreset.square,
     ]);
+    }
+    if (Platform.isIOS) {
+      return await ImageCropper().cropImage(
+        sourcePath: file.path,
+        aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1));
+    }
+    
   }
 
   Future<void> recuperarDadosUsuario() async {
