@@ -30,11 +30,22 @@ class _comentarios_postagemState extends State<comentarios_postagem> {
 
   String? _idUsuarioComentado;
   String? uidUsuario;
+  String imagemPerfil = '';
 
   Future<void> recuperarDadosUsuario() async {
     FirebaseAuth auth = FirebaseAuth.instance;
     User? usuarioLogado = auth.currentUser;
     _idUsuarioComentado = usuarioLogado?.uid;
+    DocumentSnapshot<Map<String, dynamic>> userData = await FirebaseFirestore
+        .instance
+        .collection('usuarios')
+        .doc(_idUsuarioComentado)
+        .get();
+    if (userData.exists) {
+      setState(() {
+        imagemPerfil = userData['urlImagem'];
+      });
+    }
   }
 
   Future<String?> getUidUsuario(String idPostagem) async {
@@ -792,62 +803,58 @@ class _comentarios_postagemState extends State<comentarios_postagem> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(12),
+            padding: Platform.isAndroid
+                ? const EdgeInsets.all(12)
+                : const EdgeInsets.only(left: 12, right: 12, bottom: 35),
             child: Align(
               alignment: Alignment.bottomCenter,
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Padding(
+              child: Expanded(
+                child: TextField(
+                  controller: comentarioController,
+                  maxLines: null,
+                  textAlign: TextAlign.left,
+                  keyboardType: TextInputType.text,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Color.fromARGB(255, 0, 0, 0),
+                  ),
+                  decoration: InputDecoration(
+                    suffixIcon: Padding(
                       padding: const EdgeInsets.only(right: 8),
-                      child: TextField(
-                        controller: comentarioController,
-                        maxLines: null,
-                        textAlign: TextAlign.left,
-                        keyboardType: TextInputType.text,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Color.fromARGB(255, 0, 0, 0),
-                        ),
-                        decoration: const InputDecoration(
-                          contentPadding:
-                              EdgeInsets.fromLTRB(10.0, 25.0, 35.0, 10.0),
-                          hintText: "Deixe seu comentário...",
-                          hintStyle: TextStyle(
-                            color: Color.fromARGB(255, 124, 124, 124),
-                          ),
-                          filled: true,
-                          fillColor: Color.fromARGB(255, 243, 243, 243),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.all(Radius.circular(32)),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Color.fromARGB(255, 206, 38, 88)),
-                            borderRadius: BorderRadius.all(Radius.circular(32)),
+                      child: IconButton(
+                        color: const Color.fromARGB(255, 46, 43, 43),
+                        onPressed: enviarAvaliacao,
+                        icon: Opacity(
+                          opacity: 0.6,
+                          child: SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: Image.asset('assets/enviar_3.png',
+                                color: const Color.fromARGB(
+                                    255, 212, 18, 99)),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  Container(
-                    width: 55,
-                    height: 55,
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 116, 139, 189),
-                      shape: BoxShape.rectangle,
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(32.0)),
-                      border: Border.all(color: Colors.white, width: 0),
+                    contentPadding:
+                        const EdgeInsets.fromLTRB(10.0, 25.0, 35.0, 10.0),
+                    hintText: "Deixe seu comentário...",
+                    hintStyle: const TextStyle(
+                      color: Color.fromARGB(255, 124, 124, 124),
                     ),
-                    child: IconButton(
-                      color: const Color.fromARGB(255, 255, 255, 255),
-                      onPressed: enviarAvaliacao,
-                      icon: const Icon(Icons.send, size: 18),
+                    filled: true,
+                    fillColor: const Color.fromARGB(255, 243, 243, 243),
+                    enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.all(Radius.circular(32)),
+                    ),
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Color.fromARGB(255, 206, 38, 88)),
+                      borderRadius: BorderRadius.all(Radius.circular(32)),
                     ),
                   ),
-                ],
+                ),
               ),
             ),
           ),

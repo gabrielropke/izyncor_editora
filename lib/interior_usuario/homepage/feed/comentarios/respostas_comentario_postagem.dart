@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -31,7 +32,6 @@ class respostas_comentario_postagem extends StatefulWidget {
 
 class _respostas_comentario_postagemState
     extends State<respostas_comentario_postagem> {
-  StreamController<String> streamNome = StreamController<String>();
   StreamController<String> streamNomeComentario = StreamController<String>();
   TextEditingController respostaController = TextEditingController();
 
@@ -44,6 +44,8 @@ class _respostas_comentario_postagemState
   String? texto;
   String? hora;
   String? imageUrl;
+  String imagemPerfil = '';
+  String nomePerfil = '';
 
   String formatarHora(String hora) {
     DateTime agora = DateTime.now();
@@ -69,13 +71,17 @@ class _respostas_comentario_postagemState
     FirebaseAuth auth = FirebaseAuth.instance;
     User? usuarioLogado = auth.currentUser;
     _idUsuarioLogado = usuarioLogado?.uid;
-
-    FirebaseFirestore db = FirebaseFirestore.instance;
-    DocumentSnapshot snapshot =
-        await db.collection("usuarios").doc(_idUsuarioLogado).get();
-
-    Map<String, dynamic> dados = snapshot.data() as Map<String, dynamic>;
-    streamNome.add(dados["nome"]);
+    DocumentSnapshot<Map<String, dynamic>> userData = await FirebaseFirestore
+        .instance
+        .collection('usuarios')
+        .doc(_idUsuarioLogado)
+        .get();
+    if (userData.exists) {
+      setState(() {
+        imagemPerfil = userData['urlImagem'];
+        nomePerfil = userData['nome'];
+      });
+    }
   }
 
   recuperarDadosComentario() async {
@@ -251,8 +257,7 @@ class _respostas_comentario_postagemState
                           onTap: () {
                             curtirComentario() {
                               CollectionReference novidadesCollection =
-                                  FirebaseFirestore.instance
-                                      .collection('feed');
+                                  FirebaseFirestore.instance.collection('feed');
 
                               novidadesCollection
                                   .doc(idPostagem)
@@ -605,61 +610,58 @@ class _respostas_comentario_postagemState
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(26),
+          padding: Platform.isAndroid
+              ? const EdgeInsets.all(12)
+              : const EdgeInsets.only(left: 12, right: 12, bottom: 35),
           child: Align(
             alignment: Alignment.bottomCenter,
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: TextField(
-                        controller: respostaController,
-                        maxLines: null,
-                        textAlign: TextAlign.left,
-                        keyboardType: TextInputType.text,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Color.fromARGB(255, 0, 0, 0),
-                        ),
-                        decoration: InputDecoration(
-                          contentPadding:
-                              const EdgeInsets.fromLTRB(10.0, 25.0, 35.0, 10.0),
-                          hintText:
-                              'Responder @${nomeComentario}', // Modifique esta linha
-                          hintStyle: const TextStyle(
-                            color: Color.fromARGB(255, 124, 124, 124),
-                          ),
-                          filled: true,
-                          fillColor: const Color.fromARGB(255, 243, 243, 243),
-                          enabledBorder: const OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.all(Radius.circular(32)),
-                          ),
-                          focusedBorder: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(32)),
-                          ),
-                        ),
-                      )),
+            child: Expanded(
+              child: TextField(
+                controller: respostaController,
+                maxLines: null,
+                textAlign: TextAlign.left,
+                keyboardType: TextInputType.text,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Color.fromARGB(255, 0, 0, 0),
                 ),
-                Container(
-                  width: 55,
-                  height: 55,
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 116, 139, 189),
-                    shape: BoxShape.rectangle,
-                    borderRadius: const BorderRadius.all(Radius.circular(32.0)),
-                    border: Border.all(color: Colors.white, width: 0),
+                decoration: InputDecoration(
+                  suffixIcon: Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: IconButton(
+                      color: const Color.fromARGB(255, 46, 43, 43),
+                      onPressed: enviarResposta,
+                      icon: Opacity(
+                        opacity: 0.6,
+                        child: SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: Image.asset('assets/enviar_3.png',
+                              color:
+                                  const Color.fromARGB(255, 212, 18, 99)),
+                        ),
+                      ),
+                    ),
                   ),
-                  child: IconButton(
-                    color: const Color.fromARGB(255, 255, 255, 255),
-                    onPressed: () {
-                      enviarResposta();
-                    },
-                    icon: const Icon(Icons.send, size: 18),
+                  contentPadding:
+                      const EdgeInsets.fromLTRB(10.0, 25.0, 35.0, 10.0),
+                  hintText: "Responder $nomeComentario",
+                  hintStyle: const TextStyle(
+                    color: Color.fromARGB(255, 124, 124, 124),
+                  ),
+                  filled: true,
+                  fillColor: const Color.fromARGB(255, 243, 243, 243),
+                  enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.all(Radius.circular(32)),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: Color.fromARGB(255, 206, 38, 88)),
+                    borderRadius: BorderRadius.all(Radius.circular(32)),
                   ),
                 ),
-              ],
+              ),
             ),
           ),
         ),
