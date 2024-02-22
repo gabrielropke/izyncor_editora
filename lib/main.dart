@@ -1,11 +1,15 @@
+import 'package:editora_izyncor_app/api/firebase_api.dart';
 import 'package:editora_izyncor_app/autenticacao/Login/tela_login_usuario.dart';
+import 'package:editora_izyncor_app/widgets/notification_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-void main() async {
+final navigatorKey = GlobalKey<NavigatorState>();
 
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await FirebaseAPI().initNotification();
 
   runApp(const MyApp());
 }
@@ -17,9 +21,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Izyncor',
-        theme: ThemeData(primarySwatch: Colors.blueGrey),
-        debugShowCheckedModeBanner: false,
-        home: const login(statusInicial: 0,));
+      title: 'Izyncor',
+      theme: ThemeData(primarySwatch: Colors.blueGrey),
+      debugShowCheckedModeBanner: false,
+      home: const login(
+        statusInicial: 0,
+      ),
+      routes: {
+        NotificationScreen.route:(context) => const NotificationScreen()
+      },
+    );
   }
 }

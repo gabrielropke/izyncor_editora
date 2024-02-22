@@ -9,6 +9,7 @@ import 'package:editora_izyncor_app/interior_usuario/perfil/editar/configuracoes
 import 'package:editora_izyncor_app/interior_usuario/perfil/editar/editar_perfil.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil/meu_perfil.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil/salvos/scroll_salvos.dart';
+import 'package:editora_izyncor_app/widgets/alerta_izyncor.dart';
 import 'package:editora_izyncor_app/widgets/drawer/lista_widget_drawer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -119,9 +120,11 @@ class _drawer_widgetState extends State<drawer_widget> {
                                 ),
                               ),
                             ),
-                            const Icon(
-                              Icons.wb_sunny_outlined,
-                            )
+                            IconButton(
+                                onPressed: () {
+                                  AlertasIzyncor.mostrarAlerta(context, 'Disponibilizaremos o tema escuro na versão final.');
+                                },
+                                icon: Icon(Icons.wb_sunny_outlined))
                           ],
                         ),
                         const SizedBox(height: 15),

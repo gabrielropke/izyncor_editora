@@ -31,10 +31,17 @@ class _assuntos_postagemState extends State<assuntos_postagem> {
   late String titulo;
   late String legenda;
   File? imagem;
+  bool postando = false;
 
   Future<void> recuperarDadosUsuario() async {
     User? usuarioLogado = auth.currentUser;
     idUsuarioLogado = usuarioLogado?.uid;
+  }
+
+  setarPostando() {
+    setState(() {
+      postando = !postando;
+    });
   }
 
   String _getContainerLabel(int index) {
@@ -245,7 +252,7 @@ class _assuntos_postagemState extends State<assuntos_postagem> {
     );
   }
 
-   @override
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
@@ -339,23 +346,49 @@ class _assuntos_postagemState extends State<assuntos_postagem> {
                 ),
               ],
             ),
-            Positioned(
-              bottom: 20,
-              right: 5,
-              child: GestureDetector(
-                onTap: () {
-                  publicarPostagem();
-                },
+            if (postando == false)
+              Positioned(
+                bottom: 20,
+                right: 5,
+                child: GestureDetector(
+                  onTap: () {
+                    publicarPostagem();
+                    setarPostando();
+                  },
+                  child: Container(
+                    width: 120,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 63, 122, 209),
+                      borderRadius: BorderRadius.circular(32),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'Finalizar',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            if (postando == true)
+              Positioned(
+                bottom: 20,
+                right: 5,
                 child: Container(
-                  width: 120,
+                  width: 125,
                   height: 50,
                   decoration: BoxDecoration(
-                    color: Colors.black45,
+                    color: Colors.black26,
                     borderRadius: BorderRadius.circular(32),
                   ),
                   child: const Center(
                     child: Text(
-                      'Finalizar',
+                      'Postando...',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -365,7 +398,6 @@ class _assuntos_postagemState extends State<assuntos_postagem> {
                   ),
                 ),
               ),
-            )
           ],
         ),
       ),

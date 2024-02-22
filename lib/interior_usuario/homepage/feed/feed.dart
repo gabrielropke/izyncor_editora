@@ -129,42 +129,65 @@ class _feedState extends State<feed> {
                 itemBuilder: (context, index) {
                   var postagem = postagens[index];
 
-                  return Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Column(
-                      children: [
-                        Column(
-                          children: [
-                            Visibility(
-                              visible: postagem['imagemUrl'] != null &&
-                                  postagem['imagemUrl'] == 'vazio',
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 10),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 5),
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            postagem['titulo'],
-                                            style: const TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.black),
-                                          ),
-                                          if (postagem['editado'] == 'sim')
-                                            const Positioned(
-                                                top: 10,
-                                                left: 10,
-                                                child: texto_editado(
-                                                    corTexto: Colors.black26)),
-                                        ],
-                                      ),
+                  return Visibility(
+                    visible: postagem['imagemUrl'] != null &&
+                        postagem['imagemUrl'] != 'vazio',
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 12, right: 12, top: 12),
+                      child: Column(
+                        children: [
+                          Visibility(
+                            visible: postagem['imagemUrl'] != null &&
+                                postagem['imagemUrl'] == 'vazio',
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 10),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 5),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          postagem['titulo'],
+                                          style: const TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.black),
+                                        ),
+                                        if (postagem['editado'] == 'sim')
+                                          const Positioned(
+                                              top: 10,
+                                              left: 10,
+                                              child: texto_editado(
+                                                  corTexto:
+                                                      Colors.black26)),
+                                      ],
                                     ),
-                                    icone_more(
+                                  ),
+                                  icone_more(
+                                    idUsuarioLogado: idUsuarioLogado!,
+                                    autorId: postagem['autorId'],
+                                    usernameAutor: postagem['username'],
+                                    idPostagem: postagem['idPostagem'],
+                                    legenda: postagem['legenda'],
+                                    titulo: postagem['titulo'],
+                                    imagemUrl: postagem['imagemUrl'],
+                                    corBotao: Colors.black,
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Visibility(
+                              visible: postagem['imagemUrl'] != null &&
+                                  postagem['imagemUrl'] != 'vazio',
+                              child: Stack(
+                                children: [
+                                  post_imagens(
                                       idUsuarioLogado: idUsuarioLogado!,
                                       autorId: postagem['autorId'],
                                       usernameAutor: postagem['username'],
@@ -172,20 +195,17 @@ class _feedState extends State<feed> {
                                       legenda: postagem['legenda'],
                                       titulo: postagem['titulo'],
                                       imagemUrl: postagem['imagemUrl'],
-                                      corBotao: Colors.black,
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Visibility(
-                                visible: postagem['imagemUrl'] != null &&
-                                    postagem['imagemUrl'] != 'vazio',
-                                child: Stack(
-                                  children: [
-                                    post_imagens(
+                                      corBotao: Colors.white),
+                                  if (postagem['editado'] == 'sim')
+                                    const Positioned(
+                                        top: 10,
+                                        left: 10,
+                                        child: texto_editado(
+                                            corTexto: Colors.black26)),
+                                  Positioned(
+                                      top: 10,
+                                      right: 10,
+                                      child: icone_more(
                                         idUsuarioLogado: idUsuarioLogado!,
                                         autorId: postagem['autorId'],
                                         usernameAutor: postagem['username'],
@@ -193,219 +213,203 @@ class _feedState extends State<feed> {
                                         legenda: postagem['legenda'],
                                         titulo: postagem['titulo'],
                                         imagemUrl: postagem['imagemUrl'],
-                                        corBotao: Colors.white),
-                                    if (postagem['editado'] == 'sim')
-                                      const Positioned(
-                                          top: 10,
-                                          left: 10,
-                                          child: texto_editado(
-                                              corTexto: Colors.black26)),
-                                    Positioned(
-                                        top: 10,
-                                        right: 10,
-                                        child: icone_more(
-                                          idUsuarioLogado: idUsuarioLogado!,
-                                          autorId: postagem['autorId'],
-                                          usernameAutor: postagem['username'],
-                                          idPostagem: postagem['idPostagem'],
-                                          legenda: postagem['legenda'],
-                                          titulo: postagem['titulo'],
-                                          imagemUrl: postagem['imagemUrl'],
-                                          corBotao: Colors.white,
-                                        )),
-                                    Positioned(
-                                      bottom: 0,
-                                      left: 0,
-                                      child: Container(
-                                        width: 400,
-                                        height: 70,
-                                        color: Colors.black54,
-                                      ),
+                                        corBotao: Colors.white,
+                                      )),
+                                  Positioned(
+                                    bottom: 0,
+                                    left: 0,
+                                    child: Container(
+                                      width: 400,
+                                      height: 70,
+                                      color: Colors.black54,
                                     ),
-                                    Positioned(
-                                        bottom: 11,
-                                        left: 11,
-                                        child: dados_autor_post(
-                                          idUsuarioLogado: idUsuarioLogado!,
-                                          autorId: postagem['autorId'],
-                                          usernameAutor: postagem['username'],
-                                          idPostagem: postagem['idPostagem'],
-                                          legenda: postagem['legenda'],
-                                          titulo: postagem['titulo'],
-                                          imagemUrl: postagem['imagemUrl'],
-                                          corBotao: Colors.white,
-                                          corTexto: Colors.white,
-                                          nome: postagem['nome'],
-                                          perfilAutor: postagem['urlImagem'],
-                                          sobrenome: postagem['sobrenome'],
-                                          cadastro: postagem['Cadastro'],
-                                          hora: postagem['hora'],
-                                        )),
-                                    Positioned(
-                                        bottom: 15,
-                                        right: 0,
-                                        child: Row(
-                                          children: [
-                                            icone_curtir(
-                                              idUsuarioLogado: idUsuarioLogado!,
-                                              autorId: postagem['autorId'],
-                                              usernameAutor:
-                                                  postagem['username'],
-                                              idPostagem:
-                                                  postagem['idPostagem'],
-                                              legenda: postagem['legenda'],
-                                              titulo: postagem['titulo'],
-                                              imagemUrl: postagem['imagemUrl'],
-                                              corBotao: Colors.white,
-                                              corTexto: Colors.white,
-                                              perfilAutor:
-                                                  postagem['urlImagem'],
-                                            ),
-                                            icone_comentar(
-                                              idUsuarioLogado: idUsuarioLogado!,
-                                              autorId: postagem['autorId'],
-                                              usernameAutor:
-                                                  postagem['username'],
-                                              idPostagem:
-                                                  postagem['idPostagem'],
-                                              legenda: postagem['legenda'],
-                                              titulo: postagem['titulo'],
-                                              imagemUrl: postagem['imagemUrl'],
-                                              corBotao: Colors.white,
-                                              corTexto: Colors.white,
-                                            ),
-                                            icone_salvar(
-                                              idUsuarioLogado: idUsuarioLogado!,
-                                              autorId: postagem['autorId'],
-                                              usernameAutor:
-                                                  postagem['username'],
-                                              idPostagem:
-                                                  postagem['idPostagem'],
-                                              legenda: postagem['legenda'],
-                                              titulo: postagem['titulo'],
-                                              imagemUrl: postagem['imagemUrl'],
-                                              corBotao: Colors.white,
-                                              corTexto: Colors.white,
-                                            ),
-                                            const SizedBox(width: 15),
-                                          ],
-                                        ))
-                                  ],
-                                ),
+                                  ),
+                                  Positioned(
+                                      bottom: 11,
+                                      left: 11,
+                                      child: dados_autor_post(
+                                        idUsuarioLogado: idUsuarioLogado!,
+                                        autorId: postagem['autorId'],
+                                        usernameAutor: postagem['username'],
+                                        idPostagem: postagem['idPostagem'],
+                                        legenda: postagem['legenda'],
+                                        titulo: postagem['titulo'],
+                                        imagemUrl: postagem['imagemUrl'],
+                                        corBotao: Colors.white,
+                                        corTexto: Colors.white,
+                                        nome: postagem['nome'],
+                                        perfilAutor: postagem['urlImagem'],
+                                        sobrenome: postagem['sobrenome'],
+                                        cadastro: postagem['Cadastro'],
+                                        hora: postagem['hora'],
+                                      )),
+                                  Positioned(
+                                      bottom: 15,
+                                      right: 0,
+                                      child: Row(
+                                        children: [
+                                          icone_curtir(
+                                            idUsuarioLogado:
+                                                idUsuarioLogado!,
+                                            autorId: postagem['autorId'],
+                                            usernameAutor:
+                                                postagem['username'],
+                                            idPostagem:
+                                                postagem['idPostagem'],
+                                            legenda: postagem['legenda'],
+                                            titulo: postagem['titulo'],
+                                            imagemUrl:
+                                                postagem['imagemUrl'],
+                                            corBotao: Colors.white,
+                                            corTexto: Colors.white,
+                                            perfilAutor:
+                                                postagem['urlImagem'],
+                                          ),
+                                          icone_comentar(
+                                            idUsuarioLogado:
+                                                idUsuarioLogado!,
+                                            autorId: postagem['autorId'],
+                                            usernameAutor:
+                                                postagem['username'],
+                                            idPostagem:
+                                                postagem['idPostagem'],
+                                            legenda: postagem['legenda'],
+                                            titulo: postagem['titulo'],
+                                            imagemUrl:
+                                                postagem['imagemUrl'],
+                                            corBotao: Colors.white,
+                                            corTexto: Colors.white,
+                                          ),
+                                          icone_salvar(
+                                            idUsuarioLogado:
+                                                idUsuarioLogado!,
+                                            autorId: postagem['autorId'],
+                                            usernameAutor:
+                                                postagem['username'],
+                                            idPostagem:
+                                                postagem['idPostagem'],
+                                            legenda: postagem['legenda'],
+                                            titulo: postagem['titulo'],
+                                            imagemUrl:
+                                                postagem['imagemUrl'],
+                                            corBotao: Colors.white,
+                                            corTexto: Colors.white,
+                                          ),
+                                          const SizedBox(width: 15),
+                                        ],
+                                      ))
+                                ],
                               ),
                             ),
-                            if (postagem['legenda'] != '')
-                              Align(
-                                alignment: Alignment.bottomLeft,
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.only(top: 10, left: 15),
-                                  child: ReadMoreText(
-                                    postagem['legenda'],
-                                    trimLines: 4,
-                                    colorClickableText: Colors.blue,
-                                    trimMode: TrimMode.Line,
-                                    trimCollapsedText: 'ver mais',
-                                    trimExpandedText: ' ver menos',
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 16,
-                                    ),
+                          ),
+                          if (postagem['legenda'] != '')
+                            Align(
+                              alignment: Alignment.bottomLeft,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 10, left: 15),
+                                child: ReadMoreText(
+                                  postagem['legenda'],
+                                  trimLines: 4,
+                                  colorClickableText: Colors.blue,
+                                  trimMode: TrimMode.Line,
+                                  trimCollapsedText: 'ver mais',
+                                  trimExpandedText: ' ver menos',
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 16,
                                   ),
                                 ),
                               ),
-                            Visibility(
-                              visible: postagem['imagemUrl'] != null &&
-                                  postagem['imagemUrl'] == 'vazio',
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 20),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    dados_autor_post(
-                                      idUsuarioLogado: idUsuarioLogado!,
-                                      autorId: postagem['autorId'],
-                                      usernameAutor: postagem['username'],
-                                      idPostagem: postagem['idPostagem'],
-                                      legenda: postagem['legenda'],
-                                      titulo: postagem['titulo'],
-                                      imagemUrl: postagem['imagemUrl'],
-                                      corBotao: Colors.black,
-                                      corTexto: Colors.black,
-                                      nome: postagem['nome'],
-                                      perfilAutor: postagem['urlImagem'],
-                                      sobrenome: postagem['sobrenome'],
-                                      cadastro: postagem['Cadastro'],
-                                      hora: postagem['hora'],
-                                    ),
-                                    Row(
-                                      children: [
-                                        Column(
-                                          children: [
-                                            icone_curtir(
-                                                idUsuarioLogado:
-                                                    idUsuarioLogado!,
-                                                autorId: postagem['autorId'],
-                                                usernameAutor:
-                                                    postagem['username'],
-                                                idPostagem:
-                                                    postagem['idPostagem'],
-                                                legenda: postagem['legenda'],
-                                                titulo: postagem['titulo'],
-                                                imagemUrl:
-                                                    postagem['imagemUrl'],
-                                                corBotao: const Color.fromARGB(
-                                                    255, 70, 66, 66),
-                                                corTexto: Colors.black,
-                                                perfilAutor:
-                                                    postagem['urlImagem'])
-                                          ],
-                                        ),
-                                        icone_comentar(
-                                          idUsuarioLogado: idUsuarioLogado!,
-                                          autorId: postagem['autorId'],
-                                          usernameAutor: postagem['username'],
-                                          idPostagem: postagem['idPostagem'],
-                                          legenda: postagem['legenda'],
-                                          titulo: postagem['titulo'],
-                                          imagemUrl: postagem['imagemUrl'],
-                                          corBotao: const Color.fromARGB(
-                                              255, 70, 66, 66),
-                                          corTexto: Colors.black,
-                                        ),
-                                        const SizedBox(width: 5),
-                                        icone_salvar(
-                                          idUsuarioLogado: idUsuarioLogado!,
-                                          autorId: postagem['autorId'],
-                                          usernameAutor: postagem['username'],
-                                          idPostagem: postagem['idPostagem'],
-                                          legenda: postagem['legenda'],
-                                          titulo: postagem['titulo'],
-                                          imagemUrl: postagem['imagemUrl'],
-                                          corBotao: const Color.fromARGB(
-                                              255, 70, 66, 66),
-                                          corTexto: Colors.black,
-                                        ),
-                                        const SizedBox(width: 15),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
                             ),
-                            Padding(
+                          Visibility(
+                            visible: postagem['imagemUrl'] != null &&
+                                postagem['imagemUrl'] == 'vazio',
+                            child: Padding(
                               padding: const EdgeInsets.only(top: 20),
-                              child: Container(
-                                width: double.infinity,
-                                height: 1,
-                                color: Colors.black12,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  dados_autor_post(
+                                    idUsuarioLogado: idUsuarioLogado!,
+                                    autorId: postagem['autorId'],
+                                    usernameAutor: postagem['username'],
+                                    idPostagem: postagem['idPostagem'],
+                                    legenda: postagem['legenda'],
+                                    titulo: postagem['titulo'],
+                                    imagemUrl: postagem['imagemUrl'],
+                                    corBotao: Colors.black,
+                                    corTexto: Colors.black,
+                                    nome: postagem['nome'],
+                                    perfilAutor: postagem['urlImagem'],
+                                    sobrenome: postagem['sobrenome'],
+                                    cadastro: postagem['Cadastro'],
+                                    hora: postagem['hora'],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Column(
+                                        children: [
+                                          icone_curtir(
+                                              idUsuarioLogado:
+                                                  idUsuarioLogado!,
+                                              autorId: postagem['autorId'],
+                                              usernameAutor:
+                                                  postagem['username'],
+                                              idPostagem:
+                                                  postagem['idPostagem'],
+                                              legenda: postagem['legenda'],
+                                              titulo: postagem['titulo'],
+                                              imagemUrl:
+                                                  postagem['imagemUrl'],
+                                              corBotao:
+                                                  const Color.fromARGB(
+                                                      255, 70, 66, 66),
+                                              corTexto: Colors.black,
+                                              perfilAutor:
+                                                  postagem['urlImagem'])
+                                        ],
+                                      ),
+                                      icone_comentar(
+                                        idUsuarioLogado: idUsuarioLogado!,
+                                        autorId: postagem['autorId'],
+                                        usernameAutor: postagem['username'],
+                                        idPostagem: postagem['idPostagem'],
+                                        legenda: postagem['legenda'],
+                                        titulo: postagem['titulo'],
+                                        imagemUrl: postagem['imagemUrl'],
+                                        corBotao: const Color.fromARGB(
+                                            255, 70, 66, 66),
+                                        corTexto: Colors.black,
+                                      ),
+                                      const SizedBox(width: 5),
+                                      icone_salvar(
+                                        idUsuarioLogado: idUsuarioLogado!,
+                                        autorId: postagem['autorId'],
+                                        usernameAutor: postagem['username'],
+                                        idPostagem: postagem['idPostagem'],
+                                        legenda: postagem['legenda'],
+                                        titulo: postagem['titulo'],
+                                        imagemUrl: postagem['imagemUrl'],
+                                        corBotao: const Color.fromARGB(
+                                            255, 70, 66, 66),
+                                        corTexto: Colors.black,
+                                      ),
+                                      const SizedBox(width: 15),
+                                    ],
+                                  )
+                                ],
                               ),
                             ),
-                          ],
-                        ),
-                      ],
+                          ),
+                          const SizedBox(height: 12),
+                          const Divider(
+                            color: Colors.black12,
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },

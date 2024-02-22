@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:editora_izyncor_app/interior_usuario/homepage/feed/feed.dart';
-import 'package:editora_izyncor_app/interior_usuario/homepage/novidades/novidades.dart';
+import 'package:editora_izyncor_app/interior_usuario/homepage/feed/feed_textos.dart';
 import 'package:editora_izyncor_app/widgets/drawer/drawer_widget.dart';
 import 'package:editora_izyncor_app/widgets/topo_appbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -92,7 +92,7 @@ class _principalState extends State<principal> {
                     ),
                     Tab(
                       child: Text(
-                        'Novidades',
+                        'Textos',
                         style: TextStyle(fontSize: 12),
                       ),
                     ),
@@ -106,7 +106,7 @@ class _principalState extends State<principal> {
             const Expanded(
               child: TabBarView(children: [
                 feed(),
-                novidades(),
+                FeedTextos(),
               ]),
             ),
           ],
