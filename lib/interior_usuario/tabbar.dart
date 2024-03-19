@@ -119,7 +119,7 @@ class _home_principalState extends State<home_principal> {
   Widget build(BuildContext context) {
     return Scaffold(
       body:
-          _paginas[paginasIndex], // Use the selected page based on paginasIndex
+          _paginas[paginasIndex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         onTap: navegarPaginas,

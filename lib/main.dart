@@ -1,4 +1,3 @@
-import 'package:editora_izyncor_app/api/firebase_api.dart';
 import 'package:editora_izyncor_app/autenticacao/Login/tela_login_usuario.dart';
 import 'package:editora_izyncor_app/widgets/notification_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -9,7 +8,6 @@ final navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await FirebaseAPI().initNotification();
 
   runApp(const MyApp());
 }
