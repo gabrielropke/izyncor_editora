@@ -82,15 +82,15 @@ class _icone_moreState extends State<icone_more> {
                         ),
                       ),
                     ),
-                    ListTile(
-                      leading: SizedBox(
-                          width: 25, child: Image.asset('assets/copiar.png')),
-                      title: const Text('Copiar url'),
-                      onTap: () {
-                        // Lógica de copiar URL
-                        Navigator.pop(context);
-                      },
-                    ),
+                    // ListTile(
+                    //   leading: SizedBox(
+                    //       width: 25, child: Image.asset('assets/copiar.png')),
+                    //   title: const Text('Copiar url'),
+                    //   onTap: () {
+                    //     // Lógica de copiar URL
+                    //     Navigator.pop(context);
+                    //   },
+                    // ),
                     if (idUsuarioLogado != autorId)
                       ListTile(
                         leading: SizedBox(

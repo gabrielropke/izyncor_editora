@@ -123,6 +123,7 @@ class _usuarios_chatState extends State<usuarios_chat> {
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(borderSide: BorderSide.none),
                   prefixIcon: Image.asset('assets/pesquisa.png', scale: 3),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 30, horizontal: 30),
                   fillColor: const Color.fromARGB(255, 243, 242, 242),
                   filled: true,
                 ),

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:editora_izyncor_app/recepcao/recepcao.dart';
+import 'package:editora_izyncor_app/autenticacao/termosdeuso.dart';
 import 'package:editora_izyncor_app/widgets/textfield_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -244,7 +244,7 @@ class _DadosBetaPageState extends State<DadosBetaPage> {
     adicionarDadosFirestore();
     // ignore: use_build_context_synchronously
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const recepcao()));
+        context, MaterialPageRoute(builder: (context) => TermosDeUso(idUsuarioLogado: idUsuarioLogado!, aceito: false,)));
   }
 
   Future<void> adicionarDadosFirestore() async {
@@ -263,7 +263,8 @@ class _DadosBetaPageState extends State<DadosBetaPage> {
       "cpf": '',
       "Cadastro": 'Leitor(a)',
       "biografia": 'Boas vindas a Izyncor!',
-      "urlImagem": urlImagemRecuperada
+      "urlImagem": urlImagemRecuperada,
+      "termos": 'pendente'
     });
   }
 
@@ -301,7 +302,7 @@ class _DadosBetaPageState extends State<DadosBetaPage> {
                       Align(
                           alignment: Alignment.center,
                           child: Text(
-                            'Olá Izyncoriano,',
+                            'Olá Izyncoriano(a),',
                             style: TextStyle(
                                 fontSize: 25,
                                 fontWeight: FontWeight.bold,
@@ -326,6 +327,7 @@ class _DadosBetaPageState extends State<DadosBetaPage> {
                   children: [
                     Stack(
                       children: [
+                        
                         Align(
                           alignment: Alignment.topRight,
                           child: SizedBox(
@@ -350,7 +352,7 @@ class _DadosBetaPageState extends State<DadosBetaPage> {
                                         : null,
                                   ),
                                   // ignore: unnecessary_null_comparison
-                                  child: urlImagemRecuperada != null
+                                  child: imagem == null
                                       ? const Icon(Icons.person,
                                           size: 60, color: Colors.black12)
                                       : null,
@@ -375,8 +377,8 @@ class _DadosBetaPageState extends State<DadosBetaPage> {
                                     color: const Color(0xFFBB2649),
                                     border: Border.all(
                                         width: 2, color: Colors.white)),
-                                child: const Icon(
-                                  Icons.edit,
+                                child: Icon(
+                                  imagem == null ? Icons.edit : Icons.check,
                                   color: Colors.white,
                                 ),
                               ),

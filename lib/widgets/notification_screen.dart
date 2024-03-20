@@ -6,10 +6,11 @@ class NotificationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: unused_local_variable
     final message = ModalRoute.of(context)!.settings.arguments;
     return Scaffold(
       appBar: AppBar(title: Text('oi')),
-      body: Center(
+      body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

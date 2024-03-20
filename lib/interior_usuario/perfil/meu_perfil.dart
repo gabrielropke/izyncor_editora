@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:editora_izyncor_app/configuracao/tela_config.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil/adendos/seguidores_page.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil/adendos/seguindo_page.dart';
+import 'package:editora_izyncor_app/interior_usuario/perfil/editar/configuracoes.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil/editar/editar_perfil.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil/galeria/postagens_imagens.dart';
 import 'package:editora_izyncor_app/interior_usuario/perfil/galeria/postagens_textos.dart';
@@ -104,6 +105,10 @@ class _perfilState extends State<perfil> {
               onTap: () {
                 // Lógica para obter o link
                 Navigator.pop(context);
+                Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const configuracoes()));
               },
             ),
             ListTile(

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:editora_izyncor_app/interior_usuario/homepage/feed/denuncias/enviar_denuncia.dart';
 import 'package:flutter/material.dart';
 
@@ -53,7 +55,7 @@ class _denunciarState extends State<denunciar> {
                   style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
               const SizedBox(height: 20),
               const Text(
-                  'Sua denúncia é tratada de forma completamente anônima, e sua identidade não será revelada em nenhum momento. Agradecemos por agir em prol de nossa comunidade e nos ajudar a manter um ambiente seguro para todos os usuários.',
+                  'Sua denúncia é tratada de forma completamente anônima, e sua identidade não será revelada em nenhum momento, a menos que a denúncia seja referente a violação de direitos autorais. Agradecemos por agir em prol de nossa comunidade e nos ajudar a manter um ambiente seguro para todos os usuários.',
                   style: TextStyle(color: Colors.black38)),
               const SizedBox(height: 35),
               GestureDetector(
@@ -415,6 +417,8 @@ class _denunciarState extends State<denunciar> {
                 height: 1,
                 color: Colors.black12,
               ),
+              if (Platform.isIOS)
+              const SizedBox(height: 50),
             ],
           ),
         ),

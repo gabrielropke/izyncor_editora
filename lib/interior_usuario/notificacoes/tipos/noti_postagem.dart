@@ -10,14 +10,14 @@ import 'package:flutter/material.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 
-class notificacao_page extends StatefulWidget {
-  const notificacao_page({super.key});
+class NotiPostagem extends StatefulWidget {
+  const NotiPostagem({super.key});
 
   @override
-  State<notificacao_page> createState() => _notificacao_pageState();
+  State<NotiPostagem> createState() => _NotiPostagemState();
 }
 
-class _notificacao_pageState extends State<notificacao_page> {
+class _NotiPostagemState extends State<NotiPostagem> {
   FirebaseFirestore notificacoes = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -356,24 +356,7 @@ class _notificacao_pageState extends State<notificacao_page> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        foregroundColor: Colors.black,
-        elevation: 0,
-        leadingWidth: 26,
-        backgroundColor: Colors.transparent,
-        title: const Text('Notificações'),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: GestureDetector(
-              onTap: () {
-                selecionarGeral(context);
-              },
-              child: const Icon(Icons.more_horiz),
-            ),
-          ),
-        ],
-      ),
+      backgroundColor: Colors.white,
       body: RefreshIndicator(
         onRefresh: () async {
           await Future.delayed(const Duration(seconds: 1));
@@ -427,143 +410,146 @@ class _notificacao_pageState extends State<notificacao_page> {
                 var idPostagem = messages[index].get('idPostagem');
                 var status = messages[index].get('status');
 
-                return Column(
-                  children: [
-                    GestureDetector(
-                      onDoubleTap: () {
-                        setarVisualizada(messages[index].id);
-                      },
-                      onLongPress: () {
-                        selecionarItem(context, messages[index].id, status);
-                      },
-                      onTap: () async {
-                        if (mensagem == 'enviou uma mensagem para você.') {
-                          Map<String, String>? perfilInfo =
-                              await recuperarDadosPerfilDestino(idPerfil);
-                          if (perfilInfo != null) {
-                            // String nomePerfil = perfilInfo['nome']!;
-                            // String sobrenomePerfil = perfilInfo['sobrenome']!;
-
-                            setarVisualizada(messages[index].id);
-                            // ignore: use_build_context_synchronously
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MensagemPage(
-                                      idUsuarioDestino: idPerfil)),
-                            );
-                          } else {
-                            print('Não encontrado: $idPerfil');
-                          }
-                        } else {
-                          if (mensagem == 'curtiu sua publicação.') {
-                            setarVisualizada(messages[index].id);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => postagens_individuais(
-                                    idPostagem: idPostagem,
-                                    imagemPostagem: postagem),
-                              ),
-                            );
-                          }
-                        }
-                      },
-                      child: ListTile(
-                        leading: GestureDetector(
-                          onTap: () {
-                            if (idPerfil == idUsuarioLogado) {
-                              print('idUsuarioLogado');
-                            } else {
+                return Visibility(
+                  visible: idPostagem != 'mensagem',
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                        onDoubleTap: () {
+                          setarVisualizada(messages[index].id);
+                        },
+                        onLongPress: () {
+                          selecionarItem(context, messages[index].id, status);
+                        },
+                        onTap: () async {
+                          if (mensagem == 'enviou uma mensagem para você.') {
+                            Map<String, String>? perfilInfo =
+                                await recuperarDadosPerfilDestino(idPerfil);
+                            if (perfilInfo != null) {
+                              // String nomePerfil = perfilInfo['nome']!;
+                              // String sobrenomePerfil = perfilInfo['sobrenome']!;
+                  
+                              setarVisualizada(messages[index].id);
+                              // ignore: use_build_context_synchronously
                               Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => perfil_visita(
-                                          uidPerfil: idPerfil,
-                                          nome: '',
-                                          imagemPerfil: perfil,
-                                          sobrenome: '',
-                                          cadastro: '')));
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MensagemPage(
+                                        idUsuarioDestino: idPerfil)),
+                              );
+                            } else {
+                              print('Não encontrado: $idPerfil');
                             }
-                          },
-                          child: Container(
-                            width: 45,
-                            height: 45,
-                            decoration: BoxDecoration(
-                              border: status == 'novo'
-                                  ? Border.all(
-                                      width: 2,
-                                      color: const Color.fromARGB(
-                                          255, 212, 18, 99))
-                                  : null,
-                              shape: BoxShape.circle,
-                            ),
-                            child: ClipOval(
-                              child: CachedNetworkImage(
-                                imageUrl: perfil,
-                                fit: BoxFit.cover,
-                                width: 45,
-                                height: 45,
-                                placeholder: (context, url) =>
-                                    const CircularProgressIndicator(
-                                  color: Colors.white,
+                          } else {
+                            if (mensagem == 'curtiu sua publicação.') {
+                              setarVisualizada(messages[index].id);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => postagens_individuais(
+                                      idPostagem: idPostagem,
+                                      imagemPostagem: postagem),
                                 ),
-                                errorWidget: (context, url, error) =>
-                                    const SizedBox(),
+                              );
+                            }
+                          }
+                        },
+                        child: ListTile(
+                          leading: GestureDetector(
+                            onTap: () {
+                              if (idPerfil == idUsuarioLogado) {
+                                print('idUsuarioLogado');
+                              } else {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => perfil_visita(
+                                            uidPerfil: idPerfil,
+                                            nome: '',
+                                            imagemPerfil: perfil,
+                                            sobrenome: '',
+                                            cadastro: '')));
+                              }
+                            },
+                            child: Container(
+                              width: 45,
+                              height: 45,
+                              decoration: BoxDecoration(
+                                border: status == 'novo'
+                                    ? Border.all(
+                                        width: 2,
+                                        color: const Color.fromARGB(
+                                            255, 212, 18, 99))
+                                    : null,
+                                shape: BoxShape.circle,
+                              ),
+                              child: ClipOval(
+                                child: CachedNetworkImage(
+                                  imageUrl: perfil,
+                                  fit: BoxFit.cover,
+                                  width: 45,
+                                  height: 45,
+                                  placeholder: (context, url) =>
+                                      const CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      const SizedBox(),
+                                ),
                               ),
                             ),
                           ),
+                          title: Row(
+                            children: [
+                              Text('@$username ',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold)),
+                              const SizedBox(width: 5),
+                              Text(formatDataHora(hora),
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: status == 'visto'
+                                          ? Colors.black38
+                                          : const Color.fromARGB(
+                                              255, 212, 18, 99))),
+                              if (status == 'novo') const SizedBox(width: 15),
+                              if (status == 'novo')
+                                SizedBox(
+                                  width: 15,
+                                  child: Image.asset('assets/icone_sino_01.png',
+                                      color:
+                                          const Color.fromARGB(255, 212, 18, 99)),
+                                ),
+                            ],
+                          ),
+                          subtitle: Text(mensagem,
+                              style: const TextStyle(fontSize: 16)),
+                          // trailing: Column(
+                          //   children: [
+                          //     if (postagem == 'vazio') const Text(''),
+                          //     if (postagem != 'vazio')
+                          //       SizedBox(
+                          //         width: 45,
+                          //         height: 40,
+                          //         child: ClipRRect(
+                          //           borderRadius: BorderRadius.circular(10),
+                          //           child: CachedNetworkImage(
+                          //               imageUrl: postagem,
+                          //               fit: BoxFit.cover,
+                          //               placeholder: (context, url) =>
+                          //                   const SizedBox(),
+                          //               errorWidget: (context, url, error) =>
+                          //                   const SizedBox()),
+                          //         ),
+                          //       ),
+                          //   ],
+                          // ),
                         ),
-                        title: Row(
-                          children: [
-                            Text('@$username ',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold)),
-                            const SizedBox(width: 5),
-                            Text(formatDataHora(hora),
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                    color: status == 'visto'
-                                        ? Colors.black38
-                                        : const Color.fromARGB(
-                                            255, 212, 18, 99))),
-                            if (status == 'novo') const SizedBox(width: 15),
-                            if (status == 'novo')
-                              SizedBox(
-                                width: 15,
-                                child: Image.asset('assets/icone_sino_01.png',
-                                    color:
-                                        const Color.fromARGB(255, 212, 18, 99)),
-                              ),
-                          ],
-                        ),
-                        subtitle: Text(mensagem,
-                            style: const TextStyle(fontSize: 16)),
-                        // trailing: Column(
-                        //   children: [
-                        //     if (postagem == 'vazio') const Text(''),
-                        //     if (postagem != 'vazio')
-                        //       SizedBox(
-                        //         width: 45,
-                        //         height: 40,
-                        //         child: ClipRRect(
-                        //           borderRadius: BorderRadius.circular(10),
-                        //           child: CachedNetworkImage(
-                        //               imageUrl: postagem,
-                        //               fit: BoxFit.cover,
-                        //               placeholder: (context, url) =>
-                        //                   const SizedBox(),
-                        //               errorWidget: (context, url, error) =>
-                        //                   const SizedBox()),
-                        //         ),
-                        //       ),
-                        //   ],
-                        // ),
                       ),
-                    ),
-                    const Divider(),
-                  ],
+                      const Divider(),
+                    ],
+                  ),
                 );
               },
             );

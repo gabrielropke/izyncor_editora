@@ -92,7 +92,7 @@ class _principalState extends State<principal> {
                     ),
                     Tab(
                       child: Text(
-                        'Textos',
+                        'Assuntos',
                         style: TextStyle(fontSize: 12),
                       ),
                     ),

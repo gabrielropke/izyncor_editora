@@ -453,23 +453,23 @@ class _editar_perfilState extends State<editar_perfil> {
                   )
                 ],
               ),
-              const SizedBox(height: 20),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(left: 5),
-                    child: textos_widget(texto: 'Endereço de e-mail'),
-                  ),
-                  const SizedBox(height: 5),
-                  textfield_widget(
-                    controller: controllerEmail,
-                    keyboardType: TextInputType.emailAddress,
-                    hintText: 'Digite seu e-mail',
-                    obscureText: false,
-                  )
-                ],
-              ),
+              // const SizedBox(height: 20),
+              // Column(
+              //   crossAxisAlignment: CrossAxisAlignment.start,
+              //   children: [
+              //     const Padding(
+              //       padding: EdgeInsets.only(left: 5),
+              //       child: textos_widget(texto: 'Endereço de e-mail'),
+              //     ),
+              //     const SizedBox(height: 5),
+              //     textfield_widget(
+              //       controller: controllerEmail,
+              //       keyboardType: TextInputType.emailAddress,
+              //       hintText: 'Digite seu e-mail',
+              //       obscureText: false,
+              //     )
+              //   ],
+              // ),
               const SizedBox(height: 20),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

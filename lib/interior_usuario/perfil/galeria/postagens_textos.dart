@@ -256,19 +256,19 @@ class _postagem_textosState extends State<postagem_textos> {
                                                               ),
                                                             ),
                                                           ),
-                                                          ListTile(
-                                                            leading: SizedBox(
-                                                                width: 25,
-                                                                child: Image.asset(
-                                                                    'assets/copiar.png')),
-                                                            title: const Text(
-                                                                'Copiar url'),
-                                                            onTap: () {
-                                                              // Lógica de copiar URL
-                                                              Navigator.pop(
-                                                                  context);
-                                                            },
-                                                          ),
+                                                          // ListTile(
+                                                          //   leading: SizedBox(
+                                                          //       width: 25,
+                                                          //       child: Image.asset(
+                                                          //           'assets/copiar.png')),
+                                                          //   title: const Text(
+                                                          //       'Copiar url'),
+                                                          //   onTap: () {
+                                                          //     // Lógica de copiar URL
+                                                          //     Navigator.pop(
+                                                          //         context);
+                                                          //   },
+                                                          // ),
                                                           if (idUsuarioLogado !=
                                                               postagem[
                                                                   'autorId'])

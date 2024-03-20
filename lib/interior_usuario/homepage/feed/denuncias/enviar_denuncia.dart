@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:editora_izyncor_app/interior_usuario/tabbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -169,7 +170,7 @@ class _enviar_denunciaState extends State<enviar_denuncia> {
                   ),
                 ),
               if (motivo == 'Outros') const SizedBox(height: 40),
-              if (motivo != 'Outros') const SizedBox(height: 300),
+              if (motivo != 'Outros') const SizedBox(height: 30),
               Column(
                 children: [
                   const Align(
@@ -193,7 +194,7 @@ class _enviar_denunciaState extends State<enviar_denuncia> {
                       width: double.infinity,
                       height: 50,
                       decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 28, 131, 216),
+                          color: const Color.fromARGB(255, 28, 131, 216),
                           borderRadius: BorderRadius.circular(12)),
                       child: const Center(
                         child: Text(

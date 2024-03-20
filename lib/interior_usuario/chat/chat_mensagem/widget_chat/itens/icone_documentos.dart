@@ -69,7 +69,7 @@ class icone_documentos extends StatelessWidget {
       );
     } else if (mensagem.toLowerCase().endsWith('docx')) {
       return SizedBox(
-        child: Image.asset('assevts/icone_word.png'),
+        child: Image.asset('assets/icone_word.png'),
       );
     } else {
       return SizedBox(

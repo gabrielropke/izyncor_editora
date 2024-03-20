@@ -68,7 +68,7 @@ class _ScrollSalvosState extends State<ScrollSalvos> {
                     ),
                     Tab(
                       child: Text(
-                        'Textos',
+                        'Assuntos',
                         style: TextStyle(fontSize: 12),
                       ),
                     ),

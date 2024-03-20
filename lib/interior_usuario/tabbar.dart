@@ -5,7 +5,7 @@ import 'package:editora_izyncor_app/interior_usuario/chat/conversas_chat.dart';
 import 'package:editora_izyncor_app/interior_usuario/chat/usuarios_chat.dart';
 import 'package:editora_izyncor_app/interior_usuario/homepage/feed/processo_postagem/postagem_tela01.dart';
 import 'package:editora_izyncor_app/interior_usuario/interior_principal.dart';
-import 'package:editora_izyncor_app/interior_usuario/notificacoes/notificacao_page.dart';
+import 'package:editora_izyncor_app/interior_usuario/notificacoes/scroll_notificacoes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -53,7 +53,7 @@ class _home_principalState extends State<home_principal> {
   final List _paginas = [
     const usuarios_chat(),
     const principal(),
-    const notificacao_page(),
+    const ScrollNotificacoes(),
     const conversas_chat(),
   ];
 

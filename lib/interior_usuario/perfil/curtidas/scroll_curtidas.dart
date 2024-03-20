@@ -68,7 +68,7 @@ class _ScrollCurtidasState extends State<ScrollCurtidas> {
                     ),
                     Tab(
                       child: Text(
-                        'Textos',
+                        'Assuntos',
                         style: TextStyle(fontSize: 12),
                       ),
                     ),

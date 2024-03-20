@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:editora_izyncor_app/autenticacao/Login/tela_login_usuario.dart';
+import 'package:editora_izyncor_app/autenticacao/termosdeuso.dart';
 import 'package:editora_izyncor_app/configuracao/assuntos/assuntos_selecao.dart';
 import 'package:editora_izyncor_app/configuracao/itens/relatar_problema.dart';
 import 'package:editora_izyncor_app/configuracao/itens/sobre.dart';
@@ -250,6 +251,29 @@ class _drawer_widgetState extends State<drawer_widget> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text('Minha conta',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400,
+                                      color: Color.fromARGB(255, 58, 56, 56))),
+                              Icon(Icons.keyboard_arrow_right_rounded)
+                            ],
+                          ),
+                        ),
+                      ),
+                      const Divider(),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TermosDeUso(idUsuarioLogado: idUsuarioLogado!, aceito: true,)));
+                        },
+                        child: const SizedBox(
+                          height: 30,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Políticas',
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w400,

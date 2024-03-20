@@ -830,8 +830,7 @@ class _comentarios_postagemState extends State<comentarios_postagem> {
                             width: 30,
                             height: 30,
                             child: Image.asset('assets/enviar_3.png',
-                                color: const Color.fromARGB(
-                                    255, 212, 18, 99)),
+                                color: const Color.fromARGB(255, 212, 18, 99)),
                           ),
                         ),
                       ),
@@ -849,8 +848,8 @@ class _comentarios_postagemState extends State<comentarios_postagem> {
                       borderRadius: BorderRadius.all(Radius.circular(32)),
                     ),
                     focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: Color.fromARGB(255, 206, 38, 88)),
+                      borderSide:
+                          BorderSide(color: Color.fromARGB(255, 206, 38, 88)),
                       borderRadius: BorderRadius.all(Radius.circular(32)),
                     ),
                   ),
